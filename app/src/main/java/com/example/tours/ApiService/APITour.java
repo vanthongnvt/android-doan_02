@@ -16,4 +16,14 @@ public interface APITour {
     @FormUrlEncoded
     Call<Auth> normalLogin(@Field("emailPhone") String emailPhone,
                            @Field("password") String password);
+
+    @POST("/user/register")
+    @FormUrlEncoded
+    Call<Auth> Register(@Field("password") String password,
+                        @Field("fullName") String fullName,
+                        @Field("email") String email,
+                        @Field("phone") String phone,
+                        @Field("address") String address,
+                        @Field("dob") String dob,
+                        @Field("gender") Number gender);
 }
