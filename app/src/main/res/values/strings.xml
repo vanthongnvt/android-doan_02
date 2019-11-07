@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Tours</string>
+<!--    Login Activity-->
+    <string name="login_title_bar">Đăng nhập</string>
+    <string name="login_hint_emailphone">Email hoặc Số điện thoại</string>
+    <string name="login_hint_password">Mật khẩu</string>
+    <string name="login_btn_text">Đăng nhập</string>
+    <string name="login_link_forgot_password">Quên mật khẩu?</string>
+    <string name="login_link_sign_up">Đăng ký</string>
+    <string name="login_fb_btn_text">Đăng nhập bằng Facebook</string>
+    <string name="login_gg_btn_text">Đăng nhập bằng Google</string>
+    <string name="login_empty_emailphone">Chưa nhập email hoặc số điện thoại</string>
+    <string name="login_empty_password">Chưa nhập mật khẩu</string>
+    <string name="failed_fetch_api">Đã có lỗi trong quá trình gửi dữ liệu</string>
+    <string name="unavailable_func">Chức năng chưa khả dụng</string>
+    <string name="login_not_existed">Sai email/Số điện thoại hoặc mật khẩu</string>
+<!--End Login Activity-->
 </resources>
