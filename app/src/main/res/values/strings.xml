@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Tours</string>
-<!--    Login Activity-->
+    <!--    Login Activity-->
     <string name="login_title_bar">Đăng nhập</string>
     <string name="login_hint_emailphone">Email hoặc Số điện thoại</string>
     <string name="login_hint_password">Mật khẩu</string>
@@ -14,5 +14,11 @@
     <string name="failed_fetch_api">Đã có lỗi trong quá trình gửi dữ liệu</string>
     <string name="unavailable_func">Chức năng chưa khả dụng</string>
     <string name="login_not_existed">Sai email/Số điện thoại hoặc mật khẩu</string>
-<!--End Login Activity-->
+    <!--End Login Activity-->
+
+    <!--    Navigation-->
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Trang chủ</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
