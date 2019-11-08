@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +30,7 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private APITour apiTour;
-    private EditText edtEmail, edtPassword, edtFullName, edtPhone, edtAddress, edtDob;
+    private EditText edtEmail, edtPassword,edtConfirmPass, edtFullName, edtPhone, edtAddress, edtDob;
     private RadioButton rbtnMale, rbtnFemale;
     private Button btnRegister;
     private TextView tvLinkLogin;
@@ -37,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static String EMAIL = "EMAIL";
     public static String PASS = "PASS";
     public static String BUNDLE = "BUNDLE";
+    public static String AUTH_REGISTER = "AUTH_REGISTER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String strEmail = edtEmail.getText().toString().trim();
                 String strPass = edtPassword.getText().toString().trim();
+                String strConfirmPass = edtConfirmPass.getText().toString().trim();
                 String strFullName = edtFullName.getText().toString().trim();
                 String strPhone = edtPhone.getText().toString().trim();
                 String strAddress = edtAddress.getText().toString().trim();
@@ -77,24 +80,13 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, R.string.register_empty_pass, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (strFullName.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, R.string.register_empty_fullname, Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (strPhone.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, R.string.register_empty_phone, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (strAddress.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, R.string.register_empty_address, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (strDob.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, R.string.register_empty_dob, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (numGender.intValue() == -1) {
-                    Toast.makeText(RegisterActivity.this, R.string.register_empty_gender, Toast.LENGTH_SHORT).show();
+
+                if(!strPass.equals(strConfirmPass)){
+                    Toast.makeText(RegisterActivity.this, R.string.not_same_pass, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -118,6 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         edtEmail = (EditText) findViewById(R.id.register_input_email);
         edtPassword = (EditText) findViewById(R.id.register_input_password);
+        edtConfirmPass = (EditText) findViewById(R.id.register_input_confirm_password);
         edtFullName = (EditText) findViewById(R.id.register_input_fullname);
         edtPhone = (EditText) findViewById(R.id.register_input_phone);
         edtAddress = (EditText) findViewById(R.id.register_input_address);
@@ -138,21 +131,17 @@ public class RegisterActivity extends AppCompatActivity {
                     AuthRegister mAuthRegisterObject = response.body();
                     Toast.makeText(RegisterActivity.this, R.string.successful_register, Toast.LENGTH_SHORT).show();
 
-                    //chuyen den man hinh login
-                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(EMAIL, strEmail);
-                    bundle.putString(PASS, strPass);
-                    intent.putExtra(BUNDLE, bundle);
+                    //chuyen den man hinh home
+                    Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                    intent.putExtra("AuthRegister", mAuthRegisterObject);
                     startActivity(intent);
                 }
 
                 //400 - 503
                 else {
-                    if(response.code() == 503){
+                    if (response.code() == 503) {
                         Toast.makeText(RegisterActivity.this, R.string.register_server_error, Toast.LENGTH_SHORT).show();
-                    }
-                    else if(response.code() == 400){
+                    } else if (response.code() == 400) {
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(response.errorBody().string());
@@ -162,12 +151,18 @@ public class RegisterActivity extends AppCompatActivity {
                             else if(jsonObject.getString("message").contains("Phone already registered")){
                                 Toast.makeText(RegisterActivity.this, R.string.phone_email_existed, Toast.LENGTH_SHORT).show();
                             }
+                            else if(jsonObject.getString("message").contains("Invalid email")){
+                                Toast.makeText(RegisterActivity.this, R.string.register_invalid_email, Toast.LENGTH_SHORT).show();
+                            }
+                            else if(jsonObject.getString("message").contains("Invalid phone")){
+                                Toast.makeText(RegisterActivity.this, R.string.register_invalid_phone, Toast.LENGTH_SHORT).show();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
+                   }
                 }
             }
 

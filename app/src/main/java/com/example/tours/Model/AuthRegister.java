@@ -2,8 +2,10 @@ package com.example.tours.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class AuthRegister{
+
+public class AuthRegister implements Serializable {
 
     @SerializedName("id")
     @Expose

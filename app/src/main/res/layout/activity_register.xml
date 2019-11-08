@@ -30,12 +30,30 @@
                 android:textSize="35sp" />
 
             <EditText
+                android:id="@+id/register_input_fullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:hint="Tên đầy đủ"
+                android:padding="15dp" />
+
+            <EditText
                 android:id="@+id/register_input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
                 android:hint="Email"
+                android:padding="15dp" />
+
+            <EditText
+                android:id="@+id/register_input_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:hint="Số điện thoại"
                 android:padding="15dp" />
 
             <EditText
@@ -48,22 +66,15 @@
                 android:inputType="textPassword"
                 android:padding="15dp" />
 
-            <EditText
-                android:id="@+id/register_input_fullname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/roundedborder2"
-                android:hint="Tên đầy đủ"
-                android:padding="15dp" />
 
             <EditText
-                android:id="@+id/register_input_phone"
+                android:id="@+id/register_input_confirm_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Số điện thoại"
+                android:hint="Xác nhận mật khẩu"
+                android:inputType="textPassword"
                 android:padding="15dp" />
 
             <EditText

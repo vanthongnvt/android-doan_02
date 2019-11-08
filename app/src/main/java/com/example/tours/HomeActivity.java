@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.tours.Model.AuthRegister;
 import com.example.tours.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -56,6 +57,11 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // from register:
+        AuthRegister authRegisterOb = (AuthRegister) getIntent().getSerializableExtra("AuthRegister");
+
+
     }
     private void loadFragment(Fragment fragment) {
         // load fragment

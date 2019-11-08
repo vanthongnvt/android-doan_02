@@ -32,4 +32,7 @@
     <string name="register_server_error">Lỗi Server, không tạo được tài khoản</string>
     <string name="register_email_existed">Email bạn đăng ký đã tồn tại</string>
     <string name="phone_email_existed">Số điện thoại bạn vừa đăng ký đã tồn tại</string>
+    <string name="not_same_pass">Mật khẩu không trùng khớp</string>
+    <string name="register_invalid_email">Email bạn nhập không tồn tại</string>
+    <string name="register_invalid_phone">Số điện thoại bạn nhập không tồn tại</string>
 </resources>
