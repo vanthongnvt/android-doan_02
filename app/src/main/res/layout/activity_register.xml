@@ -5,31 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
     tools:context=".MainActivity">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="72dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp"
-        android:text="Travel Assistant"
-        android:textColor="#068f41"
-        android:textSize="30sp" />
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="11">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="30dp">
 
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Travel Assistant"
+                android:textColor="#068f41"
+                android:textSize="35sp" />
 
             <EditText
                 android:id="@+id/register_input_email"
@@ -113,38 +111,32 @@
                     android:layout_weight="1"
                     android:text="Nữ" />
             </RadioGroup>
+
+            <Button
+                android:id="@+id/btn_register"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/login_btn_bg"
+                android:padding="15dp"
+                android:text="Đăng ký"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/link_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Bạn đã có tài khoản?"
+                android:textSize="16sp" />
+
+
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/btn_register"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/login_btn_bg"
-            android:padding="15dp"
-            android:text="Đăng ký"
-            android:textAllCaps="false"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/link_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Bạn đã có tài khoản?"
-            android:textSize="16sp" />
-
-
-    </LinearLayout>
 
 </LinearLayout>

@@ -21,4 +21,15 @@
     <string name="title_home">Trang chủ</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="register_empty_email">Bạn chưa nhập email</string>
+    <string name="register_empty_pass">Bạn chưa nhập mật khẩu</string>
+    <string name="register_empty_fullname">Bạn chưa nhập tên đầy đủ</string>
+    <string name="register_empty_phone">Bạn chưa nhập số điện thoại</string>
+    <string name="register_empty_address">Bạn chưa nhập địa chỉ</string>
+    <string name="register_empty_dob">Bạn chưa nhập ngày tháng năm sinh</string>
+    <string name="register_empty_gender">Bạn chưa chọn giới tính</string>
+    <string name="successful_register">Đăng ký thành công</string>
+    <string name="register_server_error">Lỗi Server, không tạo được tài khoản</string>
+    <string name="register_email_existed">Email bạn đăng ký đã tồn tại</string>
+    <string name="phone_email_existed">Số điện thoại bạn vừa đăng ký đã tồn tại</string>
 </resources>

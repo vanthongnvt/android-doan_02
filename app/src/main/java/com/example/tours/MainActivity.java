@@ -54,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
         txtEmailPhone=findViewById(R.id.login_input_email_phone);
         txtPassword=findViewById(R.id.login_input_password);
 
+        // tu man hinh dang ky sang:
+        Intent intent = getIntent();
+        if(intent != null){
+            Bundle bundle = intent.getBundleExtra(RegisterActivity.BUNDLE);
+            if(bundle != null){
+                txtEmailPhone.setText(bundle.getString(RegisterActivity.EMAIL));
+                txtPassword.setText(bundle.getString(RegisterActivity.PASS));
+            }
+        }
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
