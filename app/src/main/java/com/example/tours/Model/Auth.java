@@ -5,7 +5,9 @@ package com.example.tours.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Auth {
+import java.io.Serializable;
+
+public class Auth implements Serializable {
 
     @SerializedName("userId")
     @Expose
