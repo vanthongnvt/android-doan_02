@@ -1,10 +1,13 @@
 package com.example.tours.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -12,24 +15,53 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.tours.ApiService.APIRetrofitCreator;
+import com.example.tours.ApiService.APITour;
+import com.example.tours.MainActivity;
+import com.example.tours.Model.Auth;
+import com.example.tours.Model.ListTour;
+import com.example.tours.Model.Tour;
 import com.example.tours.R;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
+    private ListView listViewTour;
+    private APITour apiTour;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(this, new Observer<String>() {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        apiTour =  new APIRetrofitCreator().getAPIService();
+        Intent itent=getActivity().getIntent();
+        Auth auth= (Auth) itent.getSerializableExtra("Auth");
+        String token="";
+        apiTour.listTour(auth.getToken(),10,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onResponse(Call<ListTour> call, Response<ListTour> response) {
+                if(response.isSuccessful()){
+                    ListTour listTour= response.body();
+                    Toast.makeText(getActivity(), listTour.getTotal().toString(), Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ListTour> call, Throwable t) {
+                Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
-        return root;
+
+        return view;
     }
 }

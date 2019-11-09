@@ -7,112 +7,121 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="72dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        android:text="Travel Assistant"
-        android:textColor="@color/colorCustomPrimary"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        />
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp">
+        android:layout_height="match_parent">
 
-
-        <EditText
-            android:id="@+id/login_input_email_phone"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/roundedborder2"
-            android:hint="Email hoặc Số điện thoại"
-            android:padding="15dp" />
-
-
-        <EditText
-            android:id="@+id/login_input_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/roundedborder2"
-            android:hint="Mật khẩu"
-            android:inputType="textPassword"
-            android:padding="15dp" />
-
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="10dp"
-            android:padding="15dp"
-            android:background="@drawable/login_btn_bg"
-            android:text="Đăng nhập"
-            android:textAllCaps="false"
-            android:textColor="#ffffff"
-            android:textSize="18sp"
-            />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/link_forgot_password"
                 android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="Travel Assistant"
+                android:textColor="@color/colorCustomPrimary"
+                android:textSize="35sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:orientation="vertical"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp">
 
-                android:gravity="center"
-                android:text="Quên mật khẩu?"
-                android:textSize="16sp" />
-            <TextView
-                android:id="@+id/link_sign_up"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:gravity="center"
-                android:text="Đăng ký"
-                android:textSize="16sp" />
-        </RelativeLayout>
 
-        <Button
-            android:id="@+id/btn_login_fb"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:padding="15dp"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:background="@drawable/fb_login_btn_bg"
-            android:textColor="#ffffff"
-            android:text="Đăng nhập bằng Facebook" />
+                <EditText
+                    android:id="@+id/login_input_email_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Email hoặc Số điện thoại"
+                    android:padding="15dp" />
 
-        <Button
-            android:id="@+id/btn_login_gg"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:padding="15dp"
-            android:textColor="#ffffff"
-            android:background="@drawable/gg_login_btn_bg"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:textAllCaps="false"
-            android:text="Đăng nhập bằng Google" />
-    </LinearLayout>
 
+                <EditText
+                    android:id="@+id/login_input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Mật khẩu"
+                    android:inputType="textPassword"
+                    android:padding="15dp" />
+
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/login_btn_bg"
+                    android:padding="15dp"
+                    android:text="Đăng nhập"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:id="@+id/link_forgot_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+
+                        android:gravity="center"
+                        android:text="Quên mật khẩu?"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/link_sign_up"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:text="Đăng ký"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btn_login_fb"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/fb_login_btn_bg"
+                    android:padding="15dp"
+                    android:text="Đăng nhập bằng Facebook"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_login_gg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/gg_login_btn_bg"
+                    android:padding="15dp"
+                    android:text="Đăng nhập bằng Google"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

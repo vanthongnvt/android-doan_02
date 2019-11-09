@@ -109,22 +109,14 @@ public class MainActivity extends AppCompatActivity {
                     Auth mAuthObject = response.body();
 
                     //chuyen sang man hinh danh sach tour
+                    Intent itenthome= new Intent(MainActivity.this,HomeActivity.class);
+                    itenthome.putExtra("Auth",mAuthObject);
+                    startActivity(itenthome);
                 }
 
                 //400 - 404 - 500
                 else{
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(response.errorBody().string());
-                        String message = jsonObject.getString("message");
-
                         Toast.makeText(MainActivity.this, R.string.login_not_existed, Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
                 }
             }
 
