@@ -13,6 +13,13 @@
         android:layout_height="match_parent"
         android:background="@drawable/list_view_tour_iem_bg">
 
+<!--        code-->
+        <TextView
+            android:id="@+id/tourName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
     </LinearLayout>
 
 </LinearLayout>

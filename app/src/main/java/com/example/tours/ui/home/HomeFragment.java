@@ -15,8 +15,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.tours.Adapter.ListTourAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.HomeActivity;
 import com.example.tours.MainActivity;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.ListTour;
@@ -36,20 +38,27 @@ public class HomeFragment extends Fragment {
     private APITour apiTour;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             final ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         apiTour =  new APIRetrofitCreator().getAPIService();
         Intent itent=getActivity().getIntent();
         Auth auth= (Auth) itent.getSerializableExtra("Auth");
-        String token="";
         apiTour.listTour(auth.getToken(),10,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
-                    ListTour listTour= response.body();
-                    Toast.makeText(getActivity(), listTour.getTotal().toString(), Toast.LENGTH_SHORT).show();
+                    ListTour listTourResponse= response.body();
+                    List<Tour> tours = listTourResponse.getTours();
+                    listViewTour = getView().findViewById(R.id.listview_tour);
+
+                    ListTourAdapter listTourAdapter = new ListTourAdapter(container.getContext(),R.layout.listview_tour_item
+                            ,tours);
+                    listTourAdapter.notifyDataSetChanged();
+
+                    listViewTour.setAdapter(listTourAdapter);
+
                 }
                 else{
                     Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
