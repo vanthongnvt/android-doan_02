@@ -26,6 +26,15 @@ public interface APITour {
     Call<Auth> normalLogin(@Field("emailPhone") String emailPhone,
                            @Field("password") String password);
 
+    @POST("/user/login/by-facebook")
+    @FormUrlEncoded
+    Call<Auth> facebookLogin(@Field("accessToken") String accessToken);
+
+    @POST("/user/login/by-google")
+    @FormUrlEncoded
+    Call<Auth> googleLogin(@Field("accessToken") String accessToken);
+
+
     @POST("/user/register")
     @FormUrlEncoded
     Call<AuthRegister> Register(@Field("password") String password,
