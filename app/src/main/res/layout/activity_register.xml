@@ -30,21 +30,12 @@
                 android:textSize="35sp" />
 
             <EditText
-                android:id="@+id/register_input_fullname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/roundedborder2"
-                android:hint="Tên đầy đủ"
-                android:padding="15dp" />
-
-            <EditText
                 android:id="@+id/register_input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Email"
+                android:hint="Email (*)"
                 android:padding="15dp" />
 
             <EditText
@@ -53,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Số điện thoại"
+                android:hint="Số điện thoại (*)"
                 android:padding="15dp" />
 
             <EditText
@@ -62,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Mật khẩu"
+                android:hint="Mật khẩu (*)"
                 android:inputType="textPassword"
                 android:padding="15dp" />
 
@@ -73,8 +64,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Xác nhận mật khẩu"
+                android:hint="Xác nhận mật khẩu (*)"
                 android:inputType="textPassword"
+                android:padding="15dp" />
+
+            <EditText
+                android:id="@+id/register_input_fullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:hint="Họ và tên"
                 android:padding="15dp" />
 
             <EditText
@@ -127,9 +127,7 @@
                 android:id="@+id/btn_register"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginRight="30dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/login_btn_bg"
                 android:padding="15dp"

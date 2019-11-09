@@ -50,6 +50,8 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
                     ListTour listTourResponse= response.body();
+                    TextView totalTours = getView().findViewById(R.id.edt_totalTour);
+                    totalTours.setText(listTourResponse.getTotal() + " trips");
                     List<Tour> tours = listTourResponse.getTours();
                     listViewTour = getView().findViewById(R.id.listview_tour);
 
