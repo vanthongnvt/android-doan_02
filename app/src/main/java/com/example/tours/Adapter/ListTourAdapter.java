@@ -92,8 +92,8 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         holder.tvTourName.setText(tour.getName());
         holder.tvStartDate.setText(tour.getStartDate());
         holder.tvEndDate.setText(tour.getEndDate());
-        holder.tvAdults.setText(tour.getAdults().toString() + " adults ");
-        holder.tvChilds.setText(tour.getChilds().toString() + " childs");
+        holder.tvAdults.setText(tour.getAdults().toString() + " adult(s) ");
+        holder.tvChilds.setText(tour.getChilds().toString() + " child(s)");
         holder.tvMinCost.setText(tour.getMinCost());
         holder.tvMaxCost.setText(tour.getMaxCost());
 

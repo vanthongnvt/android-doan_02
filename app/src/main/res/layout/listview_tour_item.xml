@@ -47,16 +47,17 @@
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        app:srcCompat="@drawable/ic_map_marker_alt_solid" />
+                        app:srcCompat="@drawable/ic_maps_and_flags" />
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_tourName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="10dp"
-                        android:paddingTop="4dp"
+                        android:paddingTop="2dp"
                         android:text="Tour Name"
-                        android:textSize="18sp" />
+                        android:textSize="23sp" />
                 </LinearLayout>
 
 
@@ -69,8 +70,8 @@
 
                     <ImageView
                         android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:srcCompat="@drawable/ic_users_solid" />
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_multiple_users_silhouette" />
 
                     <TextView
                         android:id="@+id/tv_adults"
@@ -78,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="10dp"
                         android:paddingTop="4dp"
-                        android:text="0 adults"
+                        android:text="0 adult(s)"
                         android:textSize="18sp" />
 
                     <TextView
@@ -87,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="10dp"
                         android:paddingTop="4dp"
-                        android:text="0 childs"
+                        android:text="0 child(s)"
                         android:textSize="18sp" />
 
                 </LinearLayout>
@@ -117,9 +118,11 @@
                 android:layout_width="24dp"
                 android:layout_height="30dp"
                 android:layout_marginRight="6dp"
-                app:srcCompat="@drawable/ic_dollar_sign_solid" />
+                app:srcCompat="@drawable/ic_money_bag" />
 
             <TextView
+                android:textStyle="bold"
+                android:textColor="#8BC34A"
                 android:id="@+id/tv_minCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,6 +132,8 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:textStyle="bold"
+                android:textColor="#8BC34A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -137,6 +142,8 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:textStyle="bold"
+                android:textColor="#8BC34A"
                 android:id="@+id/tv_maxCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -156,9 +163,10 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_calendar_alt_solid" />
+                app:srcCompat="@drawable/ic_calendar" />
 
             <TextView
+                android:textStyle="italic"
                 android:id="@+id/tv_startDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,6 +176,7 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:textStyle="italic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -176,6 +185,7 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:textStyle="italic"
                 android:id="@+id/tv_endDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
