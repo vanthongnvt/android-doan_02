@@ -25,19 +25,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ListTourAdapter extends ArrayAdapter<Tour> {
     private Context context;
     private Integer resource;
     private List<Tour> list;
+    private List<Tour> list_backup;
 
     public ListTourAdapter(@NonNull Context context, int resource, @NonNull List<Tour> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         this.list = objects;
-
+        this.list_backup = new ArrayList<>();
+        this.list_backup.addAll(objects);
     }
 
     private static class ViewHolder {
@@ -90,15 +98,41 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
 
         //Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);
         holder.tvTourName.setText(tour.getName());
-        holder.tvStartDate.setText(tour.getStartDate());
-        holder.tvEndDate.setText(tour.getEndDate());
-        holder.tvAdults.setText(tour.getAdults().toString() + " adult(s) ");
-        holder.tvChilds.setText(tour.getChilds().toString() + " child(s)");
+
+        Calendar cal = Calendar.getInstance();
+        long time = Long.parseLong(tour.getStartDate());
+        cal.setTimeInMillis(time);
+        Date timeStartDate = cal.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        holder.tvStartDate.setText(dateFormat.format(timeStartDate));
+
+        time = Long.parseLong(tour.getEndDate());
+        cal.setTimeInMillis(time);
+        Date timeEndDate = cal.getTime();
+        holder.tvEndDate.setText(dateFormat.format(timeEndDate));
+
+        holder.tvAdults.setText(tour.getAdults().toString() + " người lớn ");
+        holder.tvChilds.setText(tour.getChilds().toString() + " trẻ em");
         holder.tvMinCost.setText(tour.getMinCost());
         holder.tvMaxCost.setText(tour.getMaxCost());
 
         return row;
 
+    }
+
+    public void filter(String s) {
+        list.clear();
+        if(s == ""){
+            list.addAll(list_backup);
+        }
+        else {
+            for(Tour item: list_backup){
+                if(item.getName().contains(s)){
+                    list.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
 
