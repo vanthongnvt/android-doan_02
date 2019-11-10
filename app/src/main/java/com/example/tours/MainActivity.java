@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         //gg
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().requestIdToken(getString(R.string.gg_server_client_id)).requestServerAuthCode(getString(R.string.gg_server_client_id))
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestEmail().requestIdToken(getString(R.string.gg_server_client_id)).requestServerAuthCode(getString(R.string.gg_server_client_id))
+//                .build();
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,8 +130,9 @@ public class MainActivity extends AppCompatActivity {
         btnGGLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, 96);
+                Toast.makeText(MainActivity.this, R.string.unavailable_func, Toast.LENGTH_SHORT).show();
+//                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+//                startActivityForResult(signInIntent, 96);
             }
         });
 
@@ -210,16 +211,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // ...
-            }
-        });
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                // ...
+//            }
+//        });
+//    }
 
     private void facebookLogin(String accessToken) {
         apiTour.facebookLogin(accessToken).enqueue(new Callback<Auth>() {

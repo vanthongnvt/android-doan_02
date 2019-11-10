@@ -42,6 +42,8 @@ public class HomeFragment extends Fragment {
     private ListTourAdapter listTourAdapter;
     private APITour apiTour;
     private ListTour listTourResponse;
+    private TextView totalTours;
+    private EditText edtHomeSearch;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class HomeFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         apiTour =  new APIRetrofitCreator().getAPIService();
+        listViewTour = view.findViewById(R.id.listview_tour);
+        totalTours = view.findViewById(R.id.edt_totalTour);
+        edtHomeSearch = view.findViewById(R.id.home_search);
         Intent itent=getActivity().getIntent();
         Auth auth= (Auth) itent.getSerializableExtra("Auth");
         apiTour.listTour(auth.getToken(),10,1,null,null).enqueue(new Callback<ListTour>() {
@@ -56,11 +61,11 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
                     listTourResponse= response.body();
-                    TextView totalTours = getView().findViewById(R.id.edt_totalTour);
+
                     totalTours.setText(listTourResponse.getTotal().toString());
 
                     tours = listTourResponse.getTours();
-                    listViewTour = getView().findViewById(R.id.listview_tour);
+
 
                     listTourAdapter = new ListTourAdapter(container.getContext(),R.layout.listview_tour_item,tours);
                     listTourAdapter.notifyDataSetChanged();
@@ -68,7 +73,7 @@ public class HomeFragment extends Fragment {
                     listViewTour.setAdapter(listTourAdapter);
 
                     // search:
-                    EditText edtHomeSearch = (EditText)getView().findViewById(R.id.home_search);
+
                     edtHomeSearch.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
