@@ -17,6 +17,7 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+
     android:id="@+id/nav_view"
     android:layout_width="match_parent"
     android:layout_height="40dp"
@@ -32,6 +33,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@drawable/bottom_navigation_selector"
         app:layout_behavior="com.example.tours.ui.BottomNavigationBehaviour"
-        />
 
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

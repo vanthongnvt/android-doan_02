@@ -2,6 +2,7 @@ package com.example.tours.ApiService;
 
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
+import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.Tour;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -51,4 +53,21 @@ public interface APITour {
                              @Query("pageNum") Integer pageNum,
                              @Query("orderBy") String orderBY,
                              @Query("isDescoptional") Boolean isDescoptional);
+
+    @POST("/tour/create")
+    Call<CreateTour> createTour(@Header("Authorization") String token,
+                                @Query("name") String tourName,
+                                @Query("startDate") Number startDate,
+                                @Query("endDate") Number endDate,
+                                @Query("sourceLat") Number srcLat,
+                                @Query("sourceLong") Number srcLong,
+                                @Query("desLat") Number desLat,
+                                @Query("desLong") Number desLong,
+                                @Query("isPrivate") Boolean isPrivate,
+                                @Query("adults") Number adults,
+                                @Query("childs") Number childs,
+                                @Query("minCost") Number minCost,
+                                @Query("maxCost") Number maxCost,
+                                @Query("avatar") String avatar);
+
 }

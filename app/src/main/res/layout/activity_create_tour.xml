@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="30dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Create Tour"
+                android:textColor="#068f41"
+                android:textSize="35sp" />
+
+            <EditText
+                android:id="@+id/createtour_tour_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:hint="Tên tour (*)"
+                android:padding="15dp" />
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_start_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Ngày bắt đầu (*)"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_end_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Ngày kết thúc (*)"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_source_lat"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Kinh độ nơi đi (*)"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_source_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Vĩ độ nơi đi (*)"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_dest_lat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Kinh độ nơi đến (*)"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_dest_long"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Vĩ độ nơi đến (*)"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Chế độ (*):" />
+
+            <RadioGroup
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <RadioButton
+                    android:paddingLeft="20dp"
+                    android:id="@+id/rbtn_private"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Riêng tư" />
+
+                <RadioButton
+                    android:paddingLeft="20dp"
+                    android:id="@+id/rbtn_public"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Công khai" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_adult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Số người lớn"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_child"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Số trẻ em"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_min_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Giá nhỏ nhất"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_max_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/roundedborder2"
+                    android:hint="Giá lớn nhất"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/upload_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Nhấn để tải ảnh lên cho tour"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btn_create"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/login_btn_bg"
+                android:padding="15dp"
+                android:text="Tạo"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
