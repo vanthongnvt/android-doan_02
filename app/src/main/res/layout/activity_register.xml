@@ -94,6 +94,7 @@
                 android:background="@drawable/roundedborder2"
                 android:hint="Ngày tháng năm sinh"
                 android:inputType="date"
+                android:focusableInTouchMode="false"
                 android:padding="15dp" />
 
             <TextView

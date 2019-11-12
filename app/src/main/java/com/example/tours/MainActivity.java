@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.Auth;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(TokenStorage.getInstance().getAccessToken()!=null){
+            startNewActivity(null);
+        }
         setContentView(R.layout.activity_main);
         setTitle(R.string.login_title_bar);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
@@ -148,8 +152,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startNewActivity(Auth mAuth) {
+        if(mAuth!=null){
+            TokenStorage.getInstance().setToken(mAuth.getToken());
+        }
         Intent itenthome = new Intent(MainActivity.this, HomeActivity.class);
-        itenthome.putExtra("Auth", mAuth);
+        itenthome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(itenthome);
     }
 

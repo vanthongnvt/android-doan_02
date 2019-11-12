@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
 
@@ -208,8 +209,9 @@ public class RegisterActivity extends AppCompatActivity {
                 //200 - OK
                 Auth mAuthObject = response.body();
                 //chuyen sang man hinh home
+                TokenStorage.getInstance().setToken(mAuthObject.getToken());
                 Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-                intent.putExtra("Auth", mAuthObject);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
 

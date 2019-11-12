@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.tours.Adapter.ListTourAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.CreateTourActivity;
 import com.example.tours.HomeActivity;
 import com.example.tours.MainActivity;
@@ -61,12 +62,12 @@ public class HomeFragment extends Fragment {
         edtHomeSearch = view.findViewById(R.id.home_search);
         btnAddTour = view.findViewById(R.id.btn_add_tour);
 
-        Intent itent=getActivity().getIntent();
-        final Auth auth= (Auth) itent.getSerializableExtra("Auth");
+//        Intent itent=getActivity().getIntent();
+//        final Auth auth= (Auth) itent.getSerializableExtra("Auth");
 
         String strtotalTours = totalTours.getText().toString();
         Integer numTotalTours = Integer.parseInt(strtotalTours);
-        apiTour.listTour(auth.getToken(),numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
+        apiTour.listTour(TokenStorage.getInstance().getAccessToken(),numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
@@ -116,7 +117,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CreateTourActivity.class);
-                intent.putExtra("Auth", auth);
+//                intent.putExtra("Auth", auth);
                 startActivity(intent);
             }
         });
