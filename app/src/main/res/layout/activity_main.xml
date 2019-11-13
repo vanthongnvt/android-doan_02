@@ -34,6 +34,12 @@
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Email / Số điện thoại:" />
+
 
                 <EditText
                     android:id="@+id/login_input_email_phone"
@@ -41,8 +47,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Email hoặc Số điện thoại"
                     android:padding="15dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Mật khẩu:" />
 
 
                 <EditText
@@ -50,7 +61,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Mật khẩu"
                     android:inputType="textPassword"
                     android:padding="15dp" />
 

@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -49,7 +50,7 @@ import retrofit2.Response;
 
 public class CreateTourActivity extends AppCompatActivity {
 
-    private EditText edtTourName, edtStartDate, edtEndDate, edtSrcLat, edtSrcLong, edtDestLat, edtDestLong, edtAdult, edtChild, edtMinCost, edtMaxCost;
+    private EditText edtTourName, edtStartDate, edtEndDate, edtAdult, edtChild, edtMinCost, edtMaxCost;
     private RadioButton rbtnPrivate, rbtnPublic;
     private TextView tvUpImg;
     private ImageView imgAvatar;
@@ -68,8 +69,11 @@ public class CreateTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_tour);
+        setTitle("Tạo tour");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
 
         // khoi tao:
+        init();
         init();
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -135,7 +139,7 @@ public class CreateTourActivity extends AppCompatActivity {
 
             private void showImgUploadDialog() {
                 Dialog dialog = new Dialog(CreateTourActivity.this);
-                setTitle("Chọn ảnh");
+                dialog.setTitle("Chọn ảnh");
                 dialog.setContentView(R.layout.dialog_upload_img);
                 avatarInDialog = (ImageView) dialog.findViewById(R.id.img_avatar_selected);
                 btnchooseInDialog = (Button) dialog.findViewById(R.id.btn_choose_img);
@@ -148,7 +152,6 @@ public class CreateTourActivity extends AppCompatActivity {
 
                 chooseImgBtnClick(); // btnchooseInDialog.setOnClickListeners
                 uploadImgBtnClick(dialog); // btnUpLoadInDialog.setOnClickListeners
-                dialog.dismiss();
                 dialog.show();
             }
         });
@@ -163,10 +166,6 @@ public class CreateTourActivity extends AppCompatActivity {
                 String strAvatar = "";
                 String strStartDate = edtStartDate.getText().toString().trim();
                 String strEndDate = edtEndDate.getText().toString().trim();
-                String strSrcLat = edtSrcLat.getText().toString().trim();
-                String strSrcLong = edtSrcLong.getText().toString().trim();
-                String strDestLat = edtDestLat.getText().toString().trim();
-                String strDestLong = edtDestLong.getText().toString().trim();
                 String strAdult = edtAdult.getText().toString().trim();
                 String strChild = edtChild.getText().toString().trim();
                 String strMinCost = edtMinCost.getText().toString().trim();
@@ -200,22 +199,6 @@ public class CreateTourActivity extends AppCompatActivity {
                     Toast.makeText(CreateTourActivity.this, "Ngày kết thúc không đúng định dạng", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(strSrcLat.isEmpty()){
-                    Toast.makeText(CreateTourActivity.this, "Bạn chưa nhập kinh độ cho điểm đi", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(strSrcLong.isEmpty()){
-                    Toast.makeText(CreateTourActivity.this, "Bạn chưa nhập vĩ độ cho điểm đi", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(strDestLat.isEmpty()){
-                    Toast.makeText(CreateTourActivity.this, "Bạn chưa nhập kinh độ cho điểm đến", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(strDestLong.isEmpty()){
-                    Toast.makeText(CreateTourActivity.this, "Bạn chưa nhập vĩ độ cho điểm đến", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if(isPrivate.intValue() == -1){
                     Toast.makeText(CreateTourActivity.this, "Bạn chưa chọn quyền riêng tư", Toast.LENGTH_SHORT).show();
                     return;
@@ -239,11 +222,6 @@ public class CreateTourActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-                Number numSrcLat = Integer.parseInt(strSrcLat);
-                Number numSrcLong = Integer.parseInt(strSrcLong);
-                Number numDesLat = Integer.parseInt(strDestLat);
-                Number numDesLong = Integer.parseInt(strDestLong);
 
                 if(strAdult.isEmpty()){
                     strAdult = "0";
@@ -271,7 +249,7 @@ public class CreateTourActivity extends AppCompatActivity {
                 }
 
                 //createTour(auth, strTourName, numStartDate, numEndDate, numSrcLat, numSrcLong, numDesLat, numDesLong, (Boolean) (isPrivate.intValue() == 1), numAdults, numChilds, numMinCost, numMaxCost, strAvatar);
-                createTour(TokenStorage.getInstance().getAccessToken(), strTourName, numStartDate, numEndDate, numSrcLat, numSrcLong, numDesLat, numDesLong, (Boolean) (isPrivate.intValue() == 1), numAdults, numChilds, numMinCost, numMaxCost, null);
+                createTour(TokenStorage.getInstance().getAccessToken(), strTourName, numStartDate, numEndDate, (Boolean) (isPrivate.intValue() == 1), numAdults, numChilds, numMinCost, numMaxCost, null);
 
             }
         });
@@ -307,14 +285,14 @@ public class CreateTourActivity extends AppCompatActivity {
                 byte[] imgBytes = byteArrayOutputStream.toByteArray();
 
                 imgBase64Format = Base64.encodeToString(imgBytes, Base64.DEFAULT);
-                //Toast.makeText(CreateTourActivity.this, imgBase64Format, Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateTourActivity.this, "Upload ảnh thành công", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
     }
 
-    public void createTour(String token, String name, Number startDate, Number endDate, Number srcLat, Number srcLong, Number desLat, Number desLong, Boolean isPrivate, Number adult, Number child, Number minCost, Number maxCost, String avatar){
-        apiTour.createTour(token, name, startDate, endDate, srcLat, srcLong, desLat, desLong, isPrivate, adult, child, minCost, maxCost, avatar).enqueue(new Callback<CreateTour>() {
+    public void createTour(String token, String name, Number startDate, Number endDate, Boolean isPrivate, Number adult, Number child, Number minCost, Number maxCost, String avatar){
+        apiTour.createTour(token, name, startDate, endDate, isPrivate, adult, child, minCost, maxCost, avatar).enqueue(new Callback<CreateTour>() {
             @Override
             public void onResponse(Call<CreateTour> call, Response<CreateTour> response) {
                 if(response.isSuccessful()){
@@ -339,10 +317,6 @@ public class CreateTourActivity extends AppCompatActivity {
         edtTourName = (EditText)findViewById(R.id.createtour_tour_name);
         edtStartDate = (EditText) findViewById(R.id.createtour_start_date);
         edtEndDate = (EditText) findViewById(R.id.createtour_end_date);
-        edtSrcLat = (EditText) findViewById(R.id.createtour_source_lat);
-        edtSrcLong = (EditText) findViewById(R.id.createtour_source_long);
-        edtDestLat = (EditText) findViewById(R.id.createtour_dest_lat);
-        edtDestLong = (EditText) findViewById(R.id.createtour_dest_long);
         rbtnPrivate = (RadioButton) findViewById(R.id.rbtn_private);
         rbtnPublic = (RadioButton) findViewById(R.id.rbtn_public);
         edtAdult = (EditText) findViewById(R.id.createtour_adult);

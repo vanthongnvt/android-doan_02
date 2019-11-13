@@ -29,14 +29,42 @@
                 android:textColor="#068f41"
                 android:textSize="35sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Tên tour (*):" />
+
             <EditText
                 android:id="@+id/createtour_tour_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Tên tour (*)"
                 android:padding="15dp" />
+
+            <LinearLayout
+                android:layout_marginBottom="10dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày bắt đầu (*):" />
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày kết thúc (*):" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:paddingTop="5dp"
@@ -55,7 +83,6 @@
                     android:focusableInTouchMode="false"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Ngày bắt đầu (*)"
                     android:padding="15dp" />
 
                 <EditText
@@ -66,77 +93,9 @@
                     android:focusableInTouchMode="false"
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Ngày kết thúc (*)"
                     android:padding="15dp" />
 
             </LinearLayout>
-
-            <LinearLayout
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_marginBottom="15dp"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:inputType="number"
-                    android:layout_weight="1"
-                    android:id="@+id/createtour_source_lat"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Kinh độ nơi đi (*)"
-                    android:padding="15dp" />
-
-                <EditText
-                    android:inputType="number"
-                    android:layout_weight="1"
-                    android:id="@+id/createtour_source_long"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Vĩ độ nơi đi (*)"
-                    android:padding="15dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_marginBottom="15dp"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:inputType="number"
-                    android:layout_weight="1"
-                    android:id="@+id/createtour_dest_lat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Kinh độ nơi đến (*)"
-                    android:padding="15dp" />
-
-                <EditText
-                    android:inputType="number"
-                    android:layout_weight="1"
-                    android:id="@+id/createtour_dest_long"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Vĩ độ nơi đến (*)"
-                    android:padding="15dp" />
-
-            </LinearLayout>
-
 
             <TextView
                 android:layout_width="wrap_content"
@@ -152,51 +111,44 @@
                 android:weightSum="2">
 
                 <RadioButton
+                    android:layout_marginRight="5dp"
                     android:paddingLeft="20dp"
                     android:id="@+id/rbtn_private"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Riêng tư" />
 
                 <RadioButton
+                    android:layout_marginLeft="5dp"
                     android:paddingLeft="20dp"
                     android:id="@+id/rbtn_public"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Công khai" />
             </RadioGroup>
 
             <LinearLayout
+                android:layout_marginBottom="10dp"
                 android:weightSum="2"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
-                    android:inputType="number"
+                <TextView
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:id="@+id/createtour_adult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Số người lớn"
-                    android:padding="15dp" />
+                    android:text="Số người lớn:" />
 
-                <EditText
-                    android:inputType="number"
-                    android:layout_weight="1"
-                    android:id="@+id/createtour_child"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <TextView
                     android:layout_marginLeft="5dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/roundedborder2"
-                    android:hint="Số trẻ em"
-                    android:padding="15dp" />
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Số trẻ em:" />
 
             </LinearLayout>
 
@@ -207,18 +159,74 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:text="0"
                     android:inputType="number"
                     android:layout_weight="1"
-                    android:id="@+id/createtour_min_cost"
+                    android:id="@+id/createtour_adult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Giá nhỏ nhất"
                     android:padding="15dp" />
 
                 <EditText
+                    android:text="0"
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/createtour_child"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginBottom="10dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Giá nhỏ nhất:" />
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Giá lớn nhất:" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:text="0"
+                    android:id="@+id/createtour_min_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/roundedborder2"
+                    android:inputType="number"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:text="0"
                     android:inputType="number"
                     android:layout_weight="1"
                     android:id="@+id/createtour_max_cost"
@@ -227,7 +235,6 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/roundedborder2"
-                    android:hint="Giá lớn nhất"
                     android:padding="15dp" />
 
             </LinearLayout>

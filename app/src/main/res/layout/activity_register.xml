@@ -29,14 +29,25 @@
                 android:textColor="#068f41"
                 android:textSize="35sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Email (*):" />
+
             <EditText
                 android:id="@+id/register_input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Email (*)"
                 android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Số điện thoại (*):" />
 
             <EditText
                 android:id="@+id/register_input_phone"
@@ -44,8 +55,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Số điện thoại (*)"
                 android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Mật khẩu (*):" />
 
             <EditText
                 android:id="@+id/register_input_password"
@@ -53,10 +69,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Mật khẩu (*)"
                 android:inputType="textPassword"
                 android:padding="15dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Xác nhận mật khẩu (*):" />
 
             <EditText
                 android:id="@+id/register_input_confirm_password"
@@ -64,9 +84,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Xác nhận mật khẩu (*)"
                 android:inputType="textPassword"
                 android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Họ và tên:" />
 
             <EditText
                 android:id="@+id/register_input_fullname"
@@ -74,8 +99,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Họ và tên"
+                android:hint=""
                 android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Địa chỉ:" />
 
             <EditText
                 android:id="@+id/register_input_address"
@@ -83,8 +114,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Địa chỉ"
                 android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Ngày tháng năm sinh:" />
 
             <EditText
                 android:id="@+id/register_input_dob"
@@ -92,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/roundedborder2"
-                android:hint="Ngày tháng năm sinh"
+                android:hint=""
                 android:inputType="date"
                 android:focusableInTouchMode="false"
                 android:padding="15dp" />
@@ -100,7 +136,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:text="Giới tính:" />
 
             <RadioGroup

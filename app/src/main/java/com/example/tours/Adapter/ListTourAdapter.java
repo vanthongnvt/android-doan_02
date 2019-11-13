@@ -96,7 +96,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             Picasso.get().load(tour.getAvatar()).into(holder.imgAvater);
         }
 
-        //Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);
+       // Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);
         holder.tvTourName.setText(tour.getName());
 
         Calendar cal = Calendar.getInstance();
