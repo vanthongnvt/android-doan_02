@@ -18,6 +18,7 @@
     <string name="fb_login_protocol_scheme">fb695588897599189</string>
     <string name="gg_server_client_id">284288180251-89m3dhb7cplqr1opp9d2gf4d814bbv8q.apps.googleusercontent.com</string>
     <string name="gg_app_secret">1-A7kVMbbtdjkomM9Mm4SAe8</string>
+    <string name="gg_map_API">AIzaSyBAaJwCvtDH1mzS_0VdenGZ_poviu6qshY</string>
     <!--End Login Activity-->
 
     <!--    Navigation-->
