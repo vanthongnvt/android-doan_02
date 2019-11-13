@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="16dp"
+    android:padding="10dp"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="Chọn ảnh"
+        android:textColor="@color/colorCustomPrimary"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/img_avatar_selected"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/empty_image"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="300dp"
+        android:layout_height="200dp"/>
+
+    <Button
+        android:id="@+id/btn_choose_img"
+        android:layout_margin="10dp"
+        android:textColor="#fff"
+        android:background="@drawable/login_btn_bg"
+        android:text="Chọn ảnh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btn_upload_img"
+        android:layout_margin="10dp"
+        android:textColor="#fff"
+        android:background="@drawable/login_btn_bg"
+        android:text="Upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

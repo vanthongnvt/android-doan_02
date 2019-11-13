@@ -55,19 +55,20 @@ public interface APITour {
                              @Query("isDescoptional") Boolean isDescoptional);
 
     @POST("/tour/create")
+    @FormUrlEncoded
     Call<CreateTour> createTour(@Header("Authorization") String token,
-                                @Query("name") String tourName,
-                                @Query("startDate") Number startDate,
-                                @Query("endDate") Number endDate,
-                                @Query("sourceLat") Number srcLat,
-                                @Query("sourceLong") Number srcLong,
-                                @Query("desLat") Number desLat,
-                                @Query("desLong") Number desLong,
-                                @Query("isPrivate") Boolean isPrivate,
-                                @Query("adults") Number adults,
-                                @Query("childs") Number childs,
-                                @Query("minCost") Number minCost,
-                                @Query("maxCost") Number maxCost,
-                                @Query("avatar") String avatar);
+                                @Field("name") String tourName,
+                                @Field("startDate") Number startDate,
+                                @Field("endDate") Number endDate,
+                                @Field("sourceLat") Number srcLat,
+                                @Field("sourceLong") Number srcLong,
+                                @Field("desLat") Number desLat,
+                                @Field("desLong") Number desLong,
+                                @Field("isPrivate") Boolean isPrivate,
+                                @Field("adults") Number adults,
+                                @Field("childs") Number childs,
+                                @Field("minCost") Number minCost,
+                                @Field("maxCost") Number maxCost,
+                                @Field("avatar") String avatar);
 
 }

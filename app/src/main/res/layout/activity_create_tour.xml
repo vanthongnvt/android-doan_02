@@ -52,7 +52,7 @@
                     android:id="@+id/createtour_start_date"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
+                    android:focusableInTouchMode="false"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/roundedborder2"
                     android:hint="Ngày bắt đầu (*)"
@@ -63,6 +63,7 @@
                     android:id="@+id/createtour_end_date"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/roundedborder2"
                     android:hint="Ngày kết thúc (*)"
@@ -238,6 +239,14 @@
                 android:layout_gravity="center"
                 android:text="Nhấn để tải ảnh lên cho tour"
                 android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/createtour_avatar"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/btn_create"
