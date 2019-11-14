@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreateStopPoint"/>
+        <activity android:name=".CreateStopPointActivity"/>
         <activity android:name=".CreateTourActivity" />
 
         <meta-data
@@ -25,7 +25,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBAaJwCvtDH1mzS_0VdenGZ_poviu6qshY"/>
+            android:value="@string/gg_map_API"/>
 
         <activity
             android:name="com.facebook.FacebookActivity"

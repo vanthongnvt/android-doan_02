@@ -26,6 +26,9 @@
     <string name="title_home">Trang chủ</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <!--End Navigation-->
+
+    <!--    Sign up-->
     <string name="register_empty_email">Bạn chưa nhập email</string>
     <string name="register_empty_pass">Bạn chưa nhập mật khẩu</string>
     <string name="register_empty_fullname">Bạn chưa nhập tên đầy đủ</string>
@@ -40,4 +43,9 @@
     <string name="not_same_pass">Mật khẩu không trùng khớp</string>
     <string name="register_invalid_email">Email bạn nhập không tồn tại</string>
     <string name="register_invalid_phone">Số điện thoại bạn nhập không tồn tại</string>
+    <!-- End   Sign up-->
+
+    <!--    Map-->
+    <string name="map_my_location">Vị trí của tôi</string>
+    <string name="map_failed_to_get_device_location">Không thể xác định vị trí. Hãy chắn chắn GPS đã được bật</string>
 </resources>
