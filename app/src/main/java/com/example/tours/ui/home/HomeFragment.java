@@ -51,6 +51,8 @@ public class HomeFragment extends Fragment {
     private EditText edtHomeSearch;
     private ImageView btnAddTour;
 
+    private static int MAX_NUM_PER_PAGE = 500;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
 
@@ -65,8 +67,7 @@ public class HomeFragment extends Fragment {
 //        Intent itent=getActivity().getIntent();
 //        final Auth auth= (Auth) itent.getSerializableExtra("Auth");
 
-        String strtotalTours = totalTours.getText().toString();
-        Integer numTotalTours = Integer.parseInt(strtotalTours);
+        int numTotalTours = MAX_NUM_PER_PAGE;
         apiTour.listTour(TokenStorage.getInstance().getAccessToken(),numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {

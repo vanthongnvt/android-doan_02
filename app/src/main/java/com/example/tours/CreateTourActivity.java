@@ -207,7 +207,7 @@ public class CreateTourActivity extends AppCompatActivity {
 
                 // chuyen strStartDate va strEndDate sang number (from 1970):
                 Number numStartDate = 0;
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     Date startDate = df.parse(strStartDate);
                     numStartDate = startDate.getTime();

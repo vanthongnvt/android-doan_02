@@ -96,25 +96,38 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             Picasso.get().load(tour.getAvatar()).into(holder.imgAvater);
         }
 
-       // Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);
+        //Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);
+        //Picasso.get().load("https://dulich-api.herokuapp.com/images/tours/1553545313571.jpg").into(holder.imgAvater);
         holder.tvTourName.setText(tour.getName());
 
         Calendar cal = Calendar.getInstance();
-        long time = Long.parseLong(tour.getStartDate());
-        cal.setTimeInMillis(time);
-        Date timeStartDate = cal.getTime();
+        long time = 0;
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        holder.tvStartDate.setText(dateFormat.format(timeStartDate));
+        if(tour.getStartDate() == null){
+            holder.tvStartDate.setText("00/00/0000");
+        }
+        else{
+            time = Long.parseLong(tour.getStartDate());
+            cal.setTimeInMillis(time);
+            Date timeStartDate = cal.getTime();
+            holder.tvStartDate.setText(dateFormat.format(timeStartDate));
+        }
 
-        time = Long.parseLong(tour.getEndDate());
-        cal.setTimeInMillis(time);
-        Date timeEndDate = cal.getTime();
-        holder.tvEndDate.setText(dateFormat.format(timeEndDate));
+        if(tour.getEndDate() == null){
+            holder.tvEndDate.setText("00/00/0000");
+        }
+        else{
+            time = Long.parseLong(tour.getEndDate());
+            cal.setTimeInMillis(time);
+            Date timeEndDate = cal.getTime();
+            holder.tvEndDate.setText(dateFormat.format(timeEndDate));
+        }
 
         holder.tvAdults.setText(tour.getAdults().toString() + " người lớn ");
         holder.tvChilds.setText(tour.getChilds().toString() + " trẻ em");
         holder.tvMinCost.setText(tour.getMinCost());
         holder.tvMaxCost.setText(tour.getMaxCost());
+
 
         return row;
 
