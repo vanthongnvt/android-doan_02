@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/map_btn_close_dialog"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_map_black_24dp"
+            />
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingBottom="30dp"
+            android:paddingTop="0dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Thêm điểm dừng"
+                android:textColor="#068f41"
+                android:textSize="35sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Tên điểm dừng (*):" />
+
+            <EditText
+                android:id="@+id/create_stop_point_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:padding="15dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Địa chỉ (*):" />
+
+            <EditText
+                android:id="@+id/create_stop_point_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:padding="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Tỉnh / Thành phố (*):" />
+
+            <EditText
+                android:id="@+id/create_stop_point_province"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/roundedborder2"
+                android:padding="15dp" />
+
+
+
+            <LinearLayout
+                android:layout_marginBottom="10dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Giá nhỏ nhất:" />
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Giá lớn nhất:" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:text="0"
+                    android:id="@+id/create_stop_point_min_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/roundedborder2"
+                    android:inputType="number"
+                    android:padding="15dp" />
+
+                <EditText
+                    android:text="0"
+                    android:inputType="number"
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_max_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thời điểm tới (*):" />
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_arrive_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Giờ"
+                    />
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_arrive_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Ngày"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thời điểm đi (*):" />
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_leave_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Giờ"
+                    />
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_leave_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Ngày"
+                    />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_create__stop_point"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/login_btn_bg"
+                android:padding="15dp"
+                android:text="Tạo"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

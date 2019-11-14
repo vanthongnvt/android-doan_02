@@ -67,6 +67,24 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private  GoogleMap mMap;
     private  Boolean mLocationPermisstionsGranted=false;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private Button btnShowDialog;
+    private Dialog dialogCreateStopPoint;
+    private Button btnCloseDialog;
+    private EditText edtStopPointName;
+    private EditText edtStopPointAddress;
+    private EditText edtStopPointMaxCost;
+    private EditText edtStopPointMinCost;
+    private EditText edtStopPointTimeArrive;
+    private EditText edtStopPointDateArrive;
+    private EditText edtStopPointTimeLeave;
+    private EditText edtStopPointDateLeave;
+    private int tourId;
+    private double mlat;
+    private double mlong;
+    private String mAddress;
+    private MarkerOptions markerOptions=null;
+    private Marker marker;
+    private boolean isPOIclick=false;
 //    private AutocompleteSupportFragment autocompleteFragment;
 
     @Override
@@ -79,16 +97,15 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         if(isOK==1){
             getLocationPermission();
             init();
-            edtSearchAddr.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if(actionId == EditorInfo.IME_ACTION_SEARCH||actionId==EditorInfo.IME_ACTION_DONE
-                            ||event.getAction()==KeyEvent.ACTION_DOWN|| event.getAction()==KeyEvent.KEYCODE_ENTER)
-
-                        geoLocate();
-                    return false;
-                }
-            });
+//            edtSearchAddr.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//                @Override
+//                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                    if(actionId == EditorInfo.IME_ACTION_SEARCH||actionId==EditorInfo.IME_ACTION_DONE
+//                            ||event.getAction()==KeyEvent.ACTION_DOWN|| event.getAction()==KeyEvent.KEYCODE_ENTER)
+//
+//                    return false;
+//                }
+//            });
 
             btnCurLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,6 +127,21 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                    Log.i(TAG, "An error occurred: " + status);
 //                }
 //            });
+
+            btnShowDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogCreateStopPoint.show();
+                }
+            });
+
+            btnCloseDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogCreateStopPoint.hide();
+                }
+            });
+
         }
         else if(isOK==-1){
             Intent intent = new Intent(CreateStopPointActivity.this,HomeActivity.class);
@@ -120,43 +152,62 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnPoiClickListener(this);
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
 
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
         if(mLocationPermisstionsGranted){
             getDeviceLocation();
 
+            mMap.setOnPoiClickListener(this);
+
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                }
+            });
+
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if(!isPOIclick) {
+                        moveCamera(latLng, DEFAULT_ZOOM, null);
+                    }
+                    else{
+                        isPOIclick=false;
+                    }
+                }
+            });
         }
     }
-    private void  geoLocate(){
-        String keysearch=edtSearchAddr.getText().toString();
+    private void  geoLocateToDialog(LatLng latLng){
+
+        mlat=latLng.latitude;
+        mlong=latLng.longitude;
+
         Geocoder geocoder =new Geocoder(CreateStopPointActivity.this);
-        List<Address> list= new ArrayList<>();
+        List<Address> list;
         try {
-            list=geocoder.getFromLocationName(keysearch,1);
+            list=geocoder.getFromLocation(mlat,mlong,1);
             if(list.size()>0){
                 Address address= list.get(0);
-                Log.d(TAG, "geoLocate: "+address.toString());
-                moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM,address.getAddressLine(0));
+                mAddress=address.getAddressLine(0);
+
+                edtStopPointAddress.setText(mAddress);
+
             }
             else{
-                Log.d(TAG, "geoLocate: EMPTY "+keysearch);
+                Log.d(TAG, "geoLocate: EMPTY ");
             }
         }catch (IOException e){
             Log.d(TAG, "geoLocate: Exception 1");
@@ -198,10 +249,26 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private void moveCamera(LatLng latLng, float zoom, String title){
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
-        if(!title.equals(getString(R.string.map_my_location))) {
-            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title).draggable(true);
-            mMap.addMarker(markerOptions);
+        if(marker==null){
+            markerOptions=new MarkerOptions();
         }
+        else{
+            marker.remove();
+        }
+        if(title!=null) {
+            if(!title.equals(getString(R.string.map_my_location))) {
+                markerOptions.position(latLng).title(title).draggable(true);
+                marker = mMap.addMarker(markerOptions);
+                edtStopPointName.setText(title);
+            }
+        }
+        else{
+            markerOptions.position(latLng).title(null).draggable(true);
+            marker = mMap.addMarker(markerOptions);
+            marker.showInfoWindow();
+        }
+
+        geoLocateToDialog(latLng);
         hideKeyboard();
     }
 
@@ -265,6 +332,20 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtSearchAddr=findViewById(R.id.edt_search_addr);
 
         btnCurLocation=findViewById(R.id.map_btn_cur_location);
+        btnShowDialog=findViewById(R.id.map_btn_show_dialog);
+        dialogCreateStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
+        dialogCreateStopPoint.setContentView(R.layout.dialog_create_stop_point);
+        btnCloseDialog=dialogCreateStopPoint.findViewById(R.id.map_btn_close_dialog);
+        edtStopPointAddress=dialogCreateStopPoint.findViewById(R.id.create_stop_point_address);
+        edtStopPointName=dialogCreateStopPoint.findViewById(R.id.create_stop_point_name);
+        edtStopPointMinCost=dialogCreateStopPoint.findViewById(R.id.create_stop_point_min_cost);
+        edtStopPointMaxCost=dialogCreateStopPoint.findViewById(R.id.create_stop_point_max_cost);
+        edtStopPointTimeArrive=dialogCreateStopPoint.findViewById(R.id.create_stop_point_arrive_time);
+        edtStopPointDateArrive=dialogCreateStopPoint.findViewById(R.id.create_stop_point_arrive_date);
+        edtStopPointTimeLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_time);
+        edtStopPointDateLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_date);
+
+
 //        autocompleteFragment = (AutocompleteSupportFragment)
 //                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 //        if (!Places.isInitialized()) {
@@ -279,10 +360,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onPoiClick(PointOfInterest pointOfInterest) {
-        Toast.makeText(getApplicationContext(), "Clicked: " +
-                        pointOfInterest.name + "\nPlace ID:" + pointOfInterest.placeId +
-                        "\nLatitude:" + pointOfInterest.latLng.latitude +
-                        " Longitude:" + pointOfInterest.latLng.longitude,
-                Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onPoiClick: "+pointOfInterest.name);
+        moveCamera(pointOfInterest.latLng,DEFAULT_ZOOM,pointOfInterest.name);
+        isPOIclick=true;
     }
 }

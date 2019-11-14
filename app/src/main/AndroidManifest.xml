@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreateStopPointActivity"/>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".CreateTourActivity" />
 
         <meta-data
@@ -43,7 +43,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".CreateStopPointActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
