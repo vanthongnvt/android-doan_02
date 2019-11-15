@@ -50,8 +50,8 @@ public class HomeFragment extends Fragment {
     private TextView totalTours;
     private EditText edtHomeSearch;
     private ImageView btnAddTour;
+    private int numTotalTours;
 
-    private static int MAX_NUM_PER_PAGE = 500;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
@@ -64,21 +64,47 @@ public class HomeFragment extends Fragment {
         edtHomeSearch = view.findViewById(R.id.home_search);
         btnAddTour = view.findViewById(R.id.btn_add_tour);
 
-//        Intent itent=getActivity().getIntent();
-//        final Auth auth= (Auth) itent.getSerializableExtra("Auth");
+        // goi api lan dau de lay total tours :
+        apiTour.listTour(TokenStorage.getInstance().getAccessToken(),1,1,null,null).enqueue(new Callback<ListTour>() {
+            @Override
+            public void onResponse(Call<ListTour> call, Response<ListTour> response) {
+                listTourResponse = response.body();
+                numTotalTours = listTourResponse.getTotal();
 
-        int numTotalTours = MAX_NUM_PER_PAGE;
-        apiTour.listTour(TokenStorage.getInstance().getAccessToken(),numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
+                //goi api lan tiep theo de load danh sach:
+                getList(container);
+            }
+
+            @Override
+            public void onFailure(Call<ListTour> call, Throwable t) {
+                Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+        btnAddTour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateTourActivity.class);
+//                intent.putExtra("Auth", auth);
+                startActivity(intent);
+            }
+        });
+
+        return view;
+    }
+
+    private void getList(ViewGroup container) {
+        apiTour.listTour(TokenStorage.getInstance().getAccessToken(), numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
                     listTourResponse= response.body();
-
-                    totalTours.setText(listTourResponse.getTotal().toString());
+                    totalTours.setText(numTotalTours + "");
 
                     tours = listTourResponse.getTours();
-
-
                     listTourAdapter = new ListTourAdapter(container.getContext(),R.layout.listview_tour_item,tours);
                     listTourAdapter.notifyDataSetChanged();
 
@@ -113,19 +139,7 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
-
-        btnAddTour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateTourActivity.class);
-//                intent.putExtra("Auth", auth);
-                startActivity(intent);
-            }
-        });
-
-        return view;
     }
-
 
 
 }

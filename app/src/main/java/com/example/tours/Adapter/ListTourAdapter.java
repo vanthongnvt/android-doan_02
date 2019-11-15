@@ -75,7 +75,6 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
         View row;
         ViewHolder holder;
 
@@ -94,6 +93,8 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         // set thuoc tinh cho item:
         if (tour.getAvatar() != null){
             Picasso.get().load(tour.getAvatar()).into(holder.imgAvater);
+        }else{
+            holder.imgAvater.setImageResource(R.drawable.empty_image);
         }
 
         //Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.imgAvater);

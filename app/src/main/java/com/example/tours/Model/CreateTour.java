@@ -21,10 +21,10 @@ public class CreateTour {
     private Integer maxCost;
     @SerializedName("startDate")
     @Expose
-    private Integer startDate;
+    private Long startDate;
     @SerializedName("endDate")
     @Expose
-    private Integer endDate;
+    private Long endDate;
     @SerializedName("adults")
     @Expose
     private Integer adults;
@@ -93,19 +93,19 @@ public class CreateTour {
         this.maxCost = maxCost;
     }
 
-    public Integer getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Integer startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public Integer getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Integer endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
 
