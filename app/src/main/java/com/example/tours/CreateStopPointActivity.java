@@ -7,7 +7,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -20,11 +22,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.tours.Model.StopPoint;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Status;
@@ -48,8 +53,13 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,12 +74,12 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     private EditText edtSearchAddr;
     private ImageView btnCurLocation;
-    private  GoogleMap mMap;
-    private  Boolean mLocationPermisstionsGranted=false;
+    private GoogleMap mMap;
+    private Boolean mLocationPermisstionsGranted=false;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button btnShowDialog;
     private Dialog dialogCreateStopPoint;
-    private Button btnCloseDialog;
+    private ImageView btnCloseDialog;
     private EditText edtStopPointName;
     private EditText edtStopPointAddress;
     private EditText edtStopPointMaxCost;
@@ -78,6 +88,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private EditText edtStopPointDateArrive;
     private EditText edtStopPointTimeLeave;
     private EditText edtStopPointDateLeave;
+    private Button btnCreateStopPoint;
     private int tourId;
     private double mlat;
     private double mlong;
@@ -142,6 +153,16 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 }
             });
 
+            btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   StopPoint stopPoint = checkValidInput();
+                   if(stopPoint!=null){
+                       //goi api
+                   }
+                }
+            });
+
         }
         else if(isOK==-1){
             Intent intent = new Intent(CreateStopPointActivity.this,HomeActivity.class);
@@ -160,22 +181,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                @Override
-                public void onMarkerDragStart(Marker marker) {
-
-                }
-
-                @Override
-                public void onMarkerDrag(Marker marker) {
-
-                }
-
-                @Override
-                public void onMarkerDragEnd(Marker marker) {
-                }
-            });
 
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
@@ -257,13 +262,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         }
         if(title!=null) {
             if(!title.equals(getString(R.string.map_my_location))) {
-                markerOptions.position(latLng).title(title).draggable(true);
+                markerOptions.position(latLng).title(title);
                 marker = mMap.addMarker(markerOptions);
                 edtStopPointName.setText(title);
             }
         }
         else{
-            markerOptions.position(latLng).title(null).draggable(true);
+            markerOptions.position(latLng).title(null);
             marker = mMap.addMarker(markerOptions);
             marker.showInfoWindow();
         }
@@ -344,6 +349,91 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointDateArrive=dialogCreateStopPoint.findViewById(R.id.create_stop_point_arrive_date);
         edtStopPointTimeLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_time);
         edtStopPointDateLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_date);
+        btnCreateStopPoint=dialogCreateStopPoint.findViewById(R.id.btn_create_stop_point);
+
+        Calendar myCalendar = Calendar.getInstance();
+        int hour = myCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendar.get(Calendar.MINUTE);
+        TimePickerDialog.OnTimeSetListener myTimeArriveListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                edtStopPointTimeArrive.setText(hourOfDay+":"+minute);
+            }
+        };
+        TimePickerDialog timeArrivePickerDialog = new TimePickerDialog(CreateStopPointActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeArriveListener, hour, minute, true);
+        timeArrivePickerDialog.setTitle(getString(R.string.stop_point_select_time));
+        timeArrivePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        edtStopPointTimeArrive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeArrivePickerDialog.show();
+            }
+        });
+
+        DatePickerDialog.OnDateSetListener dateArrive= new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                edtStopPointDateArrive.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+        DatePickerDialog dateArrivePicker = new DatePickerDialog(CreateStopPointActivity.this, dateArrive, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH));
+        edtStopPointDateArrive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateArrivePicker.show();
+            }
+        });
+
+
+        TimePickerDialog.OnTimeSetListener myTimeLeaveListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                edtStopPointTimeLeave.setText(hourOfDay+":"+minute);
+            }
+        };
+        TimePickerDialog timeLeavePickerDialog = new TimePickerDialog(CreateStopPointActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeLeaveListener, hour, minute, true);
+        timeLeavePickerDialog.setTitle(getString(R.string.stop_point_select_time));
+        timeLeavePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        edtStopPointTimeLeave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeLeavePickerDialog.show();
+            }
+        });
+
+        DatePickerDialog.OnDateSetListener dateLeave= new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                edtStopPointDateLeave.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+        DatePickerDialog dateLeavePicker = new DatePickerDialog(CreateStopPointActivity.this, dateLeave, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH));
+        edtStopPointDateLeave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateLeavePicker.show();
+            }
+        });
 
 
 //        autocompleteFragment = (AutocompleteSupportFragment)
@@ -354,6 +444,74 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //      Specify the types of place data to return.
 //        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
     }
+    private StopPoint checkValidInput(){
+        String name = edtStopPointName.getText().toString();
+        if(name.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_name), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String address=edtStopPointAddress.getText().toString();
+        if(address.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_address), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        int provinceId=1;
+        if(provinceId==0){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_province), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        int serviceType=2;
+        if(serviceType==0){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_service_type), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String arriveTime=edtStopPointTimeArrive.getText().toString();
+        if(arriveTime.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_time), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String arriveDate=edtStopPointDateArrive.getText().toString();
+        if(arriveDate.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_date), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String leaveTime=edtStopPointTimeLeave.getText().toString();
+        if(leaveTime.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_time), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String leaveDate=edtStopPointDateLeave.getText().toString();
+        if(leaveDate.isEmpty()){
+            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_date), Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        long utimeArr=0;
+        long utimeLev=0;
+
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.getDefault());
+        try {
+            Date date1 = (Date)formatter.parse(arriveDate+" "+arriveTime);
+            utimeArr=date1.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            Date date2 = (Date)formatter.parse(leaveDate+" "+leaveTime);
+            utimeLev=date2.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(utimeArr!=0&&utimeLev!=0){
+            String minCost=edtStopPointMinCost.getText().toString();
+            String maxCost=edtStopPointMaxCost.getText().toString();
+            return new StopPoint(null,name,address,mlong,mlat,null,Integer.parseInt(minCost),Integer.parseInt(maxCost),serviceType);
+        }
+        else{
+            Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
     private void hideKeyboard(){
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
