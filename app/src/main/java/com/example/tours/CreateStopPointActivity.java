@@ -3,6 +3,7 @@ package com.example.tours;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -21,10 +22,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -77,7 +81,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private GoogleMap mMap;
     private Boolean mLocationPermisstionsGranted=false;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private Button btnShowDialog;
+    private ImageView btnShowDialog;
     private Dialog dialogCreateStopPoint;
     private ImageView btnCloseDialog;
     private EditText edtStopPointName;
@@ -89,6 +93,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private EditText edtStopPointTimeLeave;
     private EditText edtStopPointDateLeave;
     private Button btnCreateStopPoint;
+    private Spinner spnService;
+    private Spinner spnProvince;
     private int tourId;
     private double mlat;
     private double mlong;
@@ -100,9 +106,11 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true); // to fix xml drawable error
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_create_stop_point);
+
         int isOK=isServiceAvailable();
 
         if(isOK==1){
@@ -139,6 +147,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                }
 //            });
 
+            btnShowDialog.setClickable(true);
             btnShowDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -334,10 +343,18 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
 
     private void init(){
+
+        // nhan tour id:
+        Intent intentTourID = getIntent();
+        if(intentTourID != null){
+            String strID = intentTourID.getStringExtra(CreateTourActivity.INTENT_TOUR_ID);
+            tourId = Integer.parseInt(strID);
+        }
+
         edtSearchAddr=findViewById(R.id.edt_search_addr);
 
-        btnCurLocation=findViewById(R.id.map_btn_cur_location);
-        btnShowDialog=findViewById(R.id.map_btn_show_dialog);
+        btnCurLocation= findViewById(R.id.map_btn_cur_location);
+        btnShowDialog= findViewById(R.id.map_btn_show_dialog);
         dialogCreateStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
         dialogCreateStopPoint.setContentView(R.layout.dialog_create_stop_point);
         btnCloseDialog=dialogCreateStopPoint.findViewById(R.id.map_btn_close_dialog);
@@ -350,6 +367,47 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointTimeLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_time);
         edtStopPointDateLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_date);
         btnCreateStopPoint=dialogCreateStopPoint.findViewById(R.id.btn_create_stop_point);
+
+        spnService = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_service);
+        spnProvince = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_province);
+
+        String ServiceArr[]={"Restaurant", "Hotel", "Rest Station", "Other"};
+        String ProvinceArr[]={"Hồ Chí Minh","Hà Nội","Đà Nẵng","Bình Dương","Đồng Nai","Khánh Hòa","Hải Phòng","Long An","Quảng Nam","Bà Rịa Vũng Tàu","Đắk Lắk","Cần Thơ","Bình Thuận  ","Lâm Đồng","Thừa Thiên Huế","Kiên Giang","Bắc Ninh","Quảng Ninh","Thanh Hóa","Nghệ An","Hải Dương","Gia Lai","Bình Phước","Hưng Yên","Bình Định","Tiền Giang","Thái Bình","Bắc Giang","Hòa Bình","An Giang","Vĩnh Phúc","Tây Ninh","Thái Nguyên","Lào Cai","Nam Định","Quảng Ngãi","Bến Tre","Đắk Nông","Cà Mau","Vĩnh Long","Ninh Bình","Phú Thọ","Ninh Thuận","Phú Yên","Hà Nam","Hà Tĩnh","Đồng Tháp","Sóc Trăng","Kon Tum","Quảng Bình","Quảng Trị","Trà Vinh","Hậu Giang","Sơn La","Bạc Liêu","Yên Bái","Tuyên Quang","Điện Biên","Lai Châu","Lạng Sơn","Hà Giang","Bắc Kạn","Cao Bằng"};
+
+        ArrayAdapter<String> serviceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,ServiceArr);
+        ArrayAdapter<String> provinceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,ProvinceArr);
+
+        serviceAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        provinceAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+
+        spnService.setAdapter(serviceAdapter);
+        spnProvince.setAdapter(provinceAdapter);
+
+       spnService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               // if posotion == 1 => idService = 1
+               // ...
+           }
+
+           @Override
+           public void onNothingSelected(AdapterView<?> parent) {
+                // idService = -1
+           }
+       });
+
+       spnProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               // if position == 15 => idProvince = "TTH"
+           }
+
+           @Override
+           public void onNothingSelected(AdapterView<?> parent) {
+                // idProvince = -1
+           }
+       });
+
 
         Calendar myCalendar = Calendar.getInstance();
         int hour = myCalendar.get(Calendar.HOUR_OF_DAY);

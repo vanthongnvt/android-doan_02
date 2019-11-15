@@ -64,6 +64,7 @@ public class CreateTourActivity extends AppCompatActivity {
     private Button btnUpImgInDialog;
 
     private static final int IMG_RQ = 1001;
+    public static final String INTENT_TOUR_ID = "INTENT TOUR ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,6 @@ public class CreateTourActivity extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
 
         // khoi tao:
-        init();
         init();
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -296,7 +296,12 @@ public class CreateTourActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<CreateTour> call, Response<CreateTour> response) {
                 if(response.isSuccessful()){
+                    int tourID = response.body().getId();
                     Toast.makeText(CreateTourActivity.this, "Tạo tour thành công", Toast.LENGTH_SHORT).show();
+                    // gui tour id sang man hinh create stop point:
+                    Intent intent = new Intent(CreateTourActivity.this, CreateStopPointActivity.class);
+                    intent.putExtra(INTENT_TOUR_ID, tourID + "");
+                    startActivity(intent);
                 }
                 else if(response.code() == 400){
                     Toast.makeText(CreateTourActivity.this, "Chưa nhập đủ thông tin", Toast.LENGTH_SHORT).show();
