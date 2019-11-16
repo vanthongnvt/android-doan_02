@@ -105,6 +105,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Button btnCompleteUpdateStopPoint;
 
     private int tourId=227;
+    private int editStopPoint=-1;
     private Double mlat;
     private Double mlong;
     private Integer mServiceTypeId;
@@ -113,7 +114,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private MarkerOptions markerOptions=null;
     private Marker marker;
     private boolean isPOIclick=false;
-    private StopPoint edtStopPoint=null;
     private APITour apiTour;
     private List<StopPoint>currentList = new ArrayList<>();
     private List<StopPoint>addList= new ArrayList<>();
@@ -186,8 +186,17 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 public void onClick(View v) {
                     StopPoint newStopPoint=checkValidInput();
                    if(newStopPoint!=null) {
-                       addList.add(newStopPoint);
-                       currentList.add(newStopPoint);
+                       if(editStopPoint>=0){
+                           currentList.set(editStopPoint,newStopPoint);
+
+                           //edit later
+                           addList.set(editStopPoint,newStopPoint);
+                           editStopPoint=-1;
+                       }
+                       else {
+                           addList.add(newStopPoint);
+                           currentList.add(newStopPoint);
+                       }
                        listStopPointTemporaryAdapter.notifyDataSetChanged();
                        dialogCreateStopPoint.hide();
                        dialogListStopPoint.show();
@@ -211,7 +220,12 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             btnCompleteUpdateStopPoint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addListStopPoint();
+                    if(currentList.size()<=0){
+                        Toast.makeText(CreateStopPointActivity.this,R.string.no_stop_point_selected , Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        addListStopPoint();
+                    }
                 }
             });
 
@@ -329,7 +343,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         hideKeyboard();
     }
 
-
     private int isServiceAvailable(){
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(CreateStopPointActivity.this);
         if(available== ConnectionResult.SUCCESS){
@@ -445,7 +458,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
            @Override
            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                mServiceTypeId=position+1;
-               Log.d(TAG, "onItemSelected: "+mServiceTypeId);
+//               Log.d(TAG, "onItemSelected: "+mServiceTypeId);
            }
 
            @Override
@@ -622,6 +635,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "checkValidInput: SERVICE "+mServiceTypeId);
 
         if(utimeArr!=0&&utimeLev!=0){
             String minCost=edtStopPointMinCost.getText().toString();
@@ -674,8 +688,57 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onPoiClick(PointOfInterest pointOfInterest) {
-        Log.d(TAG, "onPoiClick: "+pointOfInterest.name);
+//        Log.d(TAG, "onPoiClick: "+pointOfInterest.name);
         moveCamera(pointOfInterest.latLng,DEFAULT_ZOOM,pointOfInterest.name);
         isPOIclick=true;
+    }
+
+    public void moveCameraWhenSelectStopPoint(StopPoint stopPoint){
+        dialogListStopPoint.hide();
+        LatLng latLng = new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,DEFAULT_ZOOM));
+        if(marker==null){
+            markerOptions=new MarkerOptions();
+        }
+        else{
+            marker.remove();
+        }
+
+        markerOptions.position(latLng).title(stopPoint.getName());
+        marker = mMap.addMarker(markerOptions);
+        hideKeyboard();
+    }
+
+    public void addToDeleteList(Integer id){
+        deleteList.add(id);
+    }
+
+    public void removeTemporaryStopPoint(StopPoint stopPoint){
+        for(int i=addList.size()-1;i>=0;i--){
+            if(addList.get(i).getName().equals(stopPoint.getName())){
+                addList.remove(i);
+                return;
+            }
+        }
+    }
+
+    public void showEditStopPointDialog(int position ,StopPoint stopPoint, String arriveAt, String leaveAt){
+        dialogListStopPoint.hide();
+        dialogCreateStopPoint.show();
+        editStopPoint=position;
+        mlong=stopPoint.getLongitude();
+        mlat=stopPoint.getLatitude();
+        mServiceTypeId=stopPoint.getServiceTypeId();
+        mProvinceId =stopPoint.getProvinceId();
+        edtStopPointAddress.setText(stopPoint.getAddress());
+        edtStopPointName.setText(stopPoint.getName());
+        edtStopPointMinCost.setText(String.valueOf(stopPoint.getMinCost()));
+        edtStopPointMaxCost.setText(String.valueOf(stopPoint.getMaxCost()));
+        edtStopPointTimeArrive.setText(arriveAt.substring(0,4));
+        edtStopPointDateArrive.setText(arriveAt.substring(6));
+        edtStopPointTimeLeave.setText(leaveAt.substring(0,4));
+        edtStopPointDateLeave.setText(leaveAt.substring(6));
+        spnService.setSelection(mServiceTypeId-1);
+        spnProvince.setSelection(mProvinceId-1);
     }
 }

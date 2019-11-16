@@ -1,16 +1,21 @@
 package com.example.tours.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.location.Address;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.tours.CreateStopPointActivity;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.R;
 
@@ -42,6 +47,9 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         private final TextView tvStopPointArriveAt;
         private final TextView tvStopPointLeaveAt;
         private final TextView tvStopPointService;
+        private final ImageView btnDeleteStopPoint;
+        private final ImageView btnGeoLocateStopPoint;
+        private final ImageView btnEditStopPoint;
 
         //code
 
@@ -52,6 +60,9 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
             tvStopPointArriveAt=row.findViewById(R.id.tv_stop_point_startDate);
             tvStopPointLeaveAt=row.findViewById(R.id.tv_stop_point_endDate);
             tvStopPointService=row.findViewById(R.id.tv_stop_point_service);
+            btnDeleteStopPoint=row.findViewById(R.id.map_delete_stop_point);
+            btnGeoLocateStopPoint=row.findViewById(R.id.map_btn_view_stop_point);
+            btnEditStopPoint=row.findViewById(R.id.map_btn_edit_stop_point);
         }
     }
 
@@ -79,11 +90,76 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() +" VND");
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(stopPoint.getArrivalAt());
-        String date = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
-        holder.tvStopPointArriveAt.setText(date);
+        String date1 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
+        holder.tvStopPointArriveAt.setText(date1);
         cal.setTimeInMillis(stopPoint.getLeaveAt());
-        holder.tvStopPointLeaveAt.setText(date);
+        String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
+        holder.tvStopPointLeaveAt.setText(date2);
+
+        holder.btnDeleteStopPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConfirmBox(position);
+            }
+        });
+
+        holder.btnGeoLocateStopPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CreateStopPointActivity)context).moveCameraWhenSelectStopPoint(stopPoint);
+            }
+        });
+
+        holder.btnEditStopPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CreateStopPointActivity)context).showEditStopPointDialog(position,stopPoint,date1,date2);
+            }
+        });
 
         return row;
+    }
+
+    @Override
+    public int getCount() {
+        return list.size();
+    }
+
+    @Nullable
+    @Override
+    public StopPoint getItem(int position) {
+        return list.get(position);
+    }
+
+    private void showConfirmBox(int position){
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Xóa");
+        alert.setMessage("Xóa điểm dừng này?");
+        alert.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                StopPoint stopPoint=list.get(position);
+                list.remove(position);
+                notifyDataSetChanged();
+                if(stopPoint.getId()!=null){
+                    ((CreateStopPointActivity)context).addToDeleteList(stopPoint.getId());
+                }
+                else{
+                    ((CreateStopPointActivity)context).removeTemporaryStopPoint(stopPoint);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        alert.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
     }
 }
