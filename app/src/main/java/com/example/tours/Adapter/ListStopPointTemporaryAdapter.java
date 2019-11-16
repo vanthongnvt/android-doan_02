@@ -141,6 +141,7 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
             public void onClick(DialogInterface dialog, int which) {
                 StopPoint stopPoint=list.get(position);
                 list.remove(position);
+                ((CreateStopPointActivity)context).removeStopPointMarker(stopPoint);
                 notifyDataSetChanged();
                 if(stopPoint.getId()!=null){
                     ((CreateStopPointActivity)context).addToDeleteList(stopPoint.getId());

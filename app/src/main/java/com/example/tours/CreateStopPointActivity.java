@@ -8,11 +8,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -46,6 +52,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -120,6 +128,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private List<Integer> deleteList= new ArrayList<>();
     private ListView listViewStopPoint;
     private ListStopPointTemporaryAdapter listStopPointTemporaryAdapter;
+    boolean hasEdited=false;
+    List<Marker> markers = new ArrayList<>();
 
 //    private AutocompleteSupportFragment autocompleteFragment;
 
@@ -198,8 +208,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                            currentList.add(newStopPoint);
                        }
                        listStopPointTemporaryAdapter.notifyDataSetChanged();
-                       dialogCreateStopPoint.hide();
                        dialogListStopPoint.show();
+                       dialogCreateStopPoint.hide();
+                       addStopPointMarker(newStopPoint);
                    }
 
                 }
@@ -635,7 +646,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "checkValidInput: SERVICE "+mServiceTypeId);
+//        Log.d(TAG, "checkValidInput: SERVICE "+mServiceTypeId);
 
         if(utimeArr!=0&&utimeLev!=0){
             String minCost=edtStopPointMinCost.getText().toString();
@@ -643,6 +654,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
             StopPoint stopPoint=new StopPoint(null,name,address,mProvinceId,mlong,mlat,null,Integer.parseInt(minCost),Integer.parseInt(maxCost),utimeArr,utimeLev,mServiceTypeId);
 //            Toast.makeText(CreateStopPointActivity.this,R.string.stop_point_add_successfully, Toast.LENGTH_SHORT).show();
+            hasEdited=true;
             return stopPoint;
         }
         else{
@@ -659,7 +671,10 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 if(response.isSuccessful()) {
 //                    MessageResponse message = response.body();
                     Toast.makeText(CreateStopPointActivity.this,R.string.stop_point_add_successfully, Toast.LENGTH_SHORT).show();
-                    dialogCreateStopPoint.hide();
+//                    dialogCreateStopPoint.hide();
+                    Intent itenthome = new Intent(CreateStopPointActivity.this, HomeActivity.class);
+                    itenthome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(itenthome);
                 }
                 else{
                     JSONObject jsonObject = null;
@@ -711,12 +726,14 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     public void addToDeleteList(Integer id){
         deleteList.add(id);
+        hasEdited=true;
     }
 
     public void removeTemporaryStopPoint(StopPoint stopPoint){
         for(int i=addList.size()-1;i>=0;i--){
             if(addList.get(i).getName().equals(stopPoint.getName())){
                 addList.remove(i);
+                hasEdited=true;
                 return;
             }
         }
@@ -740,5 +757,56 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointDateLeave.setText(leaveAt.substring(6));
         spnService.setSelection(mServiceTypeId-1);
         spnProvince.setSelection(mProvinceId-1);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(hasEdited) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Thoát sẽ mất những thay đổi. Vẫn thoát?")
+                    .setCancelable(false)
+                    .setPositiveButton("Thoát và bỏ lưu", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialogListStopPoint.show();
+                            CreateStopPointActivity.super.onBackPressed();
+                        }
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    private void addStopPointMarker(StopPoint stopPoint){
+        marker.remove();
+        MarkerOptions stopPointMarkerOptions = new MarkerOptions();
+        stopPointMarkerOptions.position(new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude()))
+                .icon(bitmapDescriptorFromVector(CreateStopPointActivity.this, R.drawable.ic_pin))
+                .title(stopPoint.getName());
+        Marker stopPointMarker = mMap.addMarker(stopPointMarkerOptions);
+        stopPointMarker.setTag(stopPoint);
+        markers.add(stopPointMarker);
+    }
+
+    public void removeStopPointMarker(StopPoint stopPoint){
+        for (Marker _marker : markers){
+            if(_marker.getTag().equals(stopPoint)){
+                _marker.remove();
+                return;
+            }
+        }
+
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        Bitmap.createScaledBitmap(bitmap, 20, 20, false);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

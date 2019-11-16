@@ -302,6 +302,7 @@ public class CreateTourActivity extends AppCompatActivity {
                     Intent intent = new Intent(CreateTourActivity.this, CreateStopPointActivity.class);
                     intent.putExtra(INTENT_TOUR_ID, tourID + "");
                     startActivity(intent);
+                    finish();
                 }
                 else if(response.code() == 400){
                     Toast.makeText(CreateTourActivity.this, "Chưa nhập đủ thông tin", Toast.LENGTH_SHORT).show();
