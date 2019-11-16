@@ -45,6 +45,15 @@
             android:paddingBottom="10dp" />
 
     </RelativeLayout>
+    <ImageView
+        android:id="@+id/map_btn_show_list"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/map_layout1"
+        android:layout_margin="10dp"
+        app:srcCompat="@drawable/btn_show_dialog_list_stop_point_bg"
+
+        />
 
     <ImageView
         android:id="@+id/map_btn_cur_location"

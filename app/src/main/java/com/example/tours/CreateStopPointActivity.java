@@ -18,21 +18,20 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.tours.Adapter.ListStopPointTemporaryAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
 import com.example.tours.AppHelper.TokenStorage;
@@ -41,7 +40,6 @@ import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.UpdateStopPointsOfTour;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,12 +52,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,9 +61,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -94,9 +84,10 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private GoogleMap mMap;
     private Boolean mLocationPermisstionsGranted=false;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private ImageView btnShowDialog;
+    private ImageView btnShowDialogStopPointInfo;
     private Dialog dialogCreateStopPoint;
-    private ImageView btnCloseDialog;
+    private Dialog dialogListStopPoint;
+    private ImageView btnCloseDialogStopPointInfo;
     private EditText edtStopPointName;
     private EditText edtStopPointAddress;
     private EditText edtStopPointMaxCost;
@@ -108,6 +99,11 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Button btnCreateStopPoint;
     private Spinner spnService;
     private Spinner spnProvince;
+
+    private ImageView btnShowDialogListStopPoint;
+    private Button btnCloseDialogListStopPoint;
+    private Button btnCompleteUpdateStopPoint;
+
     private int tourId=227;
     private Double mlat;
     private Double mlong;
@@ -117,10 +113,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private MarkerOptions markerOptions=null;
     private Marker marker;
     private boolean isPOIclick=false;
+    private StopPoint edtStopPoint=null;
     private APITour apiTour;
     private List<StopPoint>currentList = new ArrayList<>();
     private List<StopPoint>addList= new ArrayList<>();
     private List<Integer> deleteList= new ArrayList<>();
+    private ListView listViewStopPoint;
+    private ListStopPointTemporaryAdapter listStopPointTemporaryAdapter;
 
 //    private AutocompleteSupportFragment autocompleteFragment;
 
@@ -167,15 +166,15 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                }
 //            });
 
-            btnShowDialog.setClickable(true);
-            btnShowDialog.setOnClickListener(new View.OnClickListener() {
+            btnShowDialogStopPointInfo.setClickable(true);
+            btnShowDialogStopPointInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialogCreateStopPoint.show();
                 }
             });
 
-            btnCloseDialog.setOnClickListener(new View.OnClickListener() {
+            btnCloseDialogStopPointInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialogCreateStopPoint.hide();
@@ -185,8 +184,34 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   checkValidInput();
-                   createStopPoint();
+                    StopPoint newStopPoint=checkValidInput();
+                   if(newStopPoint!=null) {
+                       addList.add(newStopPoint);
+                       currentList.add(newStopPoint);
+                       listStopPointTemporaryAdapter.notifyDataSetChanged();
+                       dialogCreateStopPoint.hide();
+                       dialogListStopPoint.show();
+                   }
+
+                }
+            });
+            btnShowDialogListStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListStopPoint.show();
+                }
+            });
+            btnCloseDialogListStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListStopPoint.hide();
+                }
+            });
+
+            btnCompleteUpdateStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addListStopPoint();
                 }
             });
 
@@ -374,10 +399,10 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtSearchAddr=findViewById(R.id.edt_search_addr);
 
         btnCurLocation= findViewById(R.id.map_btn_cur_location);
-        btnShowDialog= findViewById(R.id.map_btn_show_dialog);
+        btnShowDialogStopPointInfo = findViewById(R.id.map_btn_show_dialog);
         dialogCreateStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
         dialogCreateStopPoint.setContentView(R.layout.dialog_create_stop_point);
-        btnCloseDialog=dialogCreateStopPoint.findViewById(R.id.map_btn_close_dialog);
+        btnCloseDialogStopPointInfo =dialogCreateStopPoint.findViewById(R.id.map_btn_close_dialog);
         edtStopPointAddress=dialogCreateStopPoint.findViewById(R.id.create_stop_point_address);
         edtStopPointName=dialogCreateStopPoint.findViewById(R.id.create_stop_point_name);
         edtStopPointMinCost=dialogCreateStopPoint.findViewById(R.id.create_stop_point_min_cost);
@@ -387,6 +412,19 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointTimeLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_time);
         edtStopPointDateLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_date);
         btnCreateStopPoint=dialogCreateStopPoint.findViewById(R.id.btn_create_stop_point);
+
+        btnShowDialogListStopPoint =findViewById(R.id.map_btn_show_list);
+        dialogListStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
+        dialogListStopPoint.setContentView(R.layout.dialog_list_temporary_stop_point);
+        btnCloseDialogListStopPoint=dialogListStopPoint.findViewById(R.id.map_btn_close_dialog_list);
+        btnCompleteUpdateStopPoint=dialogListStopPoint.findViewById(R.id.btn_update_list_stop_point);
+
+        listViewStopPoint =dialogListStopPoint.findViewById(R.id.map_list_view_temporary_stop_point);
+        listStopPointTemporaryAdapter = new ListStopPointTemporaryAdapter(CreateStopPointActivity.this,R.layout.listview_temporary_stop_point_item,currentList);
+        listStopPointTemporaryAdapter.notifyDataSetChanged();
+        listViewStopPoint.setAdapter(listStopPointTemporaryAdapter);
+
+
 
         spnService = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_service);
         spnProvince = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_province);
@@ -526,46 +564,46 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //      Specify the types of place data to return.
 //        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
     }
-    private Boolean checkValidInput(){
+    private StopPoint checkValidInput(){
         String name = edtStopPointName.getText().toString();
         if(name.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_name), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
         String address=edtStopPointAddress.getText().toString();
         if(address.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_address), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
 //        int provinceId=1;
 //        if(provinceId==0){
 //            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_province), Toast.LENGTH_SHORT).show();
-//            return false;
+//            return null;
 //        }
 //        int serviceType=2;
 //        if(serviceType==0){
 //            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_service_type), Toast.LENGTH_SHORT).show();
-//            return false;
+//            return null;
 //        }
         String arriveTime=edtStopPointTimeArrive.getText().toString();
         if(arriveTime.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_time), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
         String arriveDate=edtStopPointDateArrive.getText().toString();
         if(arriveDate.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_date), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
         String leaveTime=edtStopPointTimeLeave.getText().toString();
         if(leaveTime.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_time), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
         String leaveDate=edtStopPointDateLeave.getText().toString();
         if(leaveDate.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_date), Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
         long utimeArr=0;
         long utimeLev=0;
@@ -590,24 +628,23 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             String maxCost=edtStopPointMaxCost.getText().toString();
 
             StopPoint stopPoint=new StopPoint(null,name,address,mProvinceId,mlong,mlat,null,Integer.parseInt(minCost),Integer.parseInt(maxCost),utimeArr,utimeLev,mServiceTypeId);
-            addList.add(stopPoint);
-
-            return true;
+//            Toast.makeText(CreateStopPointActivity.this,R.string.stop_point_add_successfully, Toast.LENGTH_SHORT).show();
+            return stopPoint;
         }
         else{
             Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-            return false;
+            return null;
         }
     }
-    private void createStopPoint(){
+    private void addListStopPoint(){
         //goi api
         UpdateStopPointsOfTour updateStopPointsOfTour = new UpdateStopPointsOfTour(tourId,addList,deleteList);
         apiTour.addStopPointToTour(TokenStorage.getInstance().getAccessToken(),updateStopPointsOfTour).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if(response.isSuccessful()) {
-                    MessageResponse message = response.body();
-                    Toast.makeText(CreateStopPointActivity.this, message.getMessage(), Toast.LENGTH_SHORT).show();
+//                    MessageResponse message = response.body();
+                    Toast.makeText(CreateStopPointActivity.this,R.string.stop_point_add_successfully, Toast.LENGTH_SHORT).show();
                     dialogCreateStopPoint.hide();
                 }
                 else{
