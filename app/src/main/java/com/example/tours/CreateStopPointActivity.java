@@ -33,7 +33,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.tours.ApiService.APIRetrofitCreator;
+import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.TokenStorage;
+import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
+import com.example.tours.Model.UpdateStopPointsOfTour;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Status;
@@ -56,6 +61,9 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -63,9 +71,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreateStopPointActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnPoiClickListener{
 
@@ -95,13 +108,20 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Button btnCreateStopPoint;
     private Spinner spnService;
     private Spinner spnProvince;
-    private int tourId;
-    private double mlat;
-    private double mlong;
+    private int tourId=227;
+    private Double mlat;
+    private Double mlong;
+    private Integer mServiceTypeId;
+    private Integer mProvinceId;
     private String mAddress;
     private MarkerOptions markerOptions=null;
     private Marker marker;
     private boolean isPOIclick=false;
+    private APITour apiTour;
+    private List<StopPoint>currentList = new ArrayList<>();
+    private List<StopPoint>addList= new ArrayList<>();
+    private List<Integer> deleteList= new ArrayList<>();
+
 //    private AutocompleteSupportFragment autocompleteFragment;
 
     @Override
@@ -165,17 +185,15 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             btnCreateStopPoint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   StopPoint stopPoint = checkValidInput();
-                   if(stopPoint!=null){
-                       //goi api
-                   }
+                   checkValidInput();
+                   createStopPoint();
                 }
             });
 
         }
         else if(isOK==-1){
-            Intent intent = new Intent(CreateStopPointActivity.this,HomeActivity.class);
-            startActivity(intent);
+            Intent intent2 = new Intent(CreateStopPointActivity.this,HomeActivity.class);
+            startActivity(intent2);
         }
     }
 
@@ -346,10 +364,12 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
         // nhan tour id:
         Intent intentTourID = getIntent();
-        if(intentTourID != null){
+        if(intentTourID.hasExtra(CreateTourActivity.INTENT_TOUR_ID)){
             String strID = intentTourID.getStringExtra(CreateTourActivity.INTENT_TOUR_ID);
             tourId = Integer.parseInt(strID);
         }
+
+        apiTour=new APIRetrofitCreator().getAPIService();
 
         edtSearchAddr=findViewById(R.id.edt_search_addr);
 
@@ -386,8 +406,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
        spnService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
            @Override
            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               // if posotion == 1 => idService = 1
-               // ...
+               mServiceTypeId=position+1;
+               Log.d(TAG, "onItemSelected: "+mServiceTypeId);
            }
 
            @Override
@@ -399,7 +419,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
        spnProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
            @Override
            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               // if position == 15 => idProvince = "TTH"
+               mProvinceId=position+1;
            }
 
            @Override
@@ -415,7 +435,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         TimePickerDialog.OnTimeSetListener myTimeArriveListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                edtStopPointTimeArrive.setText(hourOfDay+":"+minute);
+                String h = (hourOfDay<10)?"0"+hourOfDay:hourOfDay+"";
+                String m = (minute <10)?"0"+minute:minute+"";
+                edtStopPointTimeArrive.setText(h+":"+m);
             }
         };
         TimePickerDialog timeArrivePickerDialog = new TimePickerDialog(CreateStopPointActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeArriveListener, hour, minute, true);
@@ -456,7 +478,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         TimePickerDialog.OnTimeSetListener myTimeLeaveListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                edtStopPointTimeLeave.setText(hourOfDay+":"+minute);
+                String h = (hourOfDay<10)?"0"+hourOfDay:hourOfDay+"";
+                String m = (minute <10)?"0"+minute:minute+"";
+                edtStopPointTimeLeave.setText(h+":"+m);
             }
         };
         TimePickerDialog timeLeavePickerDialog = new TimePickerDialog(CreateStopPointActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeLeaveListener, hour, minute, true);
@@ -502,49 +526,50 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //      Specify the types of place data to return.
 //        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
     }
-    private StopPoint checkValidInput(){
+    private Boolean checkValidInput(){
         String name = edtStopPointName.getText().toString();
         if(name.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_name), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
         String address=edtStopPointAddress.getText().toString();
         if(address.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_address), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
-        int provinceId=1;
-        if(provinceId==0){
-            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_province), Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        int serviceType=2;
-        if(serviceType==0){
-            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_service_type), Toast.LENGTH_SHORT).show();
-            return null;
-        }
+//        int provinceId=1;
+//        if(provinceId==0){
+//            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_province), Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//        int serviceType=2;
+//        if(serviceType==0){
+//            Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_service_type), Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
         String arriveTime=edtStopPointTimeArrive.getText().toString();
         if(arriveTime.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_time), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
         String arriveDate=edtStopPointDateArrive.getText().toString();
         if(arriveDate.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_arrive_date), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
         String leaveTime=edtStopPointTimeLeave.getText().toString();
         if(leaveTime.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_time), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
         String leaveDate=edtStopPointDateLeave.getText().toString();
         if(leaveDate.isEmpty()){
             Toast.makeText(CreateStopPointActivity.this, getString(R.string.stop_point_empty_leave_date), Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
         long utimeArr=0;
         long utimeLev=0;
+
 
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.getDefault());
         try {
@@ -559,15 +584,51 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         if(utimeArr!=0&&utimeLev!=0){
             String minCost=edtStopPointMinCost.getText().toString();
             String maxCost=edtStopPointMaxCost.getText().toString();
-            return new StopPoint(null,name,address,mlong,mlat,null,Integer.parseInt(minCost),Integer.parseInt(maxCost),serviceType);
+
+            StopPoint stopPoint=new StopPoint(null,name,address,mProvinceId,mlong,mlat,null,Integer.parseInt(minCost),Integer.parseInt(maxCost),utimeArr,utimeLev,mServiceTypeId);
+            addList.add(stopPoint);
+
+            return true;
         }
         else{
             Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-            return null;
+            return false;
         }
+    }
+    private void createStopPoint(){
+        //goi api
+        UpdateStopPointsOfTour updateStopPointsOfTour = new UpdateStopPointsOfTour(tourId,addList,deleteList);
+        apiTour.addStopPointToTour(TokenStorage.getInstance().getAccessToken(),updateStopPointsOfTour).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if(response.isSuccessful()) {
+                    MessageResponse message = response.body();
+                    Toast.makeText(CreateStopPointActivity.this, message.getMessage(), Toast.LENGTH_SHORT).show();
+                    dialogCreateStopPoint.hide();
+                }
+                else{
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.errorBody().string());
+                        Toast.makeText(CreateStopPointActivity.this, jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void hideKeyboard(){

@@ -57,4 +57,5 @@
     <string name="stop_point_empty_leave_time">Bạn chưa nhập thời gian tới</string>
     <string name="stop_point_empty_leave_date">Bạn chưa nhập ngày đi</string>
     <string name="stop_point_select_time">Chọn thời gian</string>
+    <string name="stop_point_add_successfully">Thêm điểm dừng thành công</string>
 </resources>

@@ -64,7 +64,7 @@ public class CreateTourActivity extends AppCompatActivity {
     private Button btnUpImgInDialog;
 
     private static final int IMG_RQ = 1001;
-    public static final String INTENT_TOUR_ID = "INTENT TOUR ID";
+    public static final String INTENT_TOUR_ID = "INTENT_TOUR_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

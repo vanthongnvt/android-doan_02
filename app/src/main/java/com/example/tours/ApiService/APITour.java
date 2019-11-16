@@ -4,18 +4,19 @@ import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.ListTour;
-import com.example.tours.Model.Tour;
+import com.example.tours.Model.MessageResponse;
+import com.example.tours.Model.StopPoint;
+import com.example.tours.Model.UpdateStopPointsOfTour;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
-import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APITour {
@@ -67,4 +68,8 @@ public interface APITour {
                                 @Field("maxCost") Number maxCost,
                                 @Field("avatar") String avatar);
 
+
+    @POST("/tour/set-stop-points")
+    Call<MessageResponse> addStopPointToTour(@Header("Authorization") String token,
+                                             @Body UpdateStopPointsOfTour updateStopPointsOfTour);
 }

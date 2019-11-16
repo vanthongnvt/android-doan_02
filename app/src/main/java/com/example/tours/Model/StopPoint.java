@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class StopPoint {
 
+    @SerializedName("tourId")
+    @Expose
+    private Integer tourId;
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -14,25 +17,12 @@ public class StopPoint {
     @SerializedName("address")
     @Expose
     private String address;
-    @SerializedName("longitude")
+    @SerializedName("long")
     @Expose
-    private double longitude;
-
-    public StopPoint(Integer id, String name, String address, double longitude, double latitude, String contact, Integer minCost, Integer maxCost, Integer serviceTypeId) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.contact = contact;
-        this.minCost = minCost;
-        this.maxCost = maxCost;
-        this.serviceTypeId = serviceTypeId;
-    }
-
-    @SerializedName("latitude")
+    private Double longitude;
+    @SerializedName("lat")
     @Expose
-    private double latitude;
+    private Double latitude;
     @SerializedName("contact")
     @Expose
     private String contact;
@@ -42,9 +32,44 @@ public class StopPoint {
     @SerializedName("maxCost")
     @Expose
     private Integer maxCost;
+    @SerializedName("arrivalAt")
+    @Expose
+    private Long arrivalAt;
+    @SerializedName("leaveAt")
+    @Expose
+    private Long leaveAt;
     @SerializedName("serviceTypeId")
     @Expose
     private Integer serviceTypeId;
+    @SerializedName("provinceId")
+    @Expose
+    private Integer provinceId;
+    @SerializedName("avatar")
+    @Expose
+    private String avatar;
+
+    public StopPoint(Integer id, String name, String address,Integer provinceId, Double longitude, Double latitude, String contact, Integer minCost, Integer maxCost, Long arrivalAt,Long leaveAt, Integer serviceTypeId) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.provinceId=provinceId;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.contact = contact;
+        this.minCost = minCost;
+        this.maxCost = maxCost;
+        this.arrivalAt=arrivalAt;
+        this.leaveAt=leaveAt;
+        this.serviceTypeId = serviceTypeId;
+    }
+
+    public Integer getTourId() {
+        return tourId;
+    }
+
+    public void setTourId(Integer tourId) {
+        this.tourId = tourId;
+    }
 
     public Integer getId() {
         return id;
@@ -70,19 +95,19 @@ public class StopPoint {
         this.address = address;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
@@ -110,12 +135,44 @@ public class StopPoint {
         this.maxCost = maxCost;
     }
 
+    public Long getArrivalAt() {
+        return arrivalAt;
+    }
+
+    public void setArrivalAt(Long arrivalAt) {
+        this.arrivalAt = arrivalAt;
+    }
+
+    public Long getLeaveAt() {
+        return leaveAt;
+    }
+
+    public void setLeaveAt(Long leaveAt) {
+        this.leaveAt = leaveAt;
+    }
+
     public Integer getServiceTypeId() {
         return serviceTypeId;
     }
 
     public void setServiceTypeId(Integer serviceTypeId) {
         this.serviceTypeId = serviceTypeId;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public Integer getProvinceId() {
+        return provinceId;
+    }
+
+    public void setProvinceId(Integer provinceId) {
+        this.provinceId = provinceId;
     }
 
 }
