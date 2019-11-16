@@ -67,7 +67,7 @@
                 android:paddingTop="3dp"
                 android:text=""
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                />
 
 
         </LinearLayout>

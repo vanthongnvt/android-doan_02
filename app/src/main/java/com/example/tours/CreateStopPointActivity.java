@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -107,6 +108,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Button btnCreateStopPoint;
     private Spinner spnService;
     private Spinner spnProvince;
+    private TextView btnCancelEditAction;
 
     private ImageView btnShowDialogListStopPoint;
     private Button btnCloseDialogListStopPoint;
@@ -213,6 +215,14 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                        addStopPointMarker(newStopPoint);
                    }
 
+                }
+            });
+            btnCancelEditAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogCreateStopPoint.hide();
+                    btnCancelEditAction.setVisibility(View.GONE);
+                    editStopPoint=-1;
                 }
             });
             btnShowDialogListStopPoint.setOnClickListener(new View.OnClickListener() {
@@ -436,6 +446,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointTimeLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_time);
         edtStopPointDateLeave=dialogCreateStopPoint.findViewById(R.id.create_stop_point_leave_date);
         btnCreateStopPoint=dialogCreateStopPoint.findViewById(R.id.btn_create_stop_point);
+        btnCancelEditAction=dialogCreateStopPoint.findViewById(R.id.map_btn_cancel_edit_action);
 
         btnShowDialogListStopPoint =findViewById(R.id.map_btn_show_list);
         dialogListStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
@@ -741,6 +752,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     public void showEditStopPointDialog(int position ,StopPoint stopPoint, String arriveAt, String leaveAt){
         dialogListStopPoint.hide();
+        btnCancelEditAction.setVisibility(View.VISIBLE);
         dialogCreateStopPoint.show();
         editStopPoint=position;
         mlong=stopPoint.getLongitude();
@@ -780,7 +792,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
 
     private void addStopPointMarker(StopPoint stopPoint){
-        marker.remove();
+        if(marker!=null) {
+            marker.remove();
+        }
         MarkerOptions stopPointMarkerOptions = new MarkerOptions();
         stopPointMarkerOptions.position(new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude()))
                 .icon(bitmapDescriptorFromVector(CreateStopPointActivity.this, R.drawable.ic_pin))
