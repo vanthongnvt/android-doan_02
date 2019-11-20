@@ -31,10 +31,11 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_user_trip, R.id.navigation_map, R.id.navigation_notifications, R.id.navigation_user_settings)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
         NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -47,11 +48,17 @@ public class HomeActivity extends AppCompatActivity {
                         loadFragment(fragment);
                         toolbar.setTitle(R.string.title_home);
                         return true;
-                    case R.id.navigation_dashboard:
-                        toolbar.setTitle(R.string.title_dashboard);
+                    case R.id.navigation_history:
+                        toolbar.setTitle(R.string.title_user_trip);
+                        return true;
+                    case R.id.navigation_map:
+                        toolbar.setTitle(R.string.title_map);
                         return true;
                     case R.id.navigation_notifications:
                         toolbar.setTitle(R.string.title_notifications);
+                        return true;
+                    case R.id.navigation_user_settings:
+                        toolbar.setTitle(R.string.title_user_settings);
                         return true;
                 }
                 return false;

@@ -1,16 +1,15 @@
-package com.example.tours.ui.dashboard;
+package com.example.tours.ui.usersettings;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class DashboardViewModel extends ViewModel {
-
+public class UserSettingsViewModel extends ViewModel {
     private MutableLiveData<String> mText;
 
-    public DashboardViewModel() {
+    public UserSettingsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue("This is user settings fragment");
     }
 
     public LiveData<String> getText() {

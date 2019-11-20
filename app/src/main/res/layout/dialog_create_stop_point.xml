@@ -165,46 +165,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Thời điểm tới (*):" />
-
-            <LinearLayout
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_marginBottom="15dp"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:layout_weight="1"
-                    android:id="@+id/create_stop_point_arrive_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusableInTouchMode="false"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:padding="15dp"
-                    android:hint="Giờ"
-                    />
-
-                <EditText
-                    android:layout_weight="1"
-                    android:id="@+id/create_stop_point_arrive_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusableInTouchMode="false"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/roundedborder2"
-                    android:padding="15dp"
-                    android:hint="Ngày"/>
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_marginRight="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="Thời điểm đi (*):" />
 
             <LinearLayout
@@ -239,6 +199,46 @@
                     android:padding="15dp"
                     android:hint="Ngày"
                     />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thời điểm tới (*):" />
+
+            <LinearLayout
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="15dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_arrive_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Giờ"
+                    />
+
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/create_stop_point_arrive_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="false"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/roundedborder2"
+                    android:padding="15dp"
+                    android:hint="Ngày"/>
 
             </LinearLayout>
 

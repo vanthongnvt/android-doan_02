@@ -24,8 +24,10 @@
     <!--    Navigation-->
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_home">Trang chủ</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_map">Bản đồ</string>
+    <string name="title_notifications">Thông báo</string>
+    <string name="title_user_settings">Tài khoản của bạn</string>
+    <string name="title_user_trip">Chuyến đi cá nhân</string>
     <!--End Navigation-->
 
     <!--    Sign up-->
@@ -59,4 +61,5 @@
     <string name="stop_point_select_time">Chọn thời gian</string>
     <string name="stop_point_add_successfully">Đã cập nhật điểm dừng</string>
     <string name="no_stop_point_selected">Bạn chưa thêm điểm dừng nào</string>
+
 </resources>

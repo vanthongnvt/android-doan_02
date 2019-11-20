@@ -123,11 +123,30 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             Date timeEndDate = cal.getTime();
             holder.tvEndDate.setText(dateFormat.format(timeEndDate));
         }
-
-        holder.tvAdults.setText(tour.getAdults().toString() + " người lớn ");
-        holder.tvChilds.setText(tour.getChilds().toString() + " trẻ em");
-        holder.tvMinCost.setText(tour.getMinCost());
-        holder.tvMaxCost.setText(tour.getMaxCost());
+        if(tour.getAdults() == null){
+            holder.tvAdults.setText("0 người lớn ");
+        }
+        else{
+            holder.tvAdults.setText(tour.getAdults().toString() + " người lớn ");
+        }
+        if(tour.getChilds() == null){
+            holder.tvChilds.setText("0 trẻ em");
+        }
+        else{
+            holder.tvChilds.setText(tour.getChilds().toString() + " trẻ em");
+        }
+        if(tour.getMinCost() == null){
+            holder.tvMinCost.setText("0");
+        }
+        else{
+            holder.tvMinCost.setText(tour.getMinCost());
+        }
+        if(tour.getMaxCost() == null){
+            holder.tvMaxCost.setText("0");
+        }
+        else{
+            holder.tvMaxCost.setText(tour.getMaxCost());
+        }
 
 
         return row;
