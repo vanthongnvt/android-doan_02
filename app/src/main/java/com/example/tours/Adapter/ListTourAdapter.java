@@ -58,7 +58,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         private final TextView tvChilds;
         private final TextView tvMinCost;
         private final TextView tvMaxCost;
-        //code
+
 
         private ViewHolder(View row) {
             imgAvater = (ImageView) row.findViewById(R.id.img_avatar);

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/roundedborder2"
+    android:padding="5dp"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:textStyle="bold"
+        android:textColor="#068f41"
+        android:textSize="50sp"
+        android:id="@+id/stop_point_info_name"
+        android:text="NameTour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_tag_solid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_type"
+            android:text="Type"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_maps_and_flags"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_address"
+            android:text="Address"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_city_solid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_provice_city"
+            android:text="City"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_money_bag"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_min_cost"
+            android:text="MinCost"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp"
+            android:text=" - "
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:paddingTop="5dp"
+            android:id="@+id/stop_point_info_max_cost"
+            android:text="MaxCost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_plane_departure_solid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_leave"
+            android:text="Leave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_plane_arrival_solid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_arrive"
+            android:text="Arrive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -24,7 +24,9 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -132,6 +134,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private ListStopPointTemporaryAdapter listStopPointTemporaryAdapter;
     boolean hasEdited=false;
     List<Marker> markers = new ArrayList<>();
+    String ServiceArr[]={"Restaurant", "Hotel", "Rest Station", "Other"};
+    String ProvinceArr[]={"Hồ Chí Minh","Hà Nội","Đà Nẵng","Bình Dương","Đồng Nai","Khánh Hòa","Hải Phòng","Long An","Quảng Nam","Bà Rịa Vũng Tàu","Đắk Lắk","Cần Thơ","Bình Thuận  ","Lâm Đồng","Thừa Thiên Huế","Kiên Giang","Bắc Ninh","Quảng Ninh","Thanh Hóa","Nghệ An","Hải Dương","Gia Lai","Bình Phước","Hưng Yên","Bình Định","Tiền Giang","Thái Bình","Bắc Giang","Hòa Bình","An Giang","Vĩnh Phúc","Tây Ninh","Thái Nguyên","Lào Cai","Nam Định","Quảng Ngãi","Bến Tre","Đắk Nông","Cà Mau","Vĩnh Long","Ninh Bình","Phú Thọ","Ninh Thuận","Phú Yên","Hà Nam","Hà Tĩnh","Đồng Tháp","Sóc Trăng","Kon Tum","Quảng Bình","Quảng Trị","Trà Vinh","Hậu Giang","Sơn La","Bạc Liêu","Yên Bái","Tuyên Quang","Điện Biên","Lai Châu","Lạng Sơn","Hà Giang","Bắc Kạn","Cao Bằng"};
+
 
 //    private AutocompleteSupportFragment autocompleteFragment;
 
@@ -357,11 +362,67 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         else{
             markerOptions.position(latLng).title(null);
             marker = mMap.addMarker(markerOptions);
-            marker.showInfoWindow();
+            //marker.showInfoWindow();
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if(marker.getTag() != null){
+                        StopPoint stopPoint = (StopPoint) marker.getTag();
+                        showStopPointInfo(stopPoint);
+                    }
+                    return false;
+                }
+            });
         }
 
         geoLocateToDialog(latLng);
         hideKeyboard();
+    }
+
+    private void showStopPointInfo(StopPoint stopPoint) {
+        Dialog dialog = new Dialog(CreateStopPointActivity.this, R.style.Theme_Dialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_stop_point_info);
+
+        TextView name = (TextView) dialog.findViewById(R.id.stop_point_info_name);
+        TextView type = (TextView) dialog.findViewById(R.id.stop_point_info_type);
+        TextView address = (TextView) dialog.findViewById(R.id.stop_point_info_address);
+        TextView provinceCity = (TextView) dialog.findViewById(R.id.stop_point_info_provice_city);
+        TextView minCost = (TextView) dialog.findViewById(R.id.stop_point_info_min_cost);
+        TextView maxCost = (TextView) dialog.findViewById(R.id.stop_point_info_max_cost);
+        TextView leave = (TextView) dialog.findViewById(R.id.stop_point_info_leave);
+        TextView arrive = (TextView) dialog.findViewById(R.id.stop_point_info_arrive);
+
+        name.setText(stopPoint.getName());
+        int numServiceID = stopPoint.getServiceTypeId();
+        type.setText(ServiceArr[numServiceID - 1]);
+        address.setText(stopPoint.getAddress());
+        int numProvinceID = stopPoint.getProvinceId();
+        provinceCity.setText(ProvinceArr[numProvinceID - 1]);
+        int numMinCost = stopPoint.getMinCost();
+        int numMaxCost = stopPoint.getMaxCost();
+        minCost.setText(Integer.toString(numMinCost));
+        maxCost.setText(Integer.toString(numMaxCost));
+        long numLeave = stopPoint.getLeaveAt();
+        long numArrive = stopPoint.getArrivalAt();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(numLeave);
+        Date date = cal.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+        leave.setText(dateFormat.format(date));
+        cal.setTimeInMillis(numArrive);
+        date = cal.getTime();
+        arrive.setText(dateFormat.format(date));
+
+        dialog.show();
+
+        //show dialog at bottom
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+
+        wlp.gravity = Gravity.BOTTOM;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
     }
 
     private int isServiceAvailable(){
@@ -463,9 +524,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
         spnService = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_service);
         spnProvince = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_province);
-
-        String ServiceArr[]={"Restaurant", "Hotel", "Rest Station", "Other"};
-        String ProvinceArr[]={"Hồ Chí Minh","Hà Nội","Đà Nẵng","Bình Dương","Đồng Nai","Khánh Hòa","Hải Phòng","Long An","Quảng Nam","Bà Rịa Vũng Tàu","Đắk Lắk","Cần Thơ","Bình Thuận  ","Lâm Đồng","Thừa Thiên Huế","Kiên Giang","Bắc Ninh","Quảng Ninh","Thanh Hóa","Nghệ An","Hải Dương","Gia Lai","Bình Phước","Hưng Yên","Bình Định","Tiền Giang","Thái Bình","Bắc Giang","Hòa Bình","An Giang","Vĩnh Phúc","Tây Ninh","Thái Nguyên","Lào Cai","Nam Định","Quảng Ngãi","Bến Tre","Đắk Nông","Cà Mau","Vĩnh Long","Ninh Bình","Phú Thọ","Ninh Thuận","Phú Yên","Hà Nam","Hà Tĩnh","Đồng Tháp","Sóc Trăng","Kon Tum","Quảng Bình","Quảng Trị","Trà Vinh","Hậu Giang","Sơn La","Bạc Liêu","Yên Bái","Tuyên Quang","Điện Biên","Lai Châu","Lạng Sơn","Hà Giang","Bắc Kạn","Cao Bằng"};
 
         ArrayAdapter<String> serviceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,ServiceArr);
         ArrayAdapter<String> provinceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,ProvinceArr);
