@@ -470,6 +470,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                         }
                     }
                     mLocationPermisstionsGranted=true;
+                    SupportMapFragment supportMapFragment= (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+                    supportMapFragment.getMapAsync(CreateStopPointActivity.this);
                 }
             }
         }

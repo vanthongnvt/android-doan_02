@@ -6,6 +6,7 @@ import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
+import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
 
 import java.util.List;
@@ -72,4 +73,8 @@ public interface APITour {
     @POST("/tour/set-stop-points")
     Call<MessageResponse> addStopPointToTour(@Header("Authorization") String token,
                                              @Body UpdateStopPointsOfTour updateStopPointsOfTour);
+
+    @GET("/tour/info")
+    Call<TourInfo> getTourInfo(@Header("Authorization") String token,
+                               @Query("tourId") Integer tourId);
 }
