@@ -7,223 +7,284 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.TourInfoFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
-    <LinearLayout
+    <!--    <TextView-->
+    <!--        android:id="@+id/section_label"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="@dimen/activity_horizontal_margin"-->
+    <!--        android:layout_marginTop="@dimen/activity_vertical_margin"-->
+    <!--        android:layout_marginEnd="@dimen/activity_horizontal_margin"-->
+    <!--        android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/constraintLayout"-->
+    <!--        tools:layout_constraintLeft_creator="1"-->
+    <!--        tools:layout_constraintTop_creator="1" />-->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:orientation="vertical"
-       >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/img_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:adjustViewBounds="true"
-                android:maxHeight="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/empty_image" />
-
             <LinearLayout
-                android:weightSum="2"
-                android:paddingLeft="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="#fff"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/img_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/empty_image" />
 
                 <LinearLayout
-                    android:layout_weight="2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:paddingLeft="15dp"
+                    android:weightSum="2">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal"
-                        >
+                        android:layout_weight="2"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_maps_and_flags" />
-
-                        <TextView
-                            android:textStyle="bold"
-                            android:id="@+id/tv_tourName"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="3dp"
-                            android:text="Tour Name"
-                            android:textSize="20sp" />
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_maps_and_flags" />
+
+                            <TextView
+                                android:id="@+id/tv_tourName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="3dp"
+                                android:text="Tour Name"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_multiple_users_silhouette" />
+
+                            <TextView
+                                android:id="@+id/tv_adults"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:text="0 adult(s)"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:text="&amp;"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/tv_childs"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="4dp"
+                                android:text="0 child(s)"
+                                android:textSize="15sp" />
+
+                        </LinearLayout>
                     </LinearLayout>
 
+                    <ImageButton
+                        android:id="@+id/btn_clone_tour"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="#fff"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="10dp"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/ic_clone_regular" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_multiple_users_silhouette" />
-
-                        <TextView
-                            android:id="@+id/tv_adults"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="4dp"
-                            android:text="0 adult(s)"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="4dp"
-                            android:text = "&amp;"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/tv_childs"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="4dp"
-                            android:text="0 child(s)"
-                            android:textSize="15sp" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="#fff"
-                    android:paddingTop="10dp"
-                    android:paddingLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@drawable/ic_clone_regular" />
 
-            </LinearLayout>
-
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal"
-                android:paddingLeft="15dp">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_money_bag" />
-
-                <TextView
-                    android:textStyle="bold"
-                    android:textColor="#8BC34A"
-                    android:id="@+id/tv_minCost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="Min Cost"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="-"
-                    android:textColor="#8BC34A"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:textStyle="bold"
-                    android:textColor="#8BC34A"
-                    android:id="@+id/tv_maxCost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="Max Cost"
-                    android:textSize="15sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal"
-                android:paddingLeft="15dp">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_calendar" />
-
-                <TextView
-                    android:textStyle="italic"
-                    android:id="@+id/tv_startDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="Start Date"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:textStyle="italic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="-"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:textStyle="italic"
-                    android:id="@+id/tv_endDate"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="4dp"
-                    android:text="End Date"
-                    android:textSize="15sp" />
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="15dp">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_money_bag" />
+
+                    <TextView
+                        android:id="@+id/tv_minCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="Min Cost"
+                        android:textColor="#8BC34A"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="-"
+                        android:textColor="#8BC34A"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_maxCost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="Max Cost"
+                        android:textColor="#8BC34A"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="15dp">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_calendar" />
+
+                    <TextView
+                        android:id="@+id/tv_startDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="Start Date"
+                        android:textSize="15sp"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="-"
+                        android:textSize="15sp"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/tv_endDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="4dp"
+                        android:text="End Date"
+                        android:textSize="15sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="#4CAF50"
+                >
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/list_icon"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:srcCompat="@drawable/ic_format_list_bulleted_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Danh sách điểm dừng"
+                        android:textColor="#ffffff"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/circle_bg_btn"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true">
+
+                    <ImageView
+                        android:id="@+id/btn_edit_stop_points"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_margin="5dp"
+                        app:srcCompat="@drawable/ic_edit_location_black_24dp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/list_view_stop_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null" />
         </LinearLayout>
 
-    </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

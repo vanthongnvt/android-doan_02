@@ -13,21 +13,22 @@ import com.example.tours.Model.TourInfo;
 import com.example.tours.R;
 import com.example.tours.TourInfoActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2,R.string.tab_text_1};
     private final Context mContext;
     private TourInfo mtourInfo=null;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
-//        mtourInfo= ((TourInfoActivity)mContext).getTourInfo();
+        mtourInfo= ((TourInfoActivity)mContext).getTourInfo();
     }
 
     @Override
@@ -45,7 +46,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
+//        return mContext.getResources().getString(TAB_TITLES[position]);
+        return null;
     }
 
     @Override

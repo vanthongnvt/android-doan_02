@@ -1,5 +1,6 @@
 package com.example.tours;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -28,7 +29,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourMemberFra
                                                                     TourCommentFragment.OnFragmentInteractionListener {
 
     private APITour apiTour;
-    private Integer tourId=235;
+    private Integer tourId=227;
     private static TourInfo tourInfo=null;
     private ViewPager viewPager;
     private TabLayout tabs;
@@ -50,6 +51,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourMemberFra
                     tabs = findViewById(R.id.tabs);
                     viewPager.setAdapter(sectionsPagerAdapter);
                     tabs.setupWithViewPager(viewPager);
+                    setupTabIcons();
                 }
                 else{
                     Toast.makeText(TourInfoActivity.this, R.string.tour_not_exists, Toast.LENGTH_SHORT).show();
@@ -66,6 +68,12 @@ public class TourInfoActivity extends AppCompatActivity implements TourMemberFra
     }
     public TourInfo getTourInfo(){
         return tourInfo;
+    }
+    private void setupTabIcons() {
+        tabs.getTabAt(0).setIcon(R.drawable.ic_info_black_24dp);
+        tabs.getTabAt(1).setIcon(R.drawable.ic_member_white_24dp);
+        tabs.getTabAt(2).setIcon(R.drawable.ic_comment_black_24dp);
+        tabs.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
     }
 
     @Override

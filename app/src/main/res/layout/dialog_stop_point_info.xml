@@ -9,7 +9,7 @@
     <TextView
         android:textStyle="bold"
         android:textColor="#068f41"
-        android:textSize="50sp"
+        android:textSize="30sp"
         android:id="@+id/stop_point_info_name"
         android:text="NameTour"
         android:layout_width="match_parent"
@@ -117,26 +117,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:padding="5dp"
-            app:srcCompat="@drawable/ic_plane_departure_solid"
-            android:layout_width="30dp"
-            android:layout_height="30dp"/>
 
-        <TextView
-            android:textColor="#1A1818"
-            android:layout_marginTop="5dp"
-            android:paddingLeft="5dp"
-            android:id="@+id/stop_point_info_leave"
-            android:text="Leave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
 
     <LinearLayout
         
@@ -156,6 +137,26 @@
             android:id="@+id/stop_point_info_arrive"
             android:text="Arrive"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_plane_departure_solid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:textColor="#1A1818"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/stop_point_info_leave"
+            android:text="Leave"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
