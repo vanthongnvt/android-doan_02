@@ -66,7 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // from register:
-        AuthRegister authRegisterOb = (AuthRegister) getIntent().getSerializableExtra("AuthRegister");
+//        AuthRegister authRegisterOb = (AuthRegister) getIntent().getSerializableExtra("AuthRegister");
 
 
     }

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(TokenStorage.getInstance().getAccessToken()!=null){
+        if(TokenStorage.getInstance().hasLoggedIn()){
             startNewActivity(null);
         }
         setContentView(R.layout.activity_main);
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startNewActivity(Auth mAuth) {
         if(mAuth!=null){
-            TokenStorage.getInstance().setToken(mAuth.getToken());
+            TokenStorage.getInstance().setToken(mAuth.getToken(),mAuth.getUserId());
         }
         Intent itenthome = new Intent(MainActivity.this, HomeActivity.class);
         itenthome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

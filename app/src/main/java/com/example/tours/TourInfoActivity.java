@@ -9,6 +9,7 @@ import com.example.tours.ApiService.APITour;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.ui.main.TourCommentFragment;
+import com.example.tours.ui.main.TourInfoFragment;
 import com.example.tours.ui.main.TourMemberFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -25,12 +26,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TourInfoActivity extends AppCompatActivity implements TourMemberFragment.OnFragmentInteractionListener ,
+public class TourInfoActivity extends AppCompatActivity implements TourInfoFragment.OnFragmentInteractionListener,
+                                                                    TourMemberFragment.OnFragmentInteractionListener ,
                                                                     TourCommentFragment.OnFragmentInteractionListener {
 
     private APITour apiTour;
     private Integer tourId=227;
     private static TourInfo tourInfo=null;
+    private static boolean isHostUser=false;
     private ViewPager viewPager;
     private TabLayout tabs;
     private SectionsPagerAdapter sectionsPagerAdapter;
@@ -40,12 +43,14 @@ public class TourInfoActivity extends AppCompatActivity implements TourMemberFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
         apiTour = new APIRetrofitCreator().getAPIService();
-
         apiTour.getTourInfo(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<TourInfo>() {
             @Override
             public void onResponse(Call<TourInfo> call, Response<TourInfo> response) {
                 if(response.isSuccessful()){
-                   tourInfo=response.body();
+                    tourInfo=response.body();
+                    if(TokenStorage.getInstance().getUserId()==Integer.parseInt(tourInfo.getHostId())){
+                        isHostUser=true;
+                    }
                     sectionsPagerAdapter = new SectionsPagerAdapter(TourInfoActivity.this, getSupportFragmentManager());
                     viewPager = findViewById(R.id.view_pager);
                     tabs = findViewById(R.id.tabs);
@@ -68,6 +73,9 @@ public class TourInfoActivity extends AppCompatActivity implements TourMemberFra
     }
     public TourInfo getTourInfo(){
         return tourInfo;
+    }
+    public boolean isHostUser(){
+        return isHostUser;
     }
     private void setupTabIcons() {
         tabs.getTabAt(0).setIcon(R.drawable.ic_info_black_24dp);

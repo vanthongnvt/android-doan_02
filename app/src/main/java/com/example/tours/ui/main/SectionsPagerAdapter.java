@@ -24,11 +24,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     private final Context mContext;
     private TourInfo mtourInfo=null;
+    private boolean isHostUser;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
         mtourInfo= ((TourInfoActivity)mContext).getTourInfo();
+        isHostUser=((TourInfoActivity)mContext).isHostUser();
     }
 
     @Override
@@ -36,9 +38,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // getItem is called to instantiate the fragment for the given page.
         // Return a TourInfoFragment (defined as a static inner class below).
         switch (position){
-            case 0: return TourInfoFragment.newInstance(mtourInfo);
-            case 1: return TourMemberFragment.newInstance(mtourInfo);
-            case 2: return TourCommentFragment.newInstance(mtourInfo);
+            case 0: return TourInfoFragment.newInstance(mtourInfo,isHostUser);
+            case 1: return TourMemberFragment.newInstance(mtourInfo,isHostUser);
+            case 2: return TourCommentFragment.newInstance(mtourInfo,isHostUser);
         }
         return null;
     }

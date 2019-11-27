@@ -10,6 +10,7 @@ public class TokenStorage extends Application {
     private String key = "TOKEN";
 
     String accessToken=null;
+    Integer userId;
 
     @Override
     public void onCreate(){
@@ -18,7 +19,7 @@ public class TokenStorage extends Application {
         sInstance = this;
         sharedPreferences = getSharedPreferences("TOKEN_STORAGE", Context.MODE_PRIVATE);
         accessToken = retrieveTokenFromSharedPrefs();
-
+        userId = getUserIdFromSharedPrefs();
     }
 
     public static TokenStorage getInstance() {
@@ -30,10 +31,14 @@ public class TokenStorage extends Application {
         return sharedPreferences.getString(key,null);
     }
 
-    public void setToken(String token) {
+    private Integer getUserIdFromSharedPrefs(){
+        return sharedPreferences.getInt("Id",-1);
+    }
+
+    public void setToken(String token, Integer userId) {
         accessToken = token;
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
+        editor.putInt("Id",userId);
         editor.putString(key, token);
 
         editor.apply();
@@ -43,8 +48,12 @@ public class TokenStorage extends Application {
         return accessToken;
     }
 
+    public Integer getUserId(){
+        return userId;
+    }
+
     public boolean hasLoggedIn() {
-        return getAccessToken() != null;
+        return getAccessToken() != null && getUserId()!=null;
     }
 
     public boolean hasTokenExpired() {

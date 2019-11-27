@@ -25,6 +25,7 @@ public class TourCommentFragment extends Fragment {
     private static final String ARG_PARAM1 = "tour";
 
     private TourInfo tourInfo;
+    private boolean isHostUser;
 
     private OnFragmentInteractionListener mListener;
 
@@ -32,10 +33,11 @@ public class TourCommentFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static TourCommentFragment newInstance(TourInfo tourInfo) {
+    public static TourCommentFragment newInstance(TourInfo tourInfo,boolean isHostUser) {
         TourCommentFragment fragment = new TourCommentFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, tourInfo);
+        args.putBoolean("isHostUser",isHostUser);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,6 +47,7 @@ public class TourCommentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             tourInfo = (TourInfo) getArguments().getSerializable(ARG_PARAM1);
+            isHostUser=getArguments().getBoolean("isHostUser");
         }
     }
 

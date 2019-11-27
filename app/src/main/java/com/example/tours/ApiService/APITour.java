@@ -4,6 +4,7 @@ import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.ListTour;
+import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourInfo;
@@ -77,4 +78,17 @@ public interface APITour {
     @GET("/tour/info")
     Call<TourInfo> getTourInfo(@Header("Authorization") String token,
                                @Query("tourId") Integer tourId);
+
+    @GET("/user/search")
+    Call<ListUserSearch> searchUser(@Header("Authorization") String token,
+                                    @Query("searchKey") String searchKey,
+                                    @Query("pageIndex") Integer pageIndex,
+                                    @Query("pageSize") Integer pageSize);
+
+    @POST("/tour/add/member")
+    @FormUrlEncoded
+    Call<MessageResponse> inviteMember(@Header("Authorization") String token,
+                                       @Field("tourId") String tourId,
+                                       @Query("invitedUserId") String invitedUserId,
+                                       @Query("isInvited") Boolean isInvited);
 }

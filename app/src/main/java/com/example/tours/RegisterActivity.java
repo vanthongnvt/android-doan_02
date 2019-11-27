@@ -209,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //200 - OK
                 Auth mAuthObject = response.body();
                 //chuyen sang man hinh home
-                TokenStorage.getInstance().setToken(mAuthObject.getToken());
+                TokenStorage.getInstance().setToken(mAuthObject.getToken(),mAuthObject.getUserId());
                 Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

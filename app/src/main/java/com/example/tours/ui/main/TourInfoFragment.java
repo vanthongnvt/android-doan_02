@@ -1,6 +1,8 @@
 package com.example.tours.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +35,11 @@ import java.util.Date;
 public class TourInfoFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "tour";
+    private TourMemberFragment.OnFragmentInteractionListener mListener;
 
     private PageViewModel pageViewModel;
     private TourInfo tourInfo;
-    private boolean isUserTour=true;
+    private boolean isHostUser=false;
     private ImageView btnCloneTour;
     private ImageView imageAvatar;
     private TextView tvTourName;
@@ -50,10 +53,11 @@ public class TourInfoFragment extends Fragment {
     private ListView listView;
     private ListStopPointAdapter stopPointAdapter;
 
-    public static TourInfoFragment newInstance(TourInfo tourInfo) {
+    public static TourInfoFragment newInstance(TourInfo tourInfo,boolean isHostUser) {
         TourInfoFragment fragment = new TourInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_PARAM1, tourInfo);
+        bundle.putBoolean("isHostUser",isHostUser);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -69,6 +73,7 @@ public class TourInfoFragment extends Fragment {
 //        pageViewModel.setIndex(index);
         if (getArguments() != null) {
             tourInfo = (TourInfo) getArguments().getSerializable(ARG_PARAM1);
+            isHostUser=getArguments().getBoolean("isHostUser");
         }
     }
 
@@ -112,7 +117,7 @@ public class TourInfoFragment extends Fragment {
         btnEditStopPoints=root.findViewById(R.id.btn_edit_stop_points);
         listView=root.findViewById(R.id.list_view_stop_point);
         stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.listview_temporary_stop_point_item,tourInfo.getStopPoints());
-        if(isUserTour){
+        if(isHostUser){
             btnCloneTour.setVisibility(View.GONE);
         }
         else{
@@ -206,5 +211,27 @@ public class TourInfoFragment extends Fragment {
         listView.setLayoutParams(params);
         listView.requestLayout();
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof TourMemberFragment.OnFragmentInteractionListener) {
+            mListener = (TourMemberFragment.OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+//         TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }

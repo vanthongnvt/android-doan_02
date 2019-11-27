@@ -36,6 +36,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.19.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
+
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.libraries.places:places:1.1.0'
 

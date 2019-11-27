@@ -3,7 +3,9 @@ package com.example.tours.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class TourComment {
+import java.io.Serializable;
+
+public class TourComment implements Serializable {
 
     @SerializedName("id")
     @Expose
