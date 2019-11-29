@@ -1,11 +1,13 @@
 package com.example.tours.ui.usertrip;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -28,9 +30,11 @@ import com.example.tours.ApiService.APITour;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.Tour;
+import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UserListTour;
 import com.example.tours.Model.UserTour;
 import com.example.tours.R;
+import com.example.tours.TourInfoActivity;
 import com.example.tours.ui.usersettings.UserSettingsViewModel;
 
 import java.util.List;
@@ -112,6 +116,16 @@ public class UserTripFragment extends Fragment {
                         @Override
                         public void afterTextChanged(Editable s) {
 
+                        }
+                    });
+
+                    listViewUserTour.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            UserTour tour = tours.get(position);
+                            Intent intent = new Intent(view.getContext(), TourInfoActivity.class);
+                            intent.putExtra("tourId",tour.getId());
+                            startActivity(intent);
                         }
                     });
                 }

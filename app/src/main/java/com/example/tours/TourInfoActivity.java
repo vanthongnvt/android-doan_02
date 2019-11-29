@@ -1,5 +1,6 @@
 package com.example.tours;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
+        tourId = getIntent().getExtras().getInt("tourId");
         apiTour = new APIRetrofitCreator().getAPIService();
         apiTour.getTourInfo(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<TourInfo>() {
             @Override

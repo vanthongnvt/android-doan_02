@@ -112,4 +112,17 @@ public interface APITour {
                                         @Field("minCost") Number minCost,
                                         @Field("maxCost") Number maxCost,
                                         @Field("avatar") String avatar);
+
+    @POST("/tour/update-stop-point")
+    @FormUrlEncoded
+    Call<StopPoint> updateStopPointInfo(@Header("Authorization") String token,
+                                        @Field("id") String id,
+                                        @Field("name") String tourName,
+                                        @Field("arrivalAt") Long arrivalAt,
+                                        @Field("leaveAt") Long leaveAt,
+                                        @Field("serviceTypeId") Integer serviceTypeId,
+                                        @Field("minCost") Number minCost,
+                                        @Field("maxCost") Number maxCost,
+                                        @Field("avatar") String avatar,
+                                        @Field("index") Integer index);
 }

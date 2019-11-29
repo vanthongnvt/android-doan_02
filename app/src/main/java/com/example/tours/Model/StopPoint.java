@@ -49,6 +49,9 @@ public class StopPoint implements Serializable {
     @SerializedName("avatar")
     @Expose
     private String avatar;
+    @SerializedName("index")
+    @Expose
+    private Integer index;
 
     public StopPoint(Integer id, String name, String address,Integer provinceId, Double longitude, Double latitude, String contact, Integer minCost, Integer maxCost, Long arrivalAt,Long leaveAt, Integer serviceTypeId) {
         this.id = id;
@@ -177,4 +180,7 @@ public class StopPoint implements Serializable {
         this.provinceId = provinceId;
     }
 
+    public Integer getIndex(){
+        return index;
+    }
 }

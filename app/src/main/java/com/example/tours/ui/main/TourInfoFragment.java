@@ -96,7 +96,7 @@ public class TourInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(root.getContext(), CreateStopPointActivity.class);
-                intent.putExtra("tour",tourInfo);
+                intent.putExtra("tourInfo",tourInfo);
                 startActivity(intent);
             }
         });

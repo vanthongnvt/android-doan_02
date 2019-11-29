@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorCustomPrimary">#068f41</color>
     <color name="colorCustomPrimaryLighter">#12A752</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

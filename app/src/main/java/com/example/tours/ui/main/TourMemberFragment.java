@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,12 +27,14 @@ import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.TourInfo;
+import com.example.tours.Model.TourMember;
 import com.example.tours.Model.User;
 import com.example.tours.R;
 import com.example.tours.TourInfoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,6 +106,8 @@ public class TourMemberFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     dialogInviteMember.show();
+                    Window window = dialogInviteMember.getWindow();
+                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 }
             });
 
@@ -111,15 +116,15 @@ public class TourMemberFragment extends Fragment {
         return root;
     }
 
-    private void initDialogAddMember(View v) {
-        dialogInviteMember = new Dialog(v.getContext(),R.style.PlacesAutocompleteThemeFullscreen);
+    private void initDialogAddMember(View root) {
+        dialogInviteMember = new Dialog(root.getContext());
         dialogInviteMember.setContentView(R.layout.dialog_invite_member);
         edtInviteMember = dialogInviteMember.findViewById(R.id.edt_invite_member);
         btnSearchMember = dialogInviteMember.findViewById(R.id.btn_seacrh_member);
 
         listViewSearchMember = dialogInviteMember.findViewById(R.id.list_view_search_member);
         listUser=new ArrayList<>();
-        searchMemberAdapter = new ListSearchMemberAdapter(v.getContext(),R.layout.list_view_user_search_item,listUser,TourMemberFragment.this);
+        searchMemberAdapter = new ListSearchMemberAdapter(root.getContext(),R.layout.list_view_user_search_item,listUser,TourMemberFragment.this);
         listViewSearchMember.setAdapter(searchMemberAdapter);
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -129,7 +134,7 @@ public class TourMemberFragment extends Fragment {
                 String searchKey=edtInviteMember.getText().toString();
                 if(!searchKey.isEmpty()){
                     currPage=1;
-                    ((TourInfoActivity)v.getContext()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                    ((TourInfoActivity)root.getContext()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                     searchMember(searchKey);
                 }
             }
@@ -138,6 +143,12 @@ public class TourMemberFragment extends Fragment {
     }
 
     public void inviteMember(User user){
+        for (TourMember member:tourInfo.getMembers()){
+            if(member.getId().equals(user.getId())){
+                Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
         apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(),tourInfo.getId().toString(),user.getId().toString(),tourInfo.getIsPrivate()).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
