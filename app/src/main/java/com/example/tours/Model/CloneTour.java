@@ -3,11 +3,10 @@ package com.example.tours.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tour {
-
-    @SerializedName("id")
+public class CloneTour {
+    @SerializedName("hostId")
     @Expose
-    private Number id;
+    private String hostId;
     @SerializedName("status")
     @Expose
     private Number status;
@@ -16,22 +15,37 @@ public class Tour {
     private String name;
     @SerializedName("minCost")
     @Expose
-    private String minCost;
+    private Number minCost;
     @SerializedName("maxCost")
     @Expose
-    private String maxCost;
+    private Number maxCost;
     @SerializedName("startDate")
     @Expose
-    private String startDate;
+    private Number startDate;
     @SerializedName("endDate")
     @Expose
-    private String endDate;
+    private Number endDate;
     @SerializedName("adults")
     @Expose
     private Number adults;
     @SerializedName("childs")
     @Expose
     private Number childs;
+    @SerializedName("sourceLat")
+    @Expose
+    private Number sourceLat;
+    @SerializedName("sourceNumber")
+    @Expose
+    private Number sourceNumber;
+    @SerializedName("desLat")
+    @Expose
+    private Number desLat;
+    @SerializedName("desNumber")
+    @Expose
+    private Number desNumber;
+    @SerializedName("id")
+    @Expose
+    private Number id;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -39,12 +53,12 @@ public class Tour {
     @Expose
     private String avatar;
 
-    public Number getId() {
-        return id;
+    public String getHostId() {
+        return hostId;
     }
 
-    public void setId(Number id) {
-        this.id = id;
+    public void setHostId(String hostId) {
+        this.hostId = hostId;
     }
 
     public Number getStatus() {
@@ -63,35 +77,35 @@ public class Tour {
         this.name = name;
     }
 
-    public String getMinCost() {
+    public Number getMinCost() {
         return minCost;
     }
 
-    public void setMinCost(String minCost) {
+    public void setMinCost(Number minCost) {
         this.minCost = minCost;
     }
 
-    public String getMaxCost() {
+    public Number getMaxCost() {
         return maxCost;
     }
 
-    public void setMaxCost(String maxCost) {
+    public void setMaxCost(Number maxCost) {
         this.maxCost = maxCost;
     }
 
-    public String getStartDate() {
+    public Number getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Number startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Number getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Number endDate) {
         this.endDate = endDate;
     }
 
@@ -111,6 +125,46 @@ public class Tour {
         this.childs = childs;
     }
 
+    public Number getSourceLat() {
+        return sourceLat;
+    }
+
+    public void setSourceLat(Number sourceLat) {
+        this.sourceLat = sourceLat;
+    }
+
+    public Number getSourceNumber() {
+        return sourceNumber;
+    }
+
+    public void setSourceNumber(Number sourceNumber) {
+        this.sourceNumber = sourceNumber;
+    }
+
+    public Number getDesLat() {
+        return desLat;
+    }
+
+    public void setDesLat(Number desLat) {
+        this.desLat = desLat;
+    }
+
+    public Number getDesNumber() {
+        return desNumber;
+    }
+
+    public void setDesNumber(Number desNumber) {
+        this.desNumber = desNumber;
+    }
+
+    public Number getId() {
+        return id;
+    }
+
+    public void setId(Number id) {
+        this.id = id;
+    }
+
     public Boolean getIsPrivate() {
         return isPrivate;
     }
@@ -126,5 +180,4 @@ public class Tour {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-
 }

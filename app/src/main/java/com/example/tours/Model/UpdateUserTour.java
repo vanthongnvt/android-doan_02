@@ -10,31 +10,31 @@ public class UpdateUserTour {
     private String hostId;
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private Number status;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("minCost")
     @Expose
-    private Integer minCost;
+    private Number minCost;
     @SerializedName("maxCost")
     @Expose
-    private Integer maxCost;
+    private Number maxCost;
     @SerializedName("startDate")
     @Expose
-    private Long startDate;
+    private Number startDate;
     @SerializedName("endDate")
     @Expose
-    private Long endDate;
+    private Number endDate;
     @SerializedName("adults")
     @Expose
-    private Integer adults;
+    private Number adults;
     @SerializedName("childs")
     @Expose
-    private Integer childs;
+    private Number childs;
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private Number id;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -50,11 +50,11 @@ public class UpdateUserTour {
         this.hostId = hostId;
     }
 
-    public Integer getStatus() {
+    public Number getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Number status) {
         this.status = status;
     }
 
@@ -66,59 +66,59 @@ public class UpdateUserTour {
         this.name = name;
     }
 
-    public Integer getMinCost() {
+    public Number getMinCost() {
         return minCost;
     }
 
-    public void setMinCost(Integer minCost) {
+    public void setMinCost(Number minCost) {
         this.minCost = minCost;
     }
 
-    public Integer getMaxCost() {
+    public Number getMaxCost() {
         return maxCost;
     }
 
-    public void setMaxCost(Integer maxCost) {
+    public void setMaxCost(Number maxCost) {
         this.maxCost = maxCost;
     }
 
-    public Long getStartDate() {
+    public Number getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Long startDate) {
+    public void setStartDate(Number startDate) {
         this.startDate = startDate;
     }
 
-    public Long getEndDate() {
+    public Number getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Long endDate) {
+    public void setEndDate(Number endDate) {
         this.endDate = endDate;
     }
 
-    public Integer getAdults() {
+    public Number getAdults() {
         return adults;
     }
 
-    public void setAdults(Integer adults) {
+    public void setAdults(Number adults) {
         this.adults = adults;
     }
 
-    public Integer getChilds() {
+    public Number getChilds() {
         return childs;
     }
 
-    public void setChilds(Integer childs) {
+    public void setChilds(Number childs) {
         this.childs = childs;
     }
 
-    public Integer getId() {
+    public Number getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Number id) {
         this.id = id;
     }
 

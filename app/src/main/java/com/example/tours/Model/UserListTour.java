@@ -8,16 +8,16 @@ public class UserListTour {
 
     @SerializedName("total")
     @Expose
-    private Integer total;
+    private Number total;
     @SerializedName("tours")
     @Expose
     private List<UserTour> tours = null;
 
-    public Integer getTotal() {
+    public Number getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Number total) {
         this.total = total;
     }
 

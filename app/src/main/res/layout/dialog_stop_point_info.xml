@@ -33,7 +33,7 @@
             android:id="@+id/stop_point_info_type"
             android:text="Type"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +54,7 @@
             android:id="@+id/stop_point_info_address"
             android:text="Address"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -75,7 +75,7 @@
             android:id="@+id/stop_point_info_provice_city"
             android:text="City"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -96,7 +96,7 @@
             android:id="@+id/stop_point_info_min_cost"
             android:text="MinCost"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#1A1818"
@@ -105,7 +105,7 @@
             android:paddingRight="10dp"
             android:text=" - "
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#1A1818"
@@ -113,7 +113,7 @@
             android:id="@+id/stop_point_info_max_cost"
             android:text="MaxCost"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
@@ -151,13 +151,13 @@
             android:layout_height="30dp"/>
 
         <TextView
-            android:textColor="#1A1818"
+            android:id="@+id/stop_point_info_leave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:paddingLeft="5dp"
-            android:id="@+id/stop_point_info_leave"
             android:text="Leave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textColor="#1A1818" />
     </LinearLayout>
 
 </LinearLayout>

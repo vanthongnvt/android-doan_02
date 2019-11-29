@@ -9,10 +9,10 @@ public class UserTour implements Serializable {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private Number id;
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private Number status;
     @SerializedName("name")
     @Expose
     private String name;
@@ -30,10 +30,10 @@ public class UserTour implements Serializable {
     private String endDate;
     @SerializedName("adults")
     @Expose
-    private Integer adults;
+    private Number adults;
     @SerializedName("childs")
     @Expose
-    private Integer childs;
+    private Number childs;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -47,19 +47,19 @@ public class UserTour implements Serializable {
     @Expose
     private Boolean isKicked;
 
-    public Integer getId() {
+    public Number getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Number id) {
         this.id = id;
     }
 
-    public Integer getStatus() {
+    public Number getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Number status) {
         this.status = status;
     }
 
@@ -103,19 +103,19 @@ public class UserTour implements Serializable {
         this.endDate = endDate;
     }
 
-    public Integer getAdults() {
+    public Number getAdults() {
         return adults;
     }
 
-    public void setAdults(Integer adults) {
+    public void setAdults(Number adults) {
         this.adults = adults;
     }
 
-    public Integer getChilds() {
+    public Number getChilds() {
         return childs;
     }
 
-    public void setChilds(Integer childs) {
+    public void setChilds(Number childs) {
         this.childs = childs;
     }
 

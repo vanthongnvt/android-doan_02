@@ -9,43 +9,43 @@ public class CreateTour {
     private String hostId;
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private Number status;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("minCost")
     @Expose
-    private Integer minCost;
+    private Number minCost;
     @SerializedName("maxCost")
     @Expose
-    private Integer maxCost;
+    private Number maxCost;
     @SerializedName("startDate")
     @Expose
-    private Long startDate;
+    private Number startDate;
     @SerializedName("endDate")
     @Expose
-    private Long endDate;
+    private Number endDate;
     @SerializedName("adults")
     @Expose
-    private Integer adults;
+    private Number adults;
     @SerializedName("childs")
     @Expose
-    private Integer childs;
+    private Number childs;
     @SerializedName("sourceLat")
     @Expose
-    private Integer sourceLat;
-    @SerializedName("sourceLong")
+    private Number sourceLat;
+    @SerializedName("sourceNumber")
     @Expose
-    private Integer sourceLong;
+    private Number sourceNumber;
     @SerializedName("desLat")
     @Expose
-    private Integer desLat;
-    @SerializedName("desLong")
+    private Number desLat;
+    @SerializedName("desNumber")
     @Expose
-    private Integer desLong;
+    private Number desNumber;
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private Number id;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -61,11 +61,11 @@ public class CreateTour {
         this.hostId = hostId;
     }
 
-    public Integer getStatus() {
+    public Number getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Number status) {
         this.status = status;
     }
 
@@ -77,91 +77,91 @@ public class CreateTour {
         this.name = name;
     }
 
-    public Integer getMinCost() {
+    public Number getMinCost() {
         return minCost;
     }
 
-    public void setMinCost(Integer minCost) {
+    public void setMinCost(Number minCost) {
         this.minCost = minCost;
     }
 
-    public Integer getMaxCost() {
+    public Number getMaxCost() {
         return maxCost;
     }
 
-    public void setMaxCost(Integer maxCost) {
+    public void setMaxCost(Number maxCost) {
         this.maxCost = maxCost;
     }
 
-    public Long getStartDate() {
+    public Number getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Long startDate) {
+    public void setStartDate(Number startDate) {
         this.startDate = startDate;
     }
 
-    public Long getEndDate() {
+    public Number getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Long endDate) {
+    public void setEndDate(Number endDate) {
         this.endDate = endDate;
     }
 
-    public Integer getAdults() {
+    public Number getAdults() {
         return adults;
     }
 
-    public void setAdults(Integer adults) {
+    public void setAdults(Number adults) {
         this.adults = adults;
     }
 
-    public Integer getChilds() {
+    public Number getChilds() {
         return childs;
     }
 
-    public void setChilds(Integer childs) {
+    public void setChilds(Number childs) {
         this.childs = childs;
     }
 
-    public Integer getSourceLat() {
+    public Number getSourceLat() {
         return sourceLat;
     }
 
-    public void setSourceLat(Integer sourceLat) {
+    public void setSourceLat(Number sourceLat) {
         this.sourceLat = sourceLat;
     }
 
-    public Integer getSourceLong() {
-        return sourceLong;
+    public Number getSourceNumber() {
+        return sourceNumber;
     }
 
-    public void setSourceLong(Integer sourceLong) {
-        this.sourceLong = sourceLong;
+    public void setSourceNumber(Number sourceNumber) {
+        this.sourceNumber = sourceNumber;
     }
 
-    public Integer getDesLat() {
+    public Number getDesLat() {
         return desLat;
     }
 
-    public void setDesLat(Integer desLat) {
+    public void setDesLat(Number desLat) {
         this.desLat = desLat;
     }
 
-    public Integer getDesLong() {
-        return desLong;
+    public Number getDesNumber() {
+        return desNumber;
     }
 
-    public void setDesLong(Integer desLong) {
-        this.desLong = desLong;
+    public void setDesNumber(Number desNumber) {
+        this.desNumber = desNumber;
     }
 
-    public Integer getId() {
+    public Number getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Number id) {
         this.id = id;
     }
 

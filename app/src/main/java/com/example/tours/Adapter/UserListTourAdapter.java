@@ -159,7 +159,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
 
     }
 
-    public void filter(String s) {
+    public int  filter(String s) {
         list.clear();
         if(s == ""){
             list.addAll(list_backup);
@@ -172,6 +172,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
             }
         }
         notifyDataSetChanged();
+        return list.size();
     }
 
 }

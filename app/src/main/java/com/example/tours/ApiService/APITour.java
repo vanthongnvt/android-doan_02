@@ -2,7 +2,9 @@ package com.example.tours.ApiService;
 
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
+import com.example.tours.Model.CloneTour;
 import com.example.tours.Model.CreateTour;
+import com.example.tours.Model.GetStatusTours;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
@@ -111,6 +113,7 @@ public interface APITour {
                                         @Field("childs") Number childs,
                                         @Field("minCost") Number minCost,
                                         @Field("maxCost") Number maxCost,
+                                        @Field("status") Number status,
                                         @Field("avatar") String avatar);
 
     @POST("/tour/update-stop-point")
@@ -131,4 +134,12 @@ public interface APITour {
                                     @Field("tourId") Integer tourId,
                                     @Field("point") Integer point,
                                     @Field("review") Integer review);
+
+    @POST("/tour/clone")
+    @FormUrlEncoded
+    Call<CloneTour> cloneTour(@Header("Authorization") String token,
+                                        @Field("tourId") Number id);
+
+    @GET("/tour/history-user-by-status")
+    Call<GetStatusTours> getStatusTours(@Header("Authorization") String token);
 }

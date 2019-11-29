@@ -16,8 +16,8 @@
         android:paddingLeft="5dp">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             app:srcCompat="@drawable/ic_search_black_24dp" />
 
         <EditText
@@ -47,34 +47,126 @@
         android:paddingRight="5dp"
         android:paddingBottom="5dp">
 
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="5dp"
-            app:srcCompat="@drawable/ic_trekking" />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                app:srcCompat="@drawable/ic_trekking" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Toàn bộ: " />
+            <TextView
+                android:id="@+id/usertrip_edt_totalTour"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="100"
+                android:textColor="#4CAF50"
+                android:textSize="19sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/usertrip_edt_totalTour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="100"
-            android:textColor="#4CAF50"
-            android:textSize="19sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="4dp"
+                android:text="tour" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" tour du lịch" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <LinearLayout
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/ic_times_solid"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+                <TextView
+                    android:paddingLeft="5dp"
+                    android:id="@+id/tv_total_canceled_tour"
+                    android:paddingTop="5dp"
+                    android:text="1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/ic_open"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+                <TextView
+                    android:paddingLeft="5dp"
+                    android:id="@+id/tv_total_open_tour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingTop="5dp"
+                    android:text="1000" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/ic_startup"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
+
+                <TextView
+                    android:paddingLeft="5dp"
+                    android:id="@+id/tv_total_started_tour"
+                    android:paddingTop="5dp"
+                    android:text="1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="19dp"
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/ic_closed" />
+
+                <TextView
+                    android:paddingLeft="5dp"
+                    android:id="@+id/tv_total_closed_tour"
+                    android:paddingTop="5dp"
+                    android:text="1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

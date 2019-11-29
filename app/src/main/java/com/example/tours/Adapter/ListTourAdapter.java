@@ -7,12 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.tours.ApiService.APIRetrofitCreator;
+import com.example.tours.ApiService.APITour;
+import com.example.tours.ApiService.RetrofitClient;
+import com.example.tours.AppHelper.TokenStorage;
+import com.example.tours.Model.CloneTour;
 import com.example.tours.Model.Tour;
 import com.example.tours.R;
 import com.squareup.picasso.Picasso;
@@ -33,11 +40,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ListTourAdapter extends ArrayAdapter<Tour> {
     private Context context;
     private Integer resource;
     private List<Tour> list;
     private List<Tour> list_backup;
+    private APITour apiTour;
 
     public ListTourAdapter(@NonNull Context context, int resource, @NonNull List<Tour> objects) {
         super(context, resource, objects);
@@ -46,6 +58,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         this.list = objects;
         this.list_backup = new ArrayList<>();
         this.list_backup.addAll(objects);
+        apiTour = new APIRetrofitCreator().getAPIService();
     }
 
     private static class ViewHolder {
@@ -58,6 +71,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         private final TextView tvChilds;
         private final TextView tvMinCost;
         private final TextView tvMaxCost;
+        private  final ImageButton imgbtnClone;
 
 
         private ViewHolder(View row) {
@@ -69,6 +83,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             tvChilds = (TextView) row.findViewById(R.id.tv_childs);
             tvMinCost = (TextView) row.findViewById(R.id.tv_minCost);
             tvMaxCost = (TextView) row.findViewById(R.id.tv_maxCost);
+            imgbtnClone = (ImageButton) row.findViewById(R.id.listtouritem_btn_clone_tour);
         }
     }
 
@@ -148,12 +163,34 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             holder.tvMaxCost.setText(tour.getMaxCost());
         }
 
+        holder.imgbtnClone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Number id = tour.getId();
+                apiTour.cloneTour(TokenStorage.getInstance().getAccessToken(), id).enqueue(new Callback<CloneTour>() {
+                    @Override
+                    public void onResponse(Call<CloneTour> call, Response<CloneTour> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(context, "Nhân bản tour thành công", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(response.code() == 500){
+                            Toast.makeText(context, "Lỗi server, không thể nhân bản tour này", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CloneTour> call, Throwable t) {
+                        Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
         return row;
 
     }
 
-    public void filter(String s) {
+    public int filter(String s) {
         list.clear();
         if(s == ""){
             list.addAll(list_backup);
@@ -166,8 +203,8 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             }
         }
         notifyDataSetChanged();
+        return list.size();
     }
-
 
 }
 

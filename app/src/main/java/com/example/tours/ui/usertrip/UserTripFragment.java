@@ -1,6 +1,7 @@
 package com.example.tours.ui.usertrip;
 
 import android.content.Intent;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,7 +29,9 @@ import com.example.tours.Adapter.UserListTourAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
 import com.example.tours.AppHelper.TokenStorage;
+import com.example.tours.Model.GetStatusTours;
 import com.example.tours.Model.ListTour;
+import com.example.tours.Model.TotalToursGroupedBystatus;
 import com.example.tours.Model.Tour;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UserListTour;
@@ -52,6 +55,10 @@ public class UserTripFragment extends Fragment {
     private UserListTour userlistTourResponse;
     private TextView totalTours;
     private EditText edtHomeSearch;
+    private  TextView tvTotalCancelTours;
+    private  TextView tvTotalOpenTours;
+    private  TextView tvTotalStartedTours;
+    private  TextView tvTotalClosedTours;
     private int numTotalTours;
 
     public static String EDIT_ID_TOUR = "EDIT ID TOUR";
@@ -65,13 +72,20 @@ public class UserTripFragment extends Fragment {
         listViewUserTour = view.findViewById(R.id.usertrip_listview_tour);
         totalTours = view.findViewById(R.id.usertrip_edt_totalTour);
         edtHomeSearch = view.findViewById(R.id.usertrip_home_search);
+        tvTotalCancelTours = view.findViewById(R.id.tv_total_canceled_tour);
+        tvTotalOpenTours = view.findViewById(R.id.tv_total_open_tour);
+        tvTotalStartedTours = view.findViewById(R.id.tv_total_started_tour);
+        tvTotalClosedTours = view.findViewById(R.id.tv_total_closed_tour);
+
+        // goi api de lay cac status cua tours:
+        setStatusTourText();
 
         // goi api lan dau de lay total tours :
         apiTour.userListTour(TokenStorage.getInstance().getAccessToken(),1,1).enqueue(new Callback<UserListTour>() {
             @Override
             public void onResponse(Call<UserListTour> call, Response<UserListTour> response) {
                 userlistTourResponse = response.body();
-                numTotalTours = userlistTourResponse.getTotal();
+                numTotalTours = userlistTourResponse.getTotal().intValue();
 
                 //goi api lan tiep theo de load danh sach:
                 getUserTourList(container);
@@ -110,7 +124,8 @@ public class UserTripFragment extends Fragment {
 
                         @Override
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            userListTourAdapter.filter(s.toString());
+                            int totalSearch = userListTourAdapter.filter(s.toString());
+                            totalTours.setText(totalSearch+"");
                         }
 
                         @Override
@@ -137,6 +152,31 @@ public class UserTripFragment extends Fragment {
             @Override
             public void onFailure(Call<UserListTour> call, Throwable t) {
                 Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    void setStatusTourText(){
+        apiTour.getStatusTours(TokenStorage.getInstance().getAccessToken()).enqueue(new Callback<GetStatusTours>() {
+            @Override
+            public void onResponse(Call<GetStatusTours> call, Response<GetStatusTours> response) {
+                if(response.isSuccessful()){
+                    List<TotalToursGroupedBystatus> arr = response.body().getTotalToursGroupedByStatus();
+                    Number canceled = arr.get(0).getTotal();
+                    Number open = arr.get(1).getTotal();
+                    Number started = arr.get(2).getTotal();
+                    Number closed = arr.get(3).getTotal();
+
+                    tvTotalCancelTours.setText(canceled +"");
+                    tvTotalOpenTours.setText(open +"");
+                    tvTotalStartedTours.setText(started +"");
+                    tvTotalClosedTours.setText(closed +"");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetStatusTours> call, Throwable t) {
+
             }
         });
     }

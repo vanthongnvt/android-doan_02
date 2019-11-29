@@ -45,7 +45,7 @@ import retrofit2.Response;
 public class UpdateTourActivity extends AppCompatActivity {
     private UserTour tour;
     private EditText edtTourName, edtStartDate, edtEndDate, edtAdult, edtChild, edtMinCost, edtMaxCost;
-    RadioButton rbtnPrivate, rbtnPublic;
+    RadioButton rbtnPrivate, rbtnPublic, rbtnCanceled, rbtnOpen, rbtnStarted, rbtnClosed;
     private TextView tvUpImg;
     private Button btnUpdate;
     private APITour apiTour;
@@ -63,6 +63,7 @@ public class UpdateTourActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_tour);
         init();
+        handleStatusRadioButton();
 
         // hien thi date picker cho muc nhap startDate:
         final Calendar myCalendar = Calendar.getInstance();
@@ -158,38 +159,42 @@ public class UpdateTourActivity extends AppCompatActivity {
                     if (rbtnPublic.isChecked()) {
                         isPrivate = false;
                     }
-                    String strAvatar;
-                    if(imgBase64Format == null){
-                        strAvatar = null;
+                    Number status = 0;
+                    if (rbtnCanceled.isChecked()) {
+                        status = -1;
+                    } else if (rbtnOpen.isChecked()) {
+                        status = 0;
+                    } else if (rbtnStarted.isChecked()) {
+                        status = 1;
+                    } else if (rbtnClosed.isChecked()) {
+                        status = 2;
                     }
-                    else{
-                        if(imgBase64Format.isEmpty() ){
+                    String strAvatar;
+                    if (imgBase64Format == null) {
+                        strAvatar = null;
+                    } else {
+                        if (imgBase64Format.isEmpty()) {
                             strAvatar = null;
-                        }
-                        else{
+                        } else {
                             strAvatar = imgBase64Format;
                         }
                     }
 
                     strAvatar = null; // gui null, vi gui dinh dang base64 server ko response
-                    apiTour.updateUserTour(TokenStorage.getInstance().getAccessToken(), id, name, startDate, endDate,isPrivate, adults, childs, minCost, maxCost, strAvatar).enqueue(new Callback<UpdateUserTour>() {
+                    apiTour.updateUserTour(TokenStorage.getInstance().getAccessToken(), id, name, startDate, endDate, isPrivate, adults, childs, minCost, maxCost, status, strAvatar).enqueue(new Callback<UpdateUserTour>() {
                         @Override
                         public void onResponse(Call<UpdateUserTour> call, Response<UpdateUserTour> response) {
-                            if(response.isSuccessful()){
+                            if (response.isSuccessful()) {
                                 Toast.makeText(UpdateTourActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(UpdateTourActivity.this, HomeActivity.class);
                                 startActivity(intent);
-                            }
-                            else if(response.code() == 400){
+                            } else if (response.code() == 400) {
                                 Toast.makeText(UpdateTourActivity.this, "Thông tin nhập chưa đầy đủ", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(response.code() == 404){
+                            } else if (response.code() == 404) {
                                 Toast.makeText(UpdateTourActivity.this, "Tour không tồn tại", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(response.code() == 403){
+                            } else if (response.code() == 403) {
                                 Toast.makeText(UpdateTourActivity.this, "Không được phép cập nhật", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(response.code() == 500){
+                            } else if (response.code() == 500) {
                                 Toast.makeText(UpdateTourActivity.this, "Lỗi server, không thể cập nhật", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -222,6 +227,10 @@ public class UpdateTourActivity extends AppCompatActivity {
         btnUpdate = (Button) findViewById(R.id.btn_update_tour);
         rbtnPrivate = (RadioButton) findViewById(R.id.updatetour_rbtn_private);
         rbtnPublic = (RadioButton) findViewById(R.id.updatetour_rbtn_public);
+        rbtnCanceled = (RadioButton) findViewById(R.id.updatetour_rbtn_canceled);
+        rbtnOpen = (RadioButton) findViewById(R.id.updatetour_rbtn_open);
+        rbtnStarted = (RadioButton) findViewById(R.id.updatetour_rbtn_started);
+        rbtnClosed = (RadioButton) findViewById(R.id.updatetour_rbtn_closed);
 
 
         if (tour.getName() == null) {
@@ -270,6 +279,53 @@ public class UpdateTourActivity extends AppCompatActivity {
         }
         // api ko gui isPrivate ve! -> de mac dinh la private
         rbtnPrivate.setChecked(true);
+        int status = tour.getStatus().intValue();
+        if (status == -1)
+            rbtnClosed.setChecked(true);
+        else if(status == 0)
+            rbtnOpen.setChecked(true);
+        else if(status == 1)
+            rbtnStarted.setChecked(true);
+        else if(status == 2)
+            rbtnClosed.setChecked(true);
+    }
+
+    private void handleStatusRadioButton() {
+        rbtnCanceled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rbtnOpen.setChecked(false);
+                rbtnStarted.setChecked(false);
+                rbtnClosed.setChecked(false);
+            }
+        });
+
+        rbtnOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rbtnCanceled.setChecked(false);
+                rbtnStarted.setChecked(false);
+                rbtnClosed.setChecked(false);
+            }
+        });
+
+        rbtnStarted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rbtnCanceled.setChecked(false);
+                rbtnOpen.setChecked(false);
+                rbtnClosed.setChecked(false);
+            }
+        });
+
+        rbtnClosed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rbtnCanceled.setChecked(false);
+                rbtnOpen.setChecked(false);
+                rbtnStarted.setChecked(false);
+            }
+        });
 
     }
 

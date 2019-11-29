@@ -295,7 +295,7 @@ public class CreateTourActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<CreateTour> call, Response<CreateTour> response) {
                 if(response.isSuccessful()){
-                    int tourID = response.body().getId();
+                    Number tourID = response.body().getId();
                     Toast.makeText(CreateTourActivity.this, "Tạo tour thành công", Toast.LENGTH_SHORT).show();
                     // gui tour id sang man hinh create stop point:
                     Intent intent = new Intent(CreateTourActivity.this, CreateStopPointActivity.class);
