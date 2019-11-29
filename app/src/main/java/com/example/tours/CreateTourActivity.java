@@ -53,7 +53,6 @@ public class CreateTourActivity extends AppCompatActivity {
     private EditText edtTourName, edtStartDate, edtEndDate, edtAdult, edtChild, edtMinCost, edtMaxCost;
     private RadioButton rbtnPrivate, rbtnPublic;
     private TextView tvUpImg;
-    private ImageView imgAvatar;
     private Button btnCreate;
     private APITour apiTour;
     private Bitmap bitmap;
@@ -330,7 +329,6 @@ public class CreateTourActivity extends AppCompatActivity {
         edtMinCost = (EditText) findViewById(R.id.createtour_min_cost);
         edtMaxCost = (EditText) findViewById(R.id.createtour_max_cost);
         tvUpImg = (TextView) findViewById(R.id.upload_image);
-        imgAvatar = (ImageView) findViewById(R.id.createtour_avatar);
         btnCreate = (Button) findViewById(R.id.btn_create);
         imgBase64Format = "";
 

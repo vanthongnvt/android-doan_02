@@ -1,8 +1,8 @@
 package com.example.tours.Adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,32 +14,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tours.Model.Tour;
+import com.example.tours.Model.UserTour;
 import com.example.tours.R;
+import com.example.tours.UpdateTourActivity;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.BufferUnderflowException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ListTourAdapter extends ArrayAdapter<Tour> {
+public class UserListTourAdapter extends ArrayAdapter<UserTour> {
     private Context context;
     private Integer resource;
-    private List<Tour> list;
-    private List<Tour> list_backup;
+    private List<UserTour> list;
+    private List<UserTour> list_backup;
 
-    public ListTourAdapter(@NonNull Context context, int resource, @NonNull List<Tour> objects) {
+    public static String EDIT_ID_TOUR = "EDIT ID TOUR";
+
+    public UserListTourAdapter(@NonNull Context context, int resource, @NonNull List<UserTour> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
@@ -58,17 +54,19 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         private final TextView tvChilds;
         private final TextView tvMinCost;
         private final TextView tvMaxCost;
+        private final ImageView btnEdit;
 
 
         private ViewHolder(View row) {
-            imgAvater = (ImageView) row.findViewById(R.id.img_avatar);
-            tvTourName = (TextView) row.findViewById(R.id.tv_tourName);
-            tvStartDate = (TextView) row.findViewById(R.id.tv_startDate);
-            tvEndDate = (TextView) row.findViewById(R.id.tv_endDate);
-            tvAdults = (TextView) row.findViewById(R.id.tv_adults);
-            tvChilds = (TextView) row.findViewById(R.id.tv_childs);
-            tvMinCost = (TextView) row.findViewById(R.id.tv_minCost);
-            tvMaxCost = (TextView) row.findViewById(R.id.tv_maxCost);
+            imgAvater = (ImageView) row.findViewById(R.id.listusertrip_item_img_avatar);
+            tvTourName = (TextView) row.findViewById(R.id.listusertrip_item_tv_tourName);
+            tvStartDate = (TextView) row.findViewById(R.id.listusertrip_item_tv_startDate);
+            tvEndDate = (TextView) row.findViewById(R.id.listusertrip_item_tv_endDate);
+            tvAdults = (TextView) row.findViewById(R.id.listusertrip_item_tv_adults);
+            tvChilds = (TextView) row.findViewById(R.id.listusertrip_item_tv_childs);
+            tvMinCost = (TextView) row.findViewById(R.id.listusertrip_item_tv_minCost);
+            tvMaxCost = (TextView) row.findViewById(R.id.listusertrip_item_tv_maxCost);
+            btnEdit = (ImageView) row.findViewById(R.id.btn_edit_user_tour);
         }
     }
 
@@ -76,19 +74,19 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View row;
-        ViewHolder holder;
+        UserListTourAdapter.ViewHolder holder;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
-            holder = new ViewHolder(row);
+            holder = new UserListTourAdapter.ViewHolder(row);
             row.setTag(holder);
         } else {
             row = convertView;
-            holder = (ViewHolder) row.getTag();
+            holder = (UserListTourAdapter.ViewHolder) row.getTag();
         }
 
-        Tour tour = list.get(position);
+        UserTour tour = list.get(position);
 
         // set thuoc tinh cho item:
         if (tour.getAvatar() != null){
@@ -148,6 +146,14 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             holder.tvMaxCost.setText(tour.getMaxCost());
         }
 
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, UpdateTourActivity.class);
+                intent.putExtra("UserTour", tour);
+                context.startActivity(intent);
+            }
+        });
 
         return row;
 
@@ -159,7 +165,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             list.addAll(list_backup);
         }
         else {
-            for(Tour item: list_backup){
+            for(UserTour item: list_backup){
                 if(item.getName() != null && item.getName().contains(s)){
                     list.add(item);
                 }
@@ -168,6 +174,4 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         notifyDataSetChanged();
     }
 
-
 }
-

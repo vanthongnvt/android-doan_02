@@ -9,6 +9,8 @@ import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
+import com.example.tours.Model.UpdateUserTour;
+import com.example.tours.Model.UserListTour;
 
 import java.util.List;
 
@@ -91,4 +93,23 @@ public interface APITour {
                                        @Field("tourId") String tourId,
                                        @Query("invitedUserId") String invitedUserId,
                                        @Query("isInvited") Boolean isInvited);
+
+    @GET("/tour/history-user")
+    Call<UserListTour> userListTour(@Header("Authorization") String token,
+                                    @Query("pageIndex") Integer pageIndex,
+                                    @Query("pageSize") Integer pageSize);
+
+    @POST("/tour/update-tour")
+    @FormUrlEncoded
+    Call<UpdateUserTour> updateUserTour(@Header("Authorization") String token,
+                                        @Field("id") String id,
+                                        @Field("name") String tourName,
+                                        @Field("startDate") Number startDate,
+                                        @Field("endDate") Number endDate,
+                                        @Field("isPrivate") Boolean isPrivate,
+                                        @Field("adults") Number adults,
+                                        @Field("childs") Number childs,
+                                        @Field("minCost") Number minCost,
+                                        @Field("maxCost") Number maxCost,
+                                        @Field("avatar") String avatar);
 }

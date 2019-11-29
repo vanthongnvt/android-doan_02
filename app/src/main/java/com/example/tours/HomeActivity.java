@@ -6,6 +6,7 @@ import android.view.MenuItem;
 
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.ui.home.HomeFragment;
+import com.example.tours.ui.usertrip.UserTripFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
                         toolbar.setTitle(R.string.title_home);
                         return true;
                     case R.id.navigation_history:
+                        fragment = new UserTripFragment();
+                        loadFragment(fragment);
                         toolbar.setTitle(R.string.title_user_trip);
                         return true;
                     case R.id.navigation_map:

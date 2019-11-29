@@ -247,14 +247,6 @@
                 android:text="Nhấn để tải ảnh lên cho tour"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/createtour_avatar"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
             <Button
                 android:id="@+id/btn_create"
                 android:layout_width="fill_parent"
