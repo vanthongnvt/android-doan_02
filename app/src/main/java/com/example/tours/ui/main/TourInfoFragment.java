@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class TourInfoFragment extends Fragment {
     private TextView tvMaxCost;
     private TextView tvStartDate;
     private TextView tvEndDate;
+    private TextView tvStatus;
     private ImageView btnEditStopPoints;
     private ListView listView;
     private ListStopPointAdapter stopPointAdapter;
@@ -59,6 +61,7 @@ public class TourInfoFragment extends Fragment {
         bundle.putSerializable(ARG_PARAM1, tourInfo);
         bundle.putBoolean("isHostUser",isHostUser);
         fragment.setArguments(bundle);
+//        Log.d("CK_HOST", "newInstance: "+isHostUser);
         return fragment;
     }
 
@@ -97,6 +100,9 @@ public class TourInfoFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(root.getContext(), CreateStopPointActivity.class);
                 intent.putExtra("tourInfo",tourInfo);
+                if(!isHostUser){
+                    intent.putExtra("canNotEdit",true);
+                }
                 startActivity(intent);
             }
         });
@@ -114,14 +120,12 @@ public class TourInfoFragment extends Fragment {
         tvMaxCost=root.findViewById(R.id.tv_maxCost);
         tvStartDate=root.findViewById(R.id.tv_startDate);
         tvEndDate=root.findViewById(R.id.tv_endDate);
+        tvStatus=root.findViewById(R.id.tour_status);
         btnEditStopPoints=root.findViewById(R.id.btn_edit_stop_points);
         listView=root.findViewById(R.id.list_view_stop_point);
         stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.listview_temporary_stop_point_item,tourInfo.getStopPoints());
         if(isHostUser){
             btnCloneTour.setVisibility(View.GONE);
-        }
-        else{
-            btnEditStopPoints.setVisibility(View.GONE);
         }
         if (tourInfo.getAvatar() != null){
             Picasso.get().load(tourInfo.getAvatar()).into(imageAvatar);
@@ -175,6 +179,19 @@ public class TourInfoFragment extends Fragment {
         }
         else{
             tvMaxCost.setText(tourInfo.getMaxCost());
+        }
+        if(tourInfo.getStatus()==-1){
+            tvStatus.setText(R.string.tour_cancled);
+            tvStatus.setTextColor(getResources().getColor(R.color.colorCustomPrimary));
+        }
+        else if(tourInfo.getStatus()==0){
+            tvStatus.setText(R.string.tour_open);
+        }
+        else if(tourInfo.getStatus()==1){
+            tvStatus.setText(R.string.tour_started);
+        }
+        else if(tourInfo.getStatus()==2){
+            tvStatus.setText(R.string.tour_closed);
         }
 
         listView.setAdapter(stopPointAdapter);

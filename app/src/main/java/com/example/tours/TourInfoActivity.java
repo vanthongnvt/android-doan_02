@@ -53,6 +53,9 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
                     if(TokenStorage.getInstance().getUserId()==Integer.parseInt(tourInfo.getHostId())){
                         isHostUser=true;
                     }
+                    else{
+                        isHostUser=false;
+                    }
                     sectionsPagerAdapter = new SectionsPagerAdapter(TourInfoActivity.this, getSupportFragmentManager());
                     viewPager = findViewById(R.id.view_pager);
                     tabs = findViewById(R.id.tabs);

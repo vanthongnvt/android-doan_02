@@ -29,12 +29,14 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
     private Integer resource;
     private List<StopPoint> list;
     private List<String> listSerVice;
+    private boolean canNotEdit;
 
-    public ListStopPointTemporaryAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects) {
+    public ListStopPointTemporaryAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects, boolean canNotEdit) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         this.list = objects;
+        this.canNotEdit=canNotEdit;
 
         listSerVice = Arrays.asList("Restaurant", "Hotel", "Rest Station", "Other");
     }
@@ -96,12 +98,17 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
         holder.tvStopPointLeaveAt.setText(date2);
 
-        holder.btnDeleteStopPoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showConfirmBox(position);
-            }
-        });
+        if(canNotEdit){
+            holder.btnDeleteStopPoint.setVisibility(View.GONE);
+        }
+        else {
+            holder.btnDeleteStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showConfirmBox(position);
+                }
+            });
+        }
 
         holder.btnGeoLocateStopPoint.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,13 +116,17 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
                 ((CreateStopPointActivity)context).moveCameraWhenSelectStopPoint(stopPoint);
             }
         });
-
-        holder.btnEditStopPoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((CreateStopPointActivity)context).showEditStopPointDialog(position,stopPoint,date1,date2);
-            }
-        });
+        if(canNotEdit){
+            holder.btnEditStopPoint.setVisibility(View.GONE);
+        }
+        else {
+            holder.btnEditStopPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((CreateStopPointActivity) context).showEditStopPointDialog(position, stopPoint, date1, date2);
+                }
+            });
+        }
 
         return row;
     }

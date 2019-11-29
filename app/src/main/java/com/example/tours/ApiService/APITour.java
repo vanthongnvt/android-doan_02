@@ -125,4 +125,10 @@ public interface APITour {
                                         @Field("maxCost") Number maxCost,
                                         @Field("avatar") String avatar,
                                         @Field("index") Integer index);
+
+    @POST("/tour/add/review")
+    Call<MessageResponse> addReview(@Header("Authorization") String token,
+                                    @Field("tourId") Integer tourId,
+                                    @Field("point") Integer point,
+                                    @Field("review") Integer review);
 }

@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,7 +32,9 @@ import com.example.tours.MainActivity;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.Tour;
+import com.example.tours.Model.UserTour;
 import com.example.tours.R;
+import com.example.tours.TourInfoActivity;
 
 import java.util.List;
 
@@ -109,6 +112,15 @@ public class HomeFragment extends Fragment {
                     listTourAdapter.notifyDataSetChanged();
 
                     listViewTour.setAdapter(listTourAdapter);
+                    listViewTour.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Tour tour = tours.get(position);
+                            Intent intent = new Intent(view.getContext(), TourInfoActivity.class);
+                            intent.putExtra("tourId",tour.getId());
+                            startActivity(intent);
+                        }
+                    });
 
                     // search:
 

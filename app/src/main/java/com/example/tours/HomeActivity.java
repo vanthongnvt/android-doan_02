@@ -21,14 +21,16 @@ import androidx.navigation.ui.NavigationUI;
 
 public class HomeActivity extends AppCompatActivity {
     private ActionBar toolbar;
-
+    private FragmentTransaction transaction;
+    private int idMenuSelected=1;
+    private BottomNavigationView navView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         toolbar = getSupportActionBar();
         toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -37,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-        NavigationUI.setupWithNavController(navView, navController);
+//        NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -46,22 +48,25 @@ public class HomeActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         fragment = new HomeFragment();
-                        loadFragment(fragment);
-                        toolbar.setTitle(R.string.title_home);
+                        loadFragment(fragment,R.string.title_home);
+                        idMenuSelected=1;
                         return true;
                     case R.id.navigation_history:
                         fragment = new UserTripFragment();
-                        loadFragment(fragment);
-                        toolbar.setTitle(R.string.title_user_trip);
+                        loadFragment(fragment,R.string.title_user_trip);
+                        idMenuSelected=2;
                         return true;
                     case R.id.navigation_map:
                         toolbar.setTitle(R.string.title_map);
+                        idMenuSelected=3;
                         return true;
                     case R.id.navigation_notifications:
                         toolbar.setTitle(R.string.title_notifications);
+                        idMenuSelected=4;
                         return true;
                     case R.id.navigation_user_settings:
                         toolbar.setTitle(R.string.title_user_settings);
+                        idMenuSelected=5;
                         return true;
                 }
                 return false;
@@ -73,12 +78,23 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment, int resId) {
         // load fragment
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        toolbar.setTitle(resId);
+        transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.nav_host_fragment, fragment);
-        transaction.addToBackStack(null);
+//        transaction.addToBackStack(getString(resId));
         transaction.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(idMenuSelected!=1) {
+            navView.setSelectedItemId(R.id.navigation_home);
+            idMenuSelected=1;
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
 }

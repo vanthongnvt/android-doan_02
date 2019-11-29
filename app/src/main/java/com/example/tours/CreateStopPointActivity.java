@@ -92,6 +92,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private static final float DEFAULT_ZOOM = 15f;
     private static final String TAG="SHOW_MAP";
 
+    private boolean canNotEdit=false;
     private EditText edtSearchAddr;
     private ImageView btnCurLocation;
     private GoogleMap mMap;
@@ -259,8 +260,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                        Toast.makeText(CreateStopPointActivity.this,R.string.no_stop_point_selected , Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CreateStopPointActivity.this, TourInfoActivity.class);
                         intent.putExtra("tourId",tourId);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        finish();
                     }
                     else {
                         addListStopPoint();
@@ -511,6 +513,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             tourId = tourInfo.getId();
             currentList.addAll(tourInfo.getStopPoints());
             currentSizeStopPoint = currentList.size();
+            if(intentTourID.hasExtra("canNotEdit")){
+                canNotEdit=true;
+                Log.d(TAG, "init: "+ intentTourID.getExtras().getBoolean("canNotEdit"));
+            }
+            else{
+                Log.d(TAG, "init: AKAKKAKA");
+            }
         }
 
         apiTour=new APIRetrofitCreator().getAPIService();
@@ -519,6 +528,10 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
         btnCurLocation= findViewById(R.id.map_btn_cur_location);
         btnShowDialogStopPointInfo = findViewById(R.id.map_btn_show_dialog);
+        if(canNotEdit){
+            btnShowDialogStopPointInfo.setVisibility(View.GONE);
+        }
+
         dialogCreateStopPoint= new Dialog(CreateStopPointActivity.this,R.style.PlacesAutocompleteThemeFullscreen);
         dialogCreateStopPoint.setContentView(R.layout.dialog_create_stop_point);
         btnCloseDialogStopPointInfo =dialogCreateStopPoint.findViewById(R.id.map_btn_close_dialog);
@@ -538,9 +551,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         dialogListStopPoint.setContentView(R.layout.dialog_list_temporary_stop_point);
         btnCloseDialogListStopPoint=dialogListStopPoint.findViewById(R.id.map_btn_close_dialog_list);
         btnCompleteUpdateStopPoint=dialogListStopPoint.findViewById(R.id.btn_update_list_stop_point);
+        if(canNotEdit){
+            btnCloseDialogListStopPoint.setVisibility(View.GONE);
+            btnCompleteUpdateStopPoint.setVisibility(View.GONE);
+        }
 
         listViewStopPoint =dialogListStopPoint.findViewById(R.id.map_list_view_temporary_stop_point);
-        listStopPointTemporaryAdapter = new ListStopPointTemporaryAdapter(CreateStopPointActivity.this,R.layout.listview_temporary_stop_point_item,currentList);
+        listStopPointTemporaryAdapter = new ListStopPointTemporaryAdapter(CreateStopPointActivity.this,R.layout.listview_temporary_stop_point_item,currentList,canNotEdit);
         listStopPointTemporaryAdapter.notifyDataSetChanged();
         listViewStopPoint.setAdapter(listStopPointTemporaryAdapter);
 
@@ -766,7 +783,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                    dialogCreateStopPoint.hide();
                     Intent intent = new Intent(CreateStopPointActivity.this, TourInfoActivity.class);
                     intent.putExtra("tourId",tourId);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                 }
                 else{
@@ -930,9 +947,11 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onResponse(Call<StopPoint> call, Response<StopPoint> response) {
                 if(response.isSuccessful()){
-
+                    Toast.makeText(CreateStopPointActivity.this, R.string.updated_stop_point_info, Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
