@@ -59,4 +59,13 @@ public class TokenStorage extends Application {
     public boolean hasTokenExpired() {
        return false;
     }
+
+    public void removeToken(){
+        sInstance.accessToken=null;
+        sInstance.userId=null;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.remove("Id");
+        editor.apply();
+    }
 }

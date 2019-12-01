@@ -45,7 +45,7 @@ public class CreateTour {
     private Number desNumber;
     @SerializedName("id")
     @Expose
-    private Number id;
+    private Integer id;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -157,11 +157,11 @@ public class CreateTour {
         this.desNumber = desNumber;
     }
 
-    public Number getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Number id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

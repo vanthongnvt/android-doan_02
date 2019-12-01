@@ -163,7 +163,7 @@ public class TourMemberFragment extends Fragment {
     }
 
     public void searchMember(String key){
-        apiTour.searchUser(TokenStorage.getInstance().getAccessToken(),key,10,currPage).enqueue(new Callback<ListUserSearch>() {
+        apiTour.searchUser(TokenStorage.getInstance().getAccessToken(),key,currPage,10).enqueue(new Callback<ListUserSearch>() {
             @Override
             public void onResponse(Call<ListUserSearch> call, Response<ListUserSearch> response) {
                 ListUserSearch listUserSearch=response.body();

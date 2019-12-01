@@ -10,7 +10,7 @@ public class UpdateUserTour {
     private String hostId;
     @SerializedName("status")
     @Expose
-    private Number status;
+    private Integer status;
     @SerializedName("name")
     @Expose
     private String name;
@@ -34,7 +34,7 @@ public class UpdateUserTour {
     private Number childs;
     @SerializedName("id")
     @Expose
-    private Number id;
+    private Integer id;
     @SerializedName("isPrivate")
     @Expose
     private Boolean isPrivate;
@@ -50,11 +50,11 @@ public class UpdateUserTour {
         this.hostId = hostId;
     }
 
-    public Number getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Number status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -114,11 +114,11 @@ public class UpdateUserTour {
         this.childs = childs;
     }
 
-    public Number getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Number id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

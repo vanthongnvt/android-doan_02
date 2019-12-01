@@ -19,6 +19,7 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.tours.ui.main.SectionsPagerAdapter;
@@ -44,6 +45,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_info);
         tourId = getIntent().getExtras().getInt("tourId");
+//        Log.d("TOUR_INFO", "onCreate: tourId"+tourId);
         apiTour = new APIRetrofitCreator().getAPIService();
         apiTour.getTourInfo(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<TourInfo>() {
             @Override

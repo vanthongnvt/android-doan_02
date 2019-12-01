@@ -6,6 +6,8 @@ import android.view.MenuItem;
 
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.ui.home.HomeFragment;
+import com.example.tours.ui.map.MapFragment;
+import com.example.tours.ui.usersettings.UserSettingsFragment;
 import com.example.tours.ui.usertrip.UserTripFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -57,7 +59,8 @@ public class HomeActivity extends AppCompatActivity {
                         idMenuSelected=2;
                         return true;
                     case R.id.navigation_map:
-                        toolbar.setTitle(R.string.title_map);
+                        fragment = new MapFragment();
+                        loadFragment(fragment,R.string.title_map);
                         idMenuSelected=3;
                         return true;
                     case R.id.navigation_notifications:
@@ -65,7 +68,8 @@ public class HomeActivity extends AppCompatActivity {
                         idMenuSelected=4;
                         return true;
                     case R.id.navigation_user_settings:
-                        toolbar.setTitle(R.string.title_user_settings);
+                        fragment = new UserSettingsFragment();
+                        loadFragment(fragment,R.string.title_user_settings);
                         idMenuSelected=5;
                         return true;
                 }

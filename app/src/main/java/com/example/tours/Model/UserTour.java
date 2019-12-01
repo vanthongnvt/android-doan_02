@@ -9,10 +9,10 @@ public class UserTour implements Serializable {
 
     @SerializedName("id")
     @Expose
-    private Number id;
+    private Integer id;
     @SerializedName("status")
     @Expose
-    private Number status;
+    private Integer status;
     @SerializedName("name")
     @Expose
     private String name;
@@ -47,19 +47,19 @@ public class UserTour implements Serializable {
     @Expose
     private Boolean isKicked;
 
-    public Number getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Number id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Number getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Number status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

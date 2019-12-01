@@ -12,6 +12,7 @@ import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
 import com.example.tours.Model.UpdateUserTour;
+import com.example.tours.Model.UserInfo;
 import com.example.tours.Model.UserListTour;
 
 import java.util.List;
@@ -142,4 +143,12 @@ public interface APITour {
 
     @GET("/tour/history-user-by-status")
     Call<GetStatusTours> getStatusTours(@Header("Authorization") String token);
+
+    @GET("/user/info")
+    Call<UserInfo> getUserInfo(@Header("Authorization") String token);
+
+    @POST("/user/update-avatar")
+    @FormUrlEncoded
+    Call<MessageResponse> updateAvatar(@Header("Authorization") String token,
+                              @Field("file") String imageBase64);
 }
