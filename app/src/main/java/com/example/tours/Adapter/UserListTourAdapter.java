@@ -33,8 +33,6 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
     private List<UserTour> list;
     private List<UserTour> list_backup;
 
-    public static String EDIT_ID_TOUR = "EDIT ID TOUR";
-
     public UserListTourAdapter(@NonNull Context context, int resource, @NonNull List<UserTour> objects) {
         super(context, resource, objects);
         this.context = context;

@@ -35,8 +35,9 @@ public class TokenStorage extends Application {
         return sharedPreferences.getInt("Id",-1);
     }
 
-    public void setToken(String token, Integer userId) {
+    public void setToken(String token, Integer id) {
         accessToken = token;
+        userId= id;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("Id",userId);
         editor.putString(key, token);

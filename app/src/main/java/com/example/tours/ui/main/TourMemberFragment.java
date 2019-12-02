@@ -96,11 +96,13 @@ public class TourMemberFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_tour_member, container, false);
         listViewMember = root.findViewById(R.id.list_view_tour_member);
+
         tourMemberAdapter = new ListTourMemberAdapter(root.getContext(),R.layout.list_view_tour_member_item,tourInfo.getMembers());
         listViewMember.setAdapter(tourMemberAdapter);
 
+        btnShowDialogInviteMember = root.findViewById(R.id.btn_dialog_invite_member);
         if(isHostUser) {
-            btnShowDialogInviteMember = root.findViewById(R.id.btn_dialog_invite_member);
+
             initDialogAddMember(root);
             btnShowDialogInviteMember.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,8 +112,9 @@ public class TourMemberFragment extends Fragment {
                     window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 }
             });
-
-
+        }
+        else{
+            btnShowDialogInviteMember.setVisibility(View.GONE);
         }
         return root;
     }
@@ -152,7 +155,9 @@ public class TourMemberFragment extends Fragment {
         apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(),tourInfo.getId().toString(),user.getId().toString(),tourInfo.getIsPrivate()).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
+                if(response.isSuccessful()) {
+                    Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -170,7 +175,7 @@ public class TourMemberFragment extends Fragment {
 //                searchMemberAdapter.clear();
                 listUser.clear();
                 listUser.addAll(listUserSearch.getUsers());
-                Toast.makeText(getContext(), listUser.size()+"", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), listUser.size()+"", Toast.LENGTH_SHORT).show();
                 searchMemberAdapter.notifyDataSetChanged();
                 currPage++;
             }

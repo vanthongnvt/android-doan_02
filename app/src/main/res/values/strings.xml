@@ -25,7 +25,7 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_home">Trang chủ</string>
     <string name="title_map">Bản đồ</string>
-    <string name="title_notifications">Thông báo</string>
+    <string name="title_notifications">Lời mời</string>
     <string name="title_user_settings">Tài khoản của bạn</string>
     <string name="title_user_trip">Chuyến đi cá nhân</string>
     <!--End Navigation-->
@@ -82,4 +82,7 @@
     <string name="change_avatar_successfully">Thay đổi avatar thành công</string>
     <string name="image_too_large">Lỗi! Hình ảnh quá lớn</string>
 
+<!--    inviation-->
+    <string name="accept_successfully">Đã chấp nhận</string>
+    <string name="refuse_successfully">Đã từ chối</string>
 </resources>

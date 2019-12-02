@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.ui.home.HomeFragment;
 import com.example.tours.ui.map.MapFragment;
+import com.example.tours.ui.notifications.NotificationsFragment;
 import com.example.tours.ui.usersettings.UserSettingsFragment;
 import com.example.tours.ui.usertrip.UserTripFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -64,7 +65,8 @@ public class HomeActivity extends AppCompatActivity {
                         idMenuSelected=3;
                         return true;
                     case R.id.navigation_notifications:
-                        toolbar.setTitle(R.string.title_notifications);
+                        fragment= new NotificationsFragment();
+                        loadFragment(fragment,R.string.title_notifications);
                         idMenuSelected=4;
                         return true;
                     case R.id.navigation_user_settings:
@@ -81,6 +83,9 @@ public class HomeActivity extends AppCompatActivity {
 //        AuthRegister authRegisterOb = (AuthRegister) getIntent().getSerializableExtra("AuthRegister");
 
 
+    }
+    public void setTitleBar(String title){
+        toolbar.setTitle(title);
     }
     private void loadFragment(Fragment fragment, int resId) {
         // load fragment

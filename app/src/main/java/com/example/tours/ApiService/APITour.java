@@ -6,6 +6,7 @@ import com.example.tours.Model.CloneTour;
 import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.GetStatusTours;
 import com.example.tours.Model.ListTour;
+import com.example.tours.Model.ListTourInvitation;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
@@ -94,8 +95,8 @@ public interface APITour {
     @FormUrlEncoded
     Call<MessageResponse> inviteMember(@Header("Authorization") String token,
                                        @Field("tourId") String tourId,
-                                       @Query("invitedUserId") String invitedUserId,
-                                       @Query("isInvited") Boolean isInvited);
+                                       @Field("invitedUserId") String invitedUserId,
+                                       @Field("isInvited") Boolean isInvited);
 
     @GET("/tour/history-user")
     Call<UserListTour> userListTour(@Header("Authorization") String token,
@@ -151,4 +152,15 @@ public interface APITour {
     @FormUrlEncoded
     Call<MessageResponse> updateAvatar(@Header("Authorization") String token,
                               @Field("file") String imageBase64);
+
+    @GET("/tour/get/invitation")
+    Call<ListTourInvitation> userInvitation(@Header("Authorization") String token,
+                                            @Query("pageIndex") Integer pageIndex,
+                                            @Query("pageSize") Integer pageSize);
+
+    @POST("/tour/response/invitation")
+    @FormUrlEncoded
+    Call<MessageResponse> responseInvitation(@Header("Authorization") String token,
+                                       @Field("tourId") Integer id,
+                                       @Field("isAccepted") Boolean isAccepted);
 }
