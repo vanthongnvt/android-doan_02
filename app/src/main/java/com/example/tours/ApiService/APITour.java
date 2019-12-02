@@ -12,10 +12,12 @@ import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
+import com.example.tours.Model.UpdateUserInfo;
 import com.example.tours.Model.UpdateUserTour;
 import com.example.tours.Model.UserInfo;
 import com.example.tours.Model.UserListTour;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -163,4 +165,20 @@ public interface APITour {
     Call<MessageResponse> responseInvitation(@Header("Authorization") String token,
                                        @Field("tourId") Integer id,
                                        @Field("isAccepted") Boolean isAccepted);
+
+    @POST("/user/edit-info")
+    @FormUrlEncoded
+    Call<UpdateUserInfo> updateUserInfo(@Header("Authorization") String token,
+                                        @Field("fullName") String name,
+                                        @Field("email") String email,
+                                        @Field("phone") String phone,
+                                        @Field("gender") Number gender,
+                                        @Field("dob") Date dob);
+
+    @POST("/user/update-password")
+    @FormUrlEncoded
+    Call<UpdateUserInfo> updatePassword(@Header("Authorization") String token,
+                                        @Field("userId") Number id,
+                                        @Field("currentPassword") String currentPassword,
+                                        @Field("newPassword") String newPassword);
 }
