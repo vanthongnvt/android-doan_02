@@ -14,10 +14,12 @@ import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
+import com.example.tours.Model.UpdateUserInfo;
 import com.example.tours.Model.UpdateUserTour;
 import com.example.tours.Model.UserInfo;
 import com.example.tours.Model.UserListTour;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -178,4 +180,19 @@ public interface APITour {
                                  @Query("tourId") Integer tourId,
                                  @Query("pageIndex") Integer pageIndex,
                                  @Query("pageSize") Integer pageSize);
+    @POST("/user/edit-info")
+    @FormUrlEncoded
+    Call<UpdateUserInfo> updateUserInfo(@Header("Authorization") String token,
+                                        @Field("fullName") String name,
+                                        @Field("email") String email,
+                                        @Field("phone") String phone,
+                                        @Field("gender") Number gender,
+                                        @Field("dob") Date dob);
+
+    @POST("/user/update-password")
+    @FormUrlEncoded
+    Call<UpdateUserInfo> updatePassword(@Header("Authorization") String token,
+                                        @Field("userId") Number id,
+                                        @Field("currentPassword") String currentPassword,
+                                        @Field("newPassword") String newPassword);
 }

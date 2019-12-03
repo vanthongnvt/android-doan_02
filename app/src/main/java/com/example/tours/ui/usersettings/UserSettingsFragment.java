@@ -1,6 +1,8 @@
 package com.example.tours.ui.usersettings;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,7 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,20 +32,28 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.CreateTourActivity;
 import com.example.tours.HomeActivity;
 import com.example.tours.MainActivity;
 import com.example.tours.Model.MessageResponse;
+import com.example.tours.Model.UpdateUserInfo;
+import com.example.tours.Model.UpdateUserTour;
+import com.example.tours.Model.User;
 import com.example.tours.Model.UserInfo;
 import com.example.tours.R;
+import com.example.tours.RegisterActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -56,6 +69,7 @@ public class UserSettingsFragment extends Fragment {
     private TextView tvUserEmaill;
     private TextView tvUserAddress;
     private TextView tvDateOfBirth;
+    private TextView tvGender;
     private Button btnLogout;
     private Button btnEditInfo;
     private Button btnChangePassword;
@@ -69,12 +83,14 @@ public class UserSettingsFragment extends Fragment {
     private Button btnSaveAvatar;
     private ImageView tempImage;
     private String imgBase64Format;
+    private UserInfo userInfoForUpdateDialg;
+    private View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 //        userSettingsViewModel =
 //                ViewModelProviders.of(this).get(UserSettingsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_user_settings, container, false);
+        root = inflater.inflate(R.layout.fragment_user_settings, container, false);
 //        final TextView textView = root.findViewById(R.id.text_map);
 //
 //        userSettingsViewModel.getText().observe(this, new Observer<String>() {
@@ -104,8 +120,215 @@ public class UserSettingsFragment extends Fragment {
             }
         });
 
+        btnEditInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openUpdateUserInfoDialog();
+            }
+        });
+
+        btnChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openChangePassDialog();
+            }
+        });
+
         return root;
     }
+
+    private void openChangePassDialog() {
+        Dialog dialog = new Dialog(getContext(), R.style.PlacesAutocompleteThemeFullscreen);
+        dialog.setContentView(R.layout.dialog_update_password);
+        EditText edtOldPass, edtNewPass, edtConfirmPass;
+        Button btnUpdate;
+        edtOldPass = (EditText) dialog.findViewById(R.id.updatepass_oldpass);
+        edtNewPass =(EditText) dialog.findViewById(R.id.updatepass_newpass);
+        edtConfirmPass =(EditText) dialog.findViewById(R.id.updatepass_confirmpass);
+        btnUpdate = (Button) dialog.findViewById(R.id.btn_update_pass);
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String oldPass = edtOldPass.getText().toString().trim();
+                String newPass = edtNewPass.getText().toString().trim();
+                String confirmPass = edtConfirmPass.getText().toString().trim();
+
+                if(newPass.isEmpty()){
+                    Toast.makeText(getActivity(), "Bạn chưa nhập mật khẩu cũ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(oldPass.isEmpty()){
+                    Toast.makeText(getActivity(), "Bạn chưa nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(confirmPass.isEmpty()){
+                    Toast.makeText(getActivity(), "Bạn chưa xác nhận mật khẩu", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(!newPass.equals(confirmPass)){
+                    Toast.makeText(getActivity(), "Mật khẩu mới không trùng khớp", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DialogProgressBar.showProgress(getContext());
+                apiTour.updatePassword(TokenStorage.getInstance().getAccessToken(), userInfo.getId(), oldPass, newPass).enqueue(new Callback<UpdateUserInfo>() {
+                    @Override
+                    public void onResponse(Call<UpdateUserInfo> call, Response<UpdateUserInfo> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(getActivity(), "Cập nhật mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                        else if(response.code() == 400){
+                            Toast.makeText(getActivity(), "Mật khẩu hiện tại không chính xác", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(response.code() ==404){
+                            Toast.makeText(getActivity(), "Tài khoản email / phone không tồn tại", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(response.code() == 500){
+                            Toast.makeText(getActivity(), "Lỗi Server, không thể cập nhật mật khẩu", Toast.LENGTH_SHORT).show();
+                        }
+                        DialogProgressBar.closeProgress();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UpdateUserInfo> call, Throwable t) {
+                        Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
+                    }
+                });
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void openUpdateUserInfoDialog() {
+        Dialog dialog = new Dialog(getContext(), R.style.PlacesAutocompleteThemeFullscreen);
+        dialog.setContentView(R.layout.dialog_update_info_user);
+        EditText edtName, edtEmail, edtPhone, edtDob;
+        RadioButton rbtnMale, rbtnFemale;
+        edtName = (EditText) dialog.findViewById(R.id.updateuserinfo_name);
+        edtEmail = (EditText) dialog.findViewById(R.id.updateuserinfo_email);
+        edtPhone = (EditText) dialog.findViewById(R.id.updateuserinfo_phone);
+        edtDob = (EditText) dialog.findViewById(R.id.updateuserinfo_dob);
+        rbtnMale = (RadioButton) dialog.findViewById(R.id.updateuserinfo_rbtn_male);
+        rbtnFemale = (RadioButton) dialog.findViewById(R.id.updateuserinfo_rbtn_female);
+        Button btnUpdate = (Button) dialog.findViewById(R.id.btn_update_user_info);
+
+        edtName.setText(userInfo.getFullName());
+        edtEmail.setText(userInfo.getEmail());
+        edtPhone.setText(userInfo.getPhone());
+        String strGetDob =userInfo.getDob();
+        if(strGetDob!=null) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateDob = null;
+            try {
+                dateDob = df.parse(strGetDob);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            DateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+            String dob = df2.format(dateDob);
+            edtDob.setText(dob);
+        }
+        if(userInfo.getGender() != null){
+            if(userInfo.getGender() == 0)
+                rbtnFemale.setChecked(true);
+            else if(userInfo.getGender() == 1)
+                rbtnMale.setChecked(true);
+        }
+
+        // hien thi date picker cho muc nhap dob:
+        final Calendar myCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                edtDob.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+        edtDob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(getActivity(), date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = edtName.getText().toString().trim();
+                if(name.isEmpty())
+                    name = null;
+                String email = edtEmail.getText().toString().trim();
+                String phone = edtPhone.getText().toString().trim();
+                Number gender = null;
+                if(rbtnMale.isChecked())
+                    gender = 1;
+                else if(rbtnFemale.isChecked())
+                    gender = 0;
+                String strDob = edtDob.getText().toString().trim();
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                Date dob = null;
+                try {
+                    dob = df.parse(strDob);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Number finalGender = gender;
+                Date finalDob = dob;
+                String finalName = name;
+
+                if(email.isEmpty()){
+                    Toast.makeText(getActivity(), "Email không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(phone.isEmpty()){
+                    Toast.makeText(getActivity(), "Số điện thoại không được để trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DialogProgressBar.showProgress(getContext());
+                apiTour.updateUserInfo(TokenStorage.getInstance().getAccessToken(), finalName, email, phone, finalGender, finalDob).enqueue(new Callback<UpdateUserInfo>() {
+                    @Override
+                    public void onResponse(Call<UpdateUserInfo> call, Response<UpdateUserInfo> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(getActivity(), "Cập nhật thông tin tài khoản thành công", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            getUserInfo(root);
+                        }
+                        else if(response.code() == 400){
+                            Toast.makeText(getActivity(), "Thông tin nhập không hợp lệ", Toast.LENGTH_SHORT).show();
+                        }
+                        DialogProgressBar.closeProgress();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UpdateUserInfo> call, Throwable t) {
+                        Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
+                    }
+                });
+            }
+        });
+
+
+        dialog.show();
+
+    }
+
+
 
     private void init(View root) {
         btnSelectAvatar = root.findViewById(R.id.btn_select_avatar);
@@ -115,6 +338,7 @@ public class UserSettingsFragment extends Fragment {
         tvUserEmaill = root.findViewById(R.id.user_email);
         tvUserAddress = root.findViewById(R.id.user_address);
         tvDateOfBirth = root.findViewById(R.id.user_birth_day);
+        tvGender = root.findViewById(R.id.user_gender);
         btnLogout = root.findViewById(R.id.user_logout);
         btnEditInfo=root.findViewById(R.id.btn_change_user_info);
         btnChangePassword = root.findViewById(R.id.btn_change_user_password);
@@ -136,6 +360,7 @@ public class UserSettingsFragment extends Fragment {
         btnSaveAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogProgressBar.showProgress(getContext());
                 apiTour.updateAvatar(TokenStorage.getInstance().getAccessToken(),imgBase64Format).enqueue(new Callback<MessageResponse>() {
                     @Override
                     public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -155,11 +380,13 @@ public class UserSettingsFragment extends Fragment {
                                 Toast.makeText(root.getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                             }
                         }
+                        DialogProgressBar.closeProgress();
                     }
 
                     @Override
                     public void onFailure(Call<MessageResponse> call, Throwable t) {
                         Toast.makeText(root.getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
                     }
                 });
             }
@@ -207,10 +434,19 @@ public class UserSettingsFragment extends Fragment {
                     if(userInfo.getAvatar()!=null){
                         Picasso.get().load(userInfo.getAvatar()).into(userAvatar);
                     }
-                    tvUserEmaill.setText(userInfo.getFullName());
+                    tvUserFullName.setText(userInfo.getFullName());
                     tvUserPhone.setText(userInfo.getPhone());
                     tvUserEmaill.setText(userInfo.getEmail());
                     tvUserAddress.setText(userInfo.getAddress());
+                    Integer gender = userInfo.getGender();
+                    if(gender == null)
+                        tvGender.setText("(Trống)");
+                    else{
+                        if(gender == 0)
+                            tvGender.setText("Nữ");
+                        else if (gender == 1)
+                            tvGender.setText("Nam");
+                    }
 
                     if(userInfo.getDob()!=null) {
                         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
