@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.CreateTour;
@@ -69,7 +70,7 @@ public class CreateTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_tour);
-        setTitle("Tạo tour");
+        setTitle("Tạo chuyến đi");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
 
         // khoi tao:
@@ -291,12 +292,14 @@ public class CreateTourActivity extends AppCompatActivity {
     }
 
     public void createTour(String token, String name, Number startDate, Number endDate, Boolean isPrivate, Number adult, Number child, Number minCost, Number maxCost, String avatar){
+        DialogProgressBar.showProgress(this);
         apiTour.createTour(token, name, startDate, endDate, isPrivate, adult, child, minCost, maxCost, avatar).enqueue(new Callback<CreateTour>() {
             @Override
             public void onResponse(Call<CreateTour> call, Response<CreateTour> response) {
                 if(response.isSuccessful()){
                     Number tourID = response.body().getId();
                     Toast.makeText(CreateTourActivity.this, "Tạo tour thành công", Toast.LENGTH_SHORT).show();
+                    DialogProgressBar.closeProgress();
                     // gui tour id sang man hinh create stop point:
                     Intent intent = new Intent(CreateTourActivity.this, CreateStopPointActivity.class);
                     intent.putExtra(INTENT_TOUR_ID, tourID + "");
@@ -305,15 +308,19 @@ public class CreateTourActivity extends AppCompatActivity {
                 }
                 else if(response.code() == 400){
                     Toast.makeText(CreateTourActivity.this, "Chưa nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                    DialogProgressBar.closeProgress();
                 }
                 else if(response.code() == 500){
                     Toast.makeText(CreateTourActivity.this, "Lỗi server, không tạo được tour", Toast.LENGTH_SHORT).show();
+                    DialogProgressBar.closeProgress();
                 }
+
             }
 
             @Override
             public void onFailure(Call<CreateTour> call, Throwable t) {
                 Toast.makeText(CreateTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }

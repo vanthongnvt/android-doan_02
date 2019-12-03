@@ -280,6 +280,8 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:text="Chấp nhận"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:textColor="@color/colorCustomPrimary" />
 
             <Button
@@ -290,6 +292,8 @@
                 android:background="@drawable/btn_refuse_bg"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:text="Từ Chối"
                 android:textColor="#F54E4E" />
         </LinearLayout>

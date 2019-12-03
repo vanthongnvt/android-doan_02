@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.example.tours.Adapter.UserListTourAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.UpdateUserTour;
 import com.example.tours.Model.UserListTour;
@@ -62,6 +64,8 @@ public class UpdateTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_tour);
+        setTitle("Sửa chuyến đi");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
         init();
         handleStatusRadioButton();
 
@@ -181,6 +185,7 @@ public class UpdateTourActivity extends AppCompatActivity {
                     }
 
                     strAvatar = null; // gui null, vi gui dinh dang base64 server ko response
+                    DialogProgressBar.showProgress(UpdateTourActivity.this);
                     apiTour.updateUserTour(TokenStorage.getInstance().getAccessToken(), id, name, startDate, endDate, isPrivate, adults, childs, minCost, maxCost, status, strAvatar).enqueue(new Callback<UpdateUserTour>() {
                         @Override
                         public void onResponse(Call<UpdateUserTour> call, Response<UpdateUserTour> response) {
@@ -197,11 +202,13 @@ public class UpdateTourActivity extends AppCompatActivity {
                             } else if (response.code() == 500) {
                                 Toast.makeText(UpdateTourActivity.this, "Lỗi server, không thể cập nhật", Toast.LENGTH_SHORT).show();
                             }
+                            DialogProgressBar.closeProgress();
                         }
 
                         @Override
                         public void onFailure(Call<UpdateUserTour> call, Throwable t) {
                             Toast.makeText(UpdateTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                            DialogProgressBar.closeProgress();
                         }
                     });
                 }

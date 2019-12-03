@@ -3,6 +3,7 @@ package com.example.tours.ApiService;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
 import com.example.tours.Model.CloneTour;
+import com.example.tours.Model.CommentList;
 import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.GetStatusTours;
 import com.example.tours.Model.ListTour;
@@ -10,6 +11,7 @@ import com.example.tours.Model.ListTourInvitation;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
+import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.UpdateStopPointsOfTour;
 import com.example.tours.Model.UpdateUserTour;
@@ -163,4 +165,17 @@ public interface APITour {
     Call<MessageResponse> responseInvitation(@Header("Authorization") String token,
                                        @Field("tourId") Integer id,
                                        @Field("isAccepted") Boolean isAccepted);
+
+    @POST("/tour/comment")
+    @FormUrlEncoded
+    Call<MessageResponse> sendComment(@Header("Authorization") String Token,
+                                      @Field("tourId") Integer tourId,
+                                      @Field("userId") Integer userId,
+                                      @Field("comment") String comment);
+
+    @GET("/tour/comment-list")
+    Call<CommentList> getComment(@Header("Authorization") String token,
+                                 @Query("tourId") Integer tourId,
+                                 @Query("pageIndex") Integer pageIndex,
+                                 @Query("pageSize") Integer pageSize);
 }

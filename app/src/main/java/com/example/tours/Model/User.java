@@ -39,6 +39,9 @@ public class User {
     }
 
     public String getFullName() {
+        if(fullName==null){
+            return "<ID: "+ id+" >";
+        }
         return fullName;
     }
 

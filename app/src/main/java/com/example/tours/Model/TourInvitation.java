@@ -82,6 +82,10 @@ public class TourInvitation {
     }
 
     public String getHostName() {
+
+        if(hostName==null){
+            return "<ID: "+ hostId+" >";
+        }
         return hostName;
     }
 

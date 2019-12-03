@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.Auth;
 import com.example.tours.Model.AuthRegister;
@@ -157,6 +158,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void Register(final String strPass, String strFullName, final String strEmail, String strPhone, String strAddress, String strDob, Number numGender) {
         // goi api va gui rq
+        DialogProgressBar.showProgress(this);
         apiTour.Register(strPass, strFullName, strEmail, strPhone, strAddress, strDob, numGender).enqueue(new Callback<AuthRegister>() {
             @Override
             public void onResponse(Call<AuthRegister> call, Response<AuthRegister> response) {
@@ -191,12 +193,15 @@ public class RegisterActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                    DialogProgressBar.closeProgress();
                 }
+
             }
 
             @Override
             public void onFailure(Call<AuthRegister> call, Throwable t) {
                 Toast.makeText(RegisterActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }
@@ -218,6 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Auth> call, Throwable t) {
                 Toast.makeText(RegisterActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }

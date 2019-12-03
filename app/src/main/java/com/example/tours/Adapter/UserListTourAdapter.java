@@ -75,7 +75,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         UserListTourAdapter.ViewHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new UserListTourAdapter.ViewHolder(row);
             row.setTag(holder);

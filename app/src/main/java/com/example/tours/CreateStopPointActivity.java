@@ -43,6 +43,7 @@ import android.widget.Toast;
 import com.example.tours.Adapter.ListStopPointTemporaryAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.StopPoint;
@@ -773,6 +774,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
     private void addListStopPoint(){
         //goi api
+        DialogProgressBar.showProgress(this);
         UpdateStopPointsOfTour updateStopPointsOfTour = new UpdateStopPointsOfTour(tourId,addList,deleteList);
         apiTour.addStopPointToTour(TokenStorage.getInstance().getAccessToken(),updateStopPointsOfTour).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -783,8 +785,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 //                    dialogCreateStopPoint.hide();
                     Intent intent = new Intent(CreateStopPointActivity.this, TourInfoActivity.class);
                     intent.putExtra("tourId",tourId);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                 }
                 else{
                     JSONObject jsonObject = null;
@@ -798,11 +801,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                         e.printStackTrace();
                     }
                 }
+                DialogProgressBar.closeProgress();
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }
@@ -935,6 +940,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
 
     private void updateStopPointInfo(Integer id,StopPoint stopPoint){
+        DialogProgressBar.showProgress(this);
         apiTour.updateStopPointInfo(TokenStorage.getInstance().getAccessToken(),
                 id.toString(),
                 stopPoint.getName(),
@@ -952,11 +958,13 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 else {
                     Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                 }
+                DialogProgressBar.closeProgress();
             }
 
             @Override
             public void onFailure(Call<StopPoint> call, Throwable t) {
                 Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }

@@ -23,6 +23,7 @@ import com.example.tours.Adapter.ListSearchMemberAdapter;
 import com.example.tours.Adapter.ListTourMemberAdapter;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
@@ -146,6 +147,7 @@ public class TourMemberFragment extends Fragment {
     }
 
     public void inviteMember(User user){
+        DialogProgressBar.showProgress(getContext());
         for (TourMember member:tourInfo.getMembers()){
             if(member.getId().equals(user.getId())){
                 Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
@@ -158,12 +160,15 @@ public class TourMemberFragment extends Fragment {
                 if(response.isSuccessful()) {
                     Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
                 }
+                DialogProgressBar.closeProgress();
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
+
         });
     }
 

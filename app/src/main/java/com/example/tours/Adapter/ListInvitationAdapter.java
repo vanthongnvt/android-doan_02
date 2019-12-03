@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.TourInvitation;
@@ -94,7 +95,7 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
         ListInvitationAdapter.ViewHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new ListInvitationAdapter.ViewHolder(row);
             row.setTag(holder);
@@ -203,6 +204,7 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
         holder.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogProgressBar.showProgress(context);
                 apiTour.responseInvitation(TokenStorage.getInstance().getAccessToken(),tour.getId(),true).enqueue(new Callback<MessageResponse>() {
                     @Override
                     public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -211,11 +213,13 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
                             notifyDataSetChanged();
                             Toast.makeText(context,R.string.accept_successfully, Toast.LENGTH_SHORT).show();
                         }
+                        DialogProgressBar.closeProgress();
                     }
 
                     @Override
                     public void onFailure(Call<MessageResponse> call, Throwable t) {
                         Toast.makeText(context,R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
                     }
                 });
             }
@@ -224,6 +228,7 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
         holder.btnRefuse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogProgressBar.showProgress(context);
                 apiTour.responseInvitation(TokenStorage.getInstance().getAccessToken(),tour.getId(),false).enqueue(new Callback<MessageResponse>() {
                     @Override
                     public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -232,11 +237,13 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
                             notifyDataSetChanged();
                             Toast.makeText(context,R.string.refuse_successfully, Toast.LENGTH_SHORT).show();
                         }
+                        DialogProgressBar.closeProgress();
                     }
 
                     @Override
                     public void onFailure(Call<MessageResponse> call, Throwable t) {
                         Toast.makeText(context,R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
                     }
                 });
             }

@@ -11,18 +11,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.tours.Model.TourMember;
+import com.example.tours.Model.TourComment;
 import com.example.tours.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ListTourMemberAdapter extends ArrayAdapter<TourMember> {
+public class ListTourCommentAdapter extends ArrayAdapter<TourComment> {
     private Context context;
     private Integer resource;
-    private List<TourMember> list;
+    private List<TourComment> list;
 
-    public ListTourMemberAdapter(@NonNull Context context, int resource, @NonNull List<TourMember> objects) {
+    public ListTourCommentAdapter(@NonNull Context context, int resource, @NonNull List<TourComment> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
@@ -34,14 +34,14 @@ public class ListTourMemberAdapter extends ArrayAdapter<TourMember> {
 
         private final TextView tvMemberName;
         private final ImageView imgMemberAvatar;
-        private final TextView tvMemberPhone;
-        private final TextView tvHost;
+        private final TextView tvMemberComment;
+        private final TextView tvCommentTime;
 
         private ViewHolder(View row) {
             tvMemberName = row.findViewById(R.id.tv_member_name);
             imgMemberAvatar=row.findViewById(R.id.member_avatar);
-            tvMemberPhone=row.findViewById(R.id.tv_member_phone);
-            tvHost=row.findViewById(R.id.tv_host);
+            tvMemberComment=row.findViewById(R.id.tv_comment_content);
+            tvCommentTime= row.findViewById(R.id.tv_comment_time);
         }
     }
 
@@ -49,28 +49,26 @@ public class ListTourMemberAdapter extends ArrayAdapter<TourMember> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View row;
-        ListTourMemberAdapter.ViewHolder holder;
+        ListTourCommentAdapter.ViewHolder holder;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
-            holder = new ListTourMemberAdapter.ViewHolder(row);
+            holder = new ListTourCommentAdapter.ViewHolder(row);
             row.setTag(holder);
         } else {
             row = convertView;
-            holder = (ListTourMemberAdapter.ViewHolder) row.getTag();
+            holder = (ListTourCommentAdapter.ViewHolder) row.getTag();
         }
 
-        TourMember tourMember = list.get(position);
+        TourComment tourMember = list.get(position);
         if(tourMember.getAvatar()!=null&&!tourMember.getAvatar().isEmpty()){
             Picasso.get().load(tourMember.getAvatar()).into(holder.imgMemberAvatar);
         }
 
         holder.tvMemberName.setText(tourMember.getName());
-        holder.tvMemberPhone.setText(tourMember.getPhone());
-        if(tourMember.getIsHost()){
-            holder.tvHost.setText(R.string.host);
-        }
+        holder.tvMemberComment.setText(tourMember.getComment());
+        holder.tvCommentTime.setText(tourMember.getCreatedOn());
         return row;
     }
 
@@ -81,7 +79,7 @@ public class ListTourMemberAdapter extends ArrayAdapter<TourMember> {
 
     @Nullable
     @Override
-    public TourMember getItem(int position) {
+    public TourComment getItem(int position) {
         return list.get(position);
     }
 

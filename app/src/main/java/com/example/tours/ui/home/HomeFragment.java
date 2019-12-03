@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
     private EditText edtHomeSearch;
     private ImageView btnAddTour;
     private int numTotalTours;
+    private ProgressBar progressBar;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -66,7 +68,9 @@ public class HomeFragment extends Fragment {
         totalTours = view.findViewById(R.id.edt_totalTour);
         edtHomeSearch = view.findViewById(R.id.home_search);
         btnAddTour = view.findViewById(R.id.btn_add_tour);
+        progressBar = view.findViewById(R.id.progressbar_loading);
 
+        progressBar.setVisibility(View.VISIBLE);
         // goi api lan dau de lay total tours :
         apiTour.listTour(TokenStorage.getInstance().getAccessToken(),1,1,null,null).enqueue(new Callback<ListTour>() {
             @Override
@@ -76,11 +80,13 @@ public class HomeFragment extends Fragment {
 
                 //goi api lan tiep theo de load danh sach:
                 getList(container);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<ListTour> call, Throwable t) {
                 Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
             }
         });
 

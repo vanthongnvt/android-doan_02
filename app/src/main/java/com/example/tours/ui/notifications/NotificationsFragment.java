@@ -1,12 +1,14 @@
 package com.example.tours.ui.notifications;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +25,7 @@ import com.example.tours.HomeActivity;
 import com.example.tours.Model.ListTourInvitation;
 import com.example.tours.Model.TourInvitation;
 import com.example.tours.R;
+import com.example.tours.TourInfoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,7 @@ public class NotificationsFragment extends Fragment implements AbsListView.OnScr
     private List<TourInvitation> tourInvitations = new ArrayList<>();
     private ListView listView;
     private Boolean loading=false;
+    private ProgressBar progressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,11 +75,24 @@ public class NotificationsFragment extends Fragment implements AbsListView.OnScr
         listView.setAdapter(invitationAdapter);
         listView.setOnScrollListener(this);
 
+        progressBar = root.findViewById(R.id.progressbar_loading);
+
         getInvitation();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TourInvitation tour = tourInvitations.get(position);
+                Intent intent = new Intent(view.getContext(), TourInfoActivity.class);
+                intent.putExtra("tourId",tour.getId());
+                startActivity(intent);
+            }
+        });
 
     }
 
     private void getInvitation(){
+        progressBar.setVisibility(View.VISIBLE);
         apiTour.userInvitation(TokenStorage.getInstance().getAccessToken(),pageIndex,10).enqueue(new Callback<ListTourInvitation>() {
             @Override
             public void onResponse(Call<ListTourInvitation> call, Response<ListTourInvitation> response) {
@@ -89,12 +106,14 @@ public class NotificationsFragment extends Fragment implements AbsListView.OnScr
                     invitationAdapter.notifyDataSetChanged();
                     pageIndex++;
                     loading=false;
+                    progressBar.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<ListTourInvitation> call, Throwable t) {
                 Toast.makeText(getContext(),R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -116,6 +135,7 @@ public class NotificationsFragment extends Fragment implements AbsListView.OnScr
                 {
                     if(totalInvitation!=-1&&pageIndex*10 - totalInvitation < 10&&!loading) {
                         loading=true;
+
                         getInvitation();
                     }
                 }

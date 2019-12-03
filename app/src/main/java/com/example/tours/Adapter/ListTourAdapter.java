@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
 import com.example.tours.ApiService.RetrofitClient;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.CloneTour;
 import com.example.tours.Model.Tour;
@@ -94,7 +95,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         ViewHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new ViewHolder(row);
             row.setTag(holder);
@@ -166,6 +167,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         holder.imgbtnClone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogProgressBar.showProgress(context);
                 Number id = tour.getId();
                 apiTour.cloneTour(TokenStorage.getInstance().getAccessToken(), id).enqueue(new Callback<CloneTour>() {
                     @Override
@@ -176,11 +178,13 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
                         else if(response.code() == 500){
                             Toast.makeText(context, "Lỗi server, không thể nhân bản tour này", Toast.LENGTH_SHORT).show();
                         }
+                        DialogProgressBar.closeProgress();
                     }
 
                     @Override
                     public void onFailure(Call<CloneTour> call, Throwable t) {
                         Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
                     }
                 });
             }

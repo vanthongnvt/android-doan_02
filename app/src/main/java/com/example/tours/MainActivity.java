@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.tours.ApiService.APIRetrofitCreator;
 import com.example.tours.ApiService.APITour;
+import com.example.tours.AppHelper.DialogProgressBar;
 import com.example.tours.AppHelper.TokenStorage;
 import com.example.tours.Model.Auth;
 import com.facebook.CallbackManager;
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void normaLogin(String emailorPhone, String password) {
         //goi api, su dung queue de thuc hien tac vu chay nen
+        DialogProgressBar.showProgress(this);
         apiTour.normalLogin(emailorPhone, password).enqueue(new Callback<Auth>() {
             @Override
             public void onResponse(Call<Auth> call, Response<Auth> response) {
@@ -177,12 +179,15 @@ public class MainActivity extends AppCompatActivity {
                 //400 - 404 - 500
                 else {
                     Toast.makeText(MainActivity.this, R.string.login_not_existed, Toast.LENGTH_SHORT).show();
+                    DialogProgressBar.closeProgress();
                 }
+
             }
 
             @Override
             public void onFailure(Call<Auth> call, Throwable t) {
                 Toast.makeText(MainActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                DialogProgressBar.closeProgress();
             }
         });
     }

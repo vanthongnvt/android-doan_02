@@ -76,7 +76,7 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         ListStopPointTemporaryAdapter.ViewHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new ListStopPointTemporaryAdapter.ViewHolder(row);
             row.setTag(holder);

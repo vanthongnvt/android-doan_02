@@ -55,7 +55,7 @@ public class ListSearchMemberAdapter  extends ArrayAdapter<User> {
         ListSearchMemberAdapter.ViewHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new ListSearchMemberAdapter.ViewHolder(row);
             row.setTag(holder);
@@ -65,7 +65,7 @@ public class ListSearchMemberAdapter  extends ArrayAdapter<User> {
         }
 
         User user = list.get(position);
-        if(user.getAvatar()!=null){
+        if(user.getAvatar()!=null&&!user.getAvatar().isEmpty()){
             Picasso.get().load(user.getAvatar()).into(holder.imgMemberAvatar);
         }
 
