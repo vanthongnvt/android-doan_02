@@ -10,6 +10,7 @@ import com.example.tours.Model.ListTour;
 import com.example.tours.Model.ListTourInvitation;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
+import com.example.tours.Model.RequestOTPPassWord;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
@@ -22,13 +23,16 @@ import com.example.tours.Model.UserListTour;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface APITour {
@@ -157,6 +161,11 @@ public interface APITour {
     Call<MessageResponse> updateAvatar(@Header("Authorization") String token,
                               @Field("file") String imageBase64);
 
+    @POST("/user/update-avatar")
+    @Multipart
+    Call<MessageResponse> updateAvatar2(@Header("Authorization") String token,
+                                        @Part MultipartBody.Part file);
+
     @GET("/tour/get/invitation")
     Call<ListTourInvitation> userInvitation(@Header("Authorization") String token,
                                             @Query("pageIndex") Integer pageIndex,
@@ -195,4 +204,24 @@ public interface APITour {
                                         @Field("userId") Number id,
                                         @Field("currentPassword") String currentPassword,
                                         @Field("newPassword") String newPassword);
+
+    @POST("/tour/current-users-coordinate")
+    @FormUrlEncoded
+    Call<MessageResponse> currentCoordinate(@Header("Authorization") String token,
+                                              @Field("userId") Integer userId,
+                                              @Field("tourId") Integer tourId,
+                                              @Field("lat") double mlat,
+                                              @Field("long") double mlong);
+
+    @POST("/user/request-otp-recovery")
+    @FormUrlEncoded
+    Call<RequestOTPPassWord> requestOTPPassword(@Field("type") String type,
+                                                @Field("value") String value);
+
+    @POST("/user/verify-otp-recovery")
+    @FormUrlEncoded
+    Call<MessageResponse> verifyPasswordRecovery(@Field("userId") Integer userId,
+                                                 @Field("newPassword") String newPassword,
+                                                 @Field("verifyCode") String verifyCode);
+
 }

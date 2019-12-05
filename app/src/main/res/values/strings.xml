@@ -78,11 +78,23 @@
     <string name="edt_hint_search_member">Tìm kiếm thành viên bằng tên tài khoản, email, số điện  thoại</string>
     <string name="member_existed">Tài khoản này đã tham gia chuyến đi</string>
 
-<!--    user info-->
+    <!--    user info-->
     <string name="change_avatar_successfully">Thay đổi avatar thành công</string>
     <string name="image_too_large">Lỗi! Hình ảnh quá lớn</string>
+    <string name="server_err">Lỗi xử lý dữ liệu</string>
 
-<!--    inviation-->
+    <!--    inviation-->
     <string name="accept_successfully">Đã chấp nhận</string>
     <string name="refuse_successfully">Đã từ chối</string>
+    
+    <!--    OTP-->
+    <string name="sent_opt">Đã gửi mã OTP</string>
+    <string name="wrong_parameter_type">Dữ liệu không hợp lệ</string>
+    <string name="email_phone_not_exist">Email hoặc số điện thoại không tồn tại</string>
+    <string name="empty_otp">Chưa nhập mã OTP</string>
+    <string name="empty_new_password">Chưa nhập mật khẩu mới</string>
+    <string name="empty_new_password_confirm">Chưa xác nhận mật khẩu mới</string>
+    <string name="password_not_same">Mật khẩu xác nhận không giống</string>
+    <string name="wrong_or_expired_otp">Mã OTP không đúng hoặc quá hạn</string>
+    <string name="recovery_password_successfully">Khôi phục mật khẩu thành công</string>
 </resources>

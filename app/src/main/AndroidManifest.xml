@@ -15,11 +15,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UpdateTourActivity"></activity>
+        <activity android:name=".VerifyCodeRecoveryPasswordActivity"></activity>
+        <activity android:name=".PasswordRecoveryActivity" />
+
+        <receiver
+            android:name=".Service.BroadcastLocationReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".Service.BackgroundLocationService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".UpdateTourActivity" />
         <activity
             android:name=".TourInfoActivity"
             android:label="@string/title_activity_tour_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CreateStopPointActivity" />
         <activity android:name=".CreateTourActivity" />
 
@@ -58,7 +71,7 @@
         </activity>
         <activity
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home"></activity>
+            android:label="@string/title_activity_home" />
         <activity android:name=".RegisterActivity" />
     </application>
 

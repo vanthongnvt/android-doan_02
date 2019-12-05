@@ -304,6 +304,17 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                     }
                 }
             });
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if(marker.getTag() != null){
+                        StopPoint stopPoint = (StopPoint) marker.getTag();
+                        showStopPointInfo(stopPoint);
+                    }
+                    return false;
+                }
+            });
         }
     }
     private void  geoLocateToDialog(LatLng latLng){
@@ -381,17 +392,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         else{
             markerOptions.position(latLng).title(null);
             marker = mMap.addMarker(markerOptions);
-            //marker.showInfoWindow();
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    if(marker.getTag() != null){
-                        StopPoint stopPoint = (StopPoint) marker.getTag();
-                        showStopPointInfo(stopPoint);
-                    }
-                    return false;
-                }
-            });
         }
 
         geoLocateToDialog(latLng);

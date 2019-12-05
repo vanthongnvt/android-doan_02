@@ -149,6 +149,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        linkForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent otp = new Intent(MainActivity.this, PasswordRecoveryActivity.class);
+                startActivity(otp);
+            }
+        });
 
     }
 

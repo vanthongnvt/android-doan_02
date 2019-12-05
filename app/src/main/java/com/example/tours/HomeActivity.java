@@ -1,5 +1,6 @@
 package com.example.tours;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -79,8 +80,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // from register:
-//        AuthRegister authRegisterOb = (AuthRegister) getIntent().getSerializableExtra("AuthRegister");
+        // send tourId
+        Intent intent = getIntent();
+        if (intent.hasExtra("tourId")) {
+            Integer tourId = intent.getIntExtra("tourId",-1);
+        }
 
 
     }

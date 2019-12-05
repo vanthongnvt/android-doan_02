@@ -2,14 +2,17 @@ package com.example.tours.ui.usersettings;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +50,7 @@ import com.example.tours.RegisterActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -56,6 +60,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,6 +92,7 @@ public class UserSettingsFragment extends Fragment {
     private String imgBase64Format;
     private UserInfo userInfoForUpdateDialg;
     private View root;
+    private Uri URI;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -106,6 +114,7 @@ public class UserSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
                 startActivityForResult(intent, IMG_RQ);
             }
         });
@@ -154,11 +163,11 @@ public class UserSettingsFragment extends Fragment {
                 String newPass = edtNewPass.getText().toString().trim();
                 String confirmPass = edtConfirmPass.getText().toString().trim();
 
-                if(newPass.isEmpty()){
+                if(oldPass.isEmpty()){
                     Toast.makeText(getActivity(), "Bạn chưa nhập mật khẩu cũ", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(oldPass.isEmpty()){
+                if(newPass.isEmpty()){
                     Toast.makeText(getActivity(), "Bạn chưa nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -342,9 +351,11 @@ public class UserSettingsFragment extends Fragment {
         btnLogout = root.findViewById(R.id.user_logout);
         btnEditInfo=root.findViewById(R.id.btn_change_user_info);
         btnChangePassword = root.findViewById(R.id.btn_change_user_password);
+
         apiTour = new APIRetrofitCreator().getAPIService();
 
         getUserInfo(root);
+
 
         initDialogSelectAvatar(root);
     }
@@ -361,7 +372,14 @@ public class UserSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogProgressBar.showProgress(getContext());
-                apiTour.updateAvatar(TokenStorage.getInstance().getAccessToken(),imgBase64Format).enqueue(new Callback<MessageResponse>() {
+                Log.d("OkHttp", "onClick: "+URI);
+                File file = new File(getRealPathFromURI(getContext(),URI));
+                Log.d("OkHttp", "onClick: "+file.getAbsolutePath());
+                RequestBody fileReqBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+                MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+
+                apiTour.updateAvatar2(TokenStorage.getInstance().getAccessToken(),part).enqueue(new Callback<MessageResponse>() {
                     @Override
                     public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                         if(response.isSuccessful()){
@@ -377,7 +395,7 @@ public class UserSettingsFragment extends Fragment {
                                 Toast.makeText(root.getContext(), R.string.image_too_large, Toast.LENGTH_SHORT).show();
                             }
                             else {
-                                Toast.makeText(root.getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(root.getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
                             }
                         }
                         DialogProgressBar.closeProgress();
@@ -405,16 +423,17 @@ public class UserSettingsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == IMG_RQ && resultCode == HomeActivity.RESULT_OK && data != null){
-            Uri selectedImg = data.getData();
+            URI = data.getData();
+
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), selectedImg);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), URI);
                 tempImage.setImageBitmap(bitmap);
 
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                byte[] imgBytes = byteArrayOutputStream.toByteArray();
-
-                imgBase64Format = Base64.encodeToString(imgBytes, Base64.DEFAULT);
+//                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+//                byte[] imgBytes = byteArrayOutputStream.toByteArray();
+//
+//                imgBase64Format = Base64.encodeToString(imgBytes, Base64.DEFAULT);
 
                 dialogSelectAvatar.show();
 
@@ -439,6 +458,9 @@ public class UserSettingsFragment extends Fragment {
                     tvUserEmaill.setText(userInfo.getEmail());
                     tvUserAddress.setText(userInfo.getAddress());
                     Integer gender = userInfo.getGender();
+                    if(userInfo.getTypeLogin()!=0){
+                        btnChangePassword.setVisibility(View.GONE);
+                    }
                     if(gender == null)
                         tvGender.setText("(Trống)");
                     else{
@@ -473,5 +495,22 @@ public class UserSettingsFragment extends Fragment {
         });
     }
 
+    private String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            Log.e("AVATAR", "getRealPathFromURI Exception : " + e.toString());
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
 
 }

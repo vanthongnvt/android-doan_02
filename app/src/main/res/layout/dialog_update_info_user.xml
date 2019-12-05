@@ -21,9 +21,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="72dp"
                 android:layout_gravity="center_horizontal"
-                android:text="Update User Info"
+                android:text="Thông tin tài khoản"
                 android:textColor="#068f41"
-                android:textSize="35sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
