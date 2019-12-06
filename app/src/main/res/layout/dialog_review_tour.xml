@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_review"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorCustomPrimary"
+        app:title="Đánh giá chuyến đi"
+        app:titleTextColor="@color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Điểm đánh giá"
+            android:textColor="@color/colorCustomPrimary"
+            android:textSize="18sp" />
+
+        <RatingBar
+            android:id="@+id/user_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:isIndicator="false"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:numStars="5"
+            android:stepSize="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nội dung đánh giá"
+            android:textColor="@color/colorCustomPrimary"
+            android:textSize="18sp" />
+
+        <EditText
+            android:padding="5dp"
+            android:id="@+id/user_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:gravity="top|start"
+            android:layout_marginTop="10dp"
+            android:minLines="6"
+            android:background="@drawable/roundedborder2" />
+
+        <Button
+            android:id="@+id/send_review"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/login_btn_bg"
+            android:text="Gửi đánh giá"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+</LinearLayout>

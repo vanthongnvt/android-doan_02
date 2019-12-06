@@ -3,18 +3,12 @@ package com.example.tours.ui.main;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
-import com.example.tours.R;
 import com.example.tours.TourInfoActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -40,7 +34,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0: return TourInfoFragment.newInstance(mtourInfo,isHostUser);
             case 1: return TourMemberFragment.newInstance(mtourInfo,isHostUser);
-            case 2: return TourCommentFragment.newInstance(mtourInfo,isHostUser);
+            case 2: return TourReviewFragment.newInstance(mtourInfo,isHostUser);
         }
         return null;
     }

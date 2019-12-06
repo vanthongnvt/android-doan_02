@@ -6,11 +6,13 @@ import com.example.tours.Model.CloneTour;
 import com.example.tours.Model.CommentList;
 import com.example.tours.Model.CreateTour;
 import com.example.tours.Model.GetStatusTours;
+import com.example.tours.Model.ListReviewPoint;
 import com.example.tours.Model.ListTour;
 import com.example.tours.Model.ListTourInvitation;
 import com.example.tours.Model.ListUserSearch;
 import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.RequestOTPPassWord;
+import com.example.tours.Model.ReviewPoint;
 import com.example.tours.Model.StopPoint;
 import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
@@ -140,10 +142,16 @@ public interface APITour {
                                         @Field("index") Integer index);
 
     @POST("/tour/add/review")
+    @FormUrlEncoded
     Call<MessageResponse> addReview(@Header("Authorization") String token,
                                     @Field("tourId") Integer tourId,
                                     @Field("point") Integer point,
-                                    @Field("review") Integer review);
+                                    @Field("review") String review);
+
+    @GET("/tour/get/review-point-stats")
+    Call<ListReviewPoint> reviewPoint(@Header("Authorization") String token,
+                                      @Query("tourId") Integer tourId);
+
 
     @POST("/tour/clone")
     @FormUrlEncoded

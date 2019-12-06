@@ -78,6 +78,10 @@
     <string name="edt_hint_search_member">Tìm kiếm thành viên bằng tên tài khoản, email, số điện  thoại</string>
     <string name="member_existed">Tài khoản này đã tham gia chuyến đi</string>
 
+    <string name="empty_review">Chưa nhập nội dung đánh giá</string>
+    <string name="empty_point_review">Chưa chọn số điểm đánh giá</string>
+    <string name="add_review_successfully">Đã gửi đánh giá</string>
+
     <!--    user info-->
     <string name="change_avatar_successfully">Thay đổi avatar thành công</string>
     <string name="image_too_large">Lỗi! Hình ảnh quá lớn</string>

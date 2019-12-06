@@ -2,7 +2,6 @@ package com.example.tours;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,21 +15,17 @@ import com.example.tours.Model.MessageResponse;
 import com.example.tours.Model.TourComment;
 import com.example.tours.Model.TourInfo;
 import com.example.tours.Model.TourMember;
-import com.example.tours.ui.main.TourCommentFragment;
+import com.example.tours.ui.main.TourReviewFragment;
 import com.example.tours.ui.main.TourInfoFragment;
 import com.example.tours.ui.main.TourMemberFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -51,7 +46,7 @@ import retrofit2.Response;
 
 public class TourInfoActivity extends AppCompatActivity implements TourInfoFragment.OnFragmentInteractionListener,
         TourMemberFragment.OnFragmentInteractionListener,
-        TourCommentFragment.OnFragmentInteractionListener, AbsListView.OnScrollListener {
+        TourReviewFragment.OnFragmentInteractionListener, AbsListView.OnScrollListener {
 
     private APITour apiTour;
     private Integer tourId = 227;
@@ -199,12 +194,12 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
 
                     tourCommentList.add(tourComment);
                     tourCommentAdapter.notifyDataSetChanged();
-                    listViewComment.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listViewComment.smoothScrollToPosition(0);
-                        }
-                    });
+//                    listViewComment.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            listViewComment.smoothScrollToPosition(0);
+//                        }
+//                    });
 
                 } else {
                     Toast.makeText(TourInfoActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
@@ -230,7 +225,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
     private void setupTabIcons() {
         tabs.getTabAt(0).setIcon(R.drawable.ic_info_black_24dp);
         tabs.getTabAt(1).setIcon(R.drawable.ic_member_white_24dp);
-        tabs.getTabAt(2).setIcon(R.drawable.ic_comment_black_24dp);
+        tabs.getTabAt(2).setIcon(R.drawable.ic_stars_black_24dp);
         tabs.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
     }
 
