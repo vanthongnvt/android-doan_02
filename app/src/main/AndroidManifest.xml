@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tours">
+    package="com.ygaps.travelapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -8,33 +8,33 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".AppHelper.TokenStorage"
+        android:name="com.ygaps.travelapp.AppHelper.TokenStorage"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VerifyCodeRecoveryPasswordActivity"></activity>
-        <activity android:name=".PasswordRecoveryActivity" />
+        <activity android:name="com.ygaps.travelapp.VerifyCodeRecoveryPasswordActivity"></activity>
+        <activity android:name="com.ygaps.travelapp.PasswordRecoveryActivity" />
 
         <receiver
-            android:name=".Service.BroadcastLocationReceiver"
+            android:name="com.ygaps.travelapp.Service.BroadcastLocationReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".Service.BackgroundLocationService"
+            android:name="com.ygaps.travelapp.Service.BackgroundLocationService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".UpdateTourActivity" />
+        <activity android:name="com.ygaps.travelapp.UpdateTourActivity" />
         <activity
-            android:name=".TourInfoActivity"
+            android:name="com.ygaps.travelapp.TourInfoActivity"
             android:label="@string/title_activity_tour_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CreateStopPointActivity" />
-        <activity android:name=".CreateTourActivity" />
+        <activity android:name="com.ygaps.travelapp.CreateStopPointActivity" />
+        <activity android:name="com.ygaps.travelapp.CreateTourActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -62,7 +62,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.ygaps.travelapp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -70,9 +70,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name="com.ygaps.travelapp.HomeActivity"
             android:label="@string/title_activity_home" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name="com.ygaps.travelapp.RegisterActivity" />
     </application>
 
 </manifest>

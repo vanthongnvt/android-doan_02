@@ -33,7 +33,7 @@
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@drawable/bottom_navigation_selector"
-        app:layout_behavior="com.example.tours.ui.BottomNavigationBehaviour"
+        app:layout_behavior="com.ygaps.travelapp.ui.BottomNavigationBehaviour"
 
         />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
