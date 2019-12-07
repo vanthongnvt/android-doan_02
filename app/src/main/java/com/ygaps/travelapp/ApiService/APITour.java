@@ -245,7 +245,7 @@ public interface APITour {
                                            @Field("platform") Integer platform,
                                            @Field("appVersion") String appVersion);
 
-    @POST("/user/notification/put-token")
+    @POST("/user/notification/remove-token")
     @FormUrlEncoded
     Call<MessageResponse> removeFirebaseToken(@Header("Authorization") String token,
                                                 @Field("fcmToken") String fcmToken,

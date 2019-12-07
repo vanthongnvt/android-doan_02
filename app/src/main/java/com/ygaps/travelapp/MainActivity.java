@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.DialogProgressBar;
@@ -27,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.ygaps.travelapp.Model.MessageResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,6 +162,24 @@ public class MainActivity extends AppCompatActivity {
     private void startNewActivity(Auth mAuth) {
         if(mAuth!=null){
             TokenStorage.getInstance().setToken(mAuth.getToken(),mAuth.getUserId());
+            String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            String fmcToken= FirebaseInstanceId.getInstance().getToken();
+            apiTour.registerFirebaseToken(mAuth.getToken(),fmcToken,android_id,1,"1.0").enqueue(new Callback<MessageResponse>() {
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    if(response.isSuccessful()){
+                        Log.d("Register Firebase", "onResponse: successfully");
+                    }
+                    else{
+                        Log.d("Register Firebase", "onResponse: failed");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    Log.d("Register Firebase", "onResponse: failed");
+                }
+            });
         }
         Intent itenthome = new Intent(MainActivity.this, HomeActivity.class);
         itenthome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

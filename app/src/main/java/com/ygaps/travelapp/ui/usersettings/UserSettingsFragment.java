@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.DialogProgressBar;
@@ -110,10 +112,28 @@ public class UserSettingsFragment extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TokenStorage.getInstance().removeToken();
-                Intent intent = new Intent(root.getContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                DialogProgressBar.showProgress(getContext());
+                String fmcToken= FirebaseInstanceId.getInstance().getToken();
+                String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                apiTour.removeFirebaseToken(TokenStorage.getInstance().getAccessToken(),fmcToken,android_id).enqueue(new Callback<MessageResponse>() {
+                    @Override
+                    public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                        if(!response.isSuccessful()){
+                            Toast.makeText(root.getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
+                        }
+                        TokenStorage.getInstance().removeToken();
+                        DialogProgressBar.closeProgress();
+                        Intent intent = new Intent(root.getContext(), MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MessageResponse> call, Throwable t) {
+                        DialogProgressBar.closeProgress();
+                        Toast.makeText(root.getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 

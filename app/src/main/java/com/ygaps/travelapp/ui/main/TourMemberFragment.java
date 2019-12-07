@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -58,7 +59,7 @@ public class TourMemberFragment extends Fragment {
     private APITour apiTour;
     private ListView listViewMember;
     private ListTourMemberAdapter tourMemberAdapter;
-    private Button btnShowDialogInviteMember;
+    private ImageView btnShowDialogInviteMember;
     private Dialog dialogInviteMember;
     private EditText edtInviteMember;
     private ImageView btnSearchMember;
@@ -82,6 +83,7 @@ public class TourMemberFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+//        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             tourInfo = (TourInfo) getArguments().getSerializable(ARG_PARAM1);
@@ -146,17 +148,25 @@ public class TourMemberFragment extends Fragment {
 
     public void inviteMember(User user){
         DialogProgressBar.showProgress(getContext());
-        for (TourMember member:tourInfo.getMembers()){
-            if(member.getId().equals(user.getId())){
-                Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(),tourInfo.getId().toString(),user.getId().toString(),tourInfo.getIsPrivate()).enqueue(new Callback<MessageResponse>() {
+        apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(),tourInfo.getId().toString(),user.getId().toString(),true).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if(response.isSuccessful()) {
-                    Toast.makeText(getContext(), getString(R.string.invite_success) + user.getFullName(), Toast.LENGTH_SHORT).show();
+                    if(response.body().getResCode()==null){
+                        Toast.makeText(getContext(), getString(R.string.invite_success) + " " + user.getFullName(), Toast.LENGTH_SHORT).show();
+                    }
+                    else if(response.body().getResCode()==-1){
+                        Toast.makeText(getContext(),  user.getFullName()+ " " + getString(R.string.existed_member), Toast.LENGTH_SHORT).show();
+                    }
+                    else if(response.body().getResCode()==0){
+                        Toast.makeText(getContext(),  user.getFullName()+ " " + getString(R.string.already_invited), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
                 DialogProgressBar.closeProgress();
             }

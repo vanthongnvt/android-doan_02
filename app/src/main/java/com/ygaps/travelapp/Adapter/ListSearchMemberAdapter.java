@@ -67,6 +67,9 @@ public class ListSearchMemberAdapter  extends ArrayAdapter<User> {
         if(user.getAvatar()!=null&&!user.getAvatar().isEmpty()){
             Picasso.get().load(user.getAvatar()).into(holder.imgMemberAvatar);
         }
+        else{
+            holder.imgMemberAvatar.setImageResource(R.drawable.unknown_user);
+        }
 
         holder.tvMemberName.setText(user.getFullName());
         holder.tvMemberPhone.setText(user.getPhone());

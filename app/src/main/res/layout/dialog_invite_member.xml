@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:paddingTop="20dp"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
-    android:background="@drawable/dialog_invite_member_bg"
-    >
+    android:background="@drawable/dialog_invite_member_bg">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:background="@drawable/ic_search_black_24dp"
+            app:srcCompat="@drawable/ic_search_black_24dp"
             />
     </RelativeLayout>
 

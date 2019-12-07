@@ -87,9 +87,11 @@
     <string name="image_too_large">Lỗi! Hình ảnh quá lớn</string>
     <string name="server_err">Lỗi xử lý dữ liệu</string>
 
-    <!--    inviation-->
+    <!--    inviation-->nhóm
     <string name="accept_successfully">Đã chấp nhận</string>
     <string name="refuse_successfully">Đã từ chối</string>
+    <string name="existed_member">đã ở trong nhóm</string>
+    <string name="already_invited">đã được mời từ trước</string>
     
     <!--    OTP-->
     <string name="sent_opt">Đã gửi mã OTP</string>
@@ -101,4 +103,11 @@
     <string name="password_not_same">Mật khẩu xác nhận không giống</string>
     <string name="wrong_or_expired_otp">Mã OTP không đúng hoặc quá hạn</string>
     <string name="recovery_password_successfully">Khôi phục mật khẩu thành công</string>
+
+    <string name="fire_base_key">AIzaSyDnbQCZQc8R754Qpafqd3XdykSwVHiRQeo</string>
+    <string name="register_fire_base_failed">Register Firebase failed</string>
+    <string name="register_fire_base_successful">Register Firebase successfully</string>
+
+    <!--    Notification-->
+    <string name="invite_title">Lời mời tham gia chuyến đi</string>
 </resources>
