@@ -250,4 +250,15 @@ public interface APITour {
     Call<MessageResponse> removeFirebaseToken(@Header("Authorization") String token,
                                                 @Field("fcmToken") String fcmToken,
                                                 @Field("deviceId") String deviceId);
+
+    @POST("/tour/add/notification-on-road")
+    @FormUrlEncoded
+    Call<MessageResponse> createNotificationOnRoad(@Header("Authorization") String token,
+                                                   @Field("lat") double mlat,
+                                                   @Field("long") long mlong,
+                                                   @Field("tourId") Integer tourId,
+                                                   @Field("userId") Integer userId,
+                                                   @Field("notificationType") Integer notificationType,
+                                                   @Field("speed") Integer speed,
+                                                   @Field("note") String note);
 }

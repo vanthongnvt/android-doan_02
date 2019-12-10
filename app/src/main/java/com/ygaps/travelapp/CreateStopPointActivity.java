@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.ygaps.travelapp.Adapter.ListStopPointTemporaryAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
@@ -399,7 +400,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
 
     private void showStopPointInfo(StopPoint stopPoint) {
-        Dialog dialog = new Dialog(CreateStopPointActivity.this, R.style.Theme_Dialog);
+        BottomSheetDialog dialog = new BottomSheetDialog(CreateStopPointActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_stop_point_info);
 
@@ -434,14 +435,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         arrive.setText(dateFormat.format(date));
 
         dialog.show();
-
-        //show dialog at bottom
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-
-        wlp.gravity = Gravity.BOTTOM;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
     }
 
     private int isServiceAvailable(){

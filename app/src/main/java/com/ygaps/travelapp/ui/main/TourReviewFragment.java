@@ -111,7 +111,7 @@ public class TourReviewFragment extends Fragment {
     }
 
     private void initDialogAddReview(View root){
-        dialogAddReview = new Dialog(root.getContext(),R.style.PlacesAutocompleteThemeFullscreen);
+        dialogAddReview = new Dialog(root.getContext(),R.style.DialogSlideAnimation);
         dialogAddReview.setContentView(R.layout.dialog_review_tour);
 
         userRating=dialogAddReview.findViewById(R.id.user_rating);

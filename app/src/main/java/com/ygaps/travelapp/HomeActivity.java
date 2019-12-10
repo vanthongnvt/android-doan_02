@@ -27,6 +27,8 @@ public class HomeActivity extends AppCompatActivity {
     private FragmentTransaction transaction;
     private int idMenuSelected=1;
     private BottomNavigationView navView;
+
+    private int argumentForMapFragment=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         toolbar = getSupportActionBar();
         toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
         navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_user_trip, R.id.navigation_map, R.id.navigation_notifications, R.id.navigation_user_settings)
                 .build();
@@ -79,10 +80,15 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // send tourId
+        // send tourId to Map fragment
         Intent intent = getIntent();
-        if (intent.hasExtra("tourId")) {
-            Integer tourId = intent.getIntExtra("tourId",-1);
+        if (intent.hasExtra("directionTourId")) {
+            int argumentForMapFragment = intent.getIntExtra("directionTourId",-1);
+            if(argumentForMapFragment!=-1) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("directionTourId", argumentForMapFragment);
+
+            }
         }
 
 
@@ -108,5 +114,9 @@ public class HomeActivity extends AppCompatActivity {
         else{
             super.onBackPressed();
         }
+    }
+
+    public BottomNavigationView getNavigation(){
+        return navView;
     }
 }
