@@ -1,6 +1,7 @@
 package com.ygaps.travelapp.Adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,9 @@ public class ListTourMemberAdapter extends ArrayAdapter<TourMember> {
         TourMember tourMember = list.get(position);
         if(tourMember.getAvatar()!=null&&!tourMember.getAvatar().isEmpty()){
             Picasso.get().load(tourMember.getAvatar()).into(holder.imgMemberAvatar);
+        }
+        else{
+            holder.imgMemberAvatar.setImageResource(R.drawable.unknown_user);
         }
 
         holder.tvMemberName.setText(tourMember.getName());

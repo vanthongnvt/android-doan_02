@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cảnh báo tốc độ"
+        android:text="Giới hạn tốc độ"
         android:textAllCaps="true"
         android:textSize="18sp"
         android:textColor="@color/colorCustomPrimary"

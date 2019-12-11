@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -36,12 +38,16 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.ygaps.travelapp.Adapter.ListMapDestinationAdapter;
+import com.ygaps.travelapp.Adapter.ListNotificationTourAdapter;
+import com.ygaps.travelapp.Adapter.ListTourCommentAdapter;
+import com.ygaps.travelapp.Adapter.ListTourMemberAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
-import com.ygaps.travelapp.CreateStopPointActivity;
 import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.Notification;
+import com.ygaps.travelapp.Model.NotificationList;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.R;
@@ -72,7 +78,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, AbsListView.OnScrollListener {
     private MapViewModel mapViewModel;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -93,7 +99,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private View mRoot;
     private ImageView btnCurLocation;
     private ImageView btnShowListDestination;
-    private ImageView btnShowNotification;
+    private ImageView btnShowWarningSpeedNotificationDialog;
+    private ImageView btnShowListMember;
+    private ImageView btnShowNotificationList;
 
     private Dialog dialogListDestination;
     private ListMapDestinationAdapter mapDestinationAdapter;
@@ -108,7 +116,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private TextView maxCostStopPoint;
     private TextView leaveStopPoint;
     private TextView arriveStopPoint;
-    String ServiceArr[]={"Restaurant", "Hotel", "Rest Station", "Other"};
+    String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
 
     private BottomSheetDialog dialogCreateNotification;
     private RadioGroup rdWarnings;
@@ -118,12 +126,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private EditText textNotification;
     private Button btnSendNotification;
 
+    private BottomSheetDialog dialogListMember;
+    private ListView listViewMember;
+    private ListTourMemberAdapter listTourMemberAdapter;
+
+    private Dialog dialogNotificationList;
+    private EditText inputTextNotify;
+    private ImageView btnSendTextNotify;
+    private ListView listViewNotification;
+    private ListNotificationTourAdapter tourNotificationAdapter;
+    private List<Notification> notificationList = new ArrayList<>();
+    private ProgressBar progressBar;
+    private Integer pageIndex = 1;
+    private boolean loading = false;
+    private Integer count = 0;
+    private boolean firstClick = true;
+
     private Integer tourId = 227;
     private TourInfo tourInfo;
     private APITour apiTour;
     private StopPoint targetStopPoint = null;
     private Location myLocation;
-    private boolean getlocationFail=false;
+    private boolean getlocationFail = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -147,7 +171,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getArguments()==null || getArguments().getInt("directionTourId",-1) != -1) {
+        if (getArguments() == null || getArguments().getInt("directionTourId", -1) != -1) {
 //            tourId = getArguments().getInt("directionTourId");
             int isOK = isServiceAvailable();
 
@@ -199,13 +223,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void init() {
         btnCurLocation = mRoot.findViewById(R.id.map_btn_cur_location);
         btnShowListDestination = mRoot.findViewById(R.id.map_btn_direction);
-        btnShowNotification = mRoot.findViewById(R.id.show_warning_notification);
+        btnShowWarningSpeedNotificationDialog = mRoot.findViewById(R.id.show_warning_notification);
 
         dialogListDestination = new Dialog(getContext(), R.style.DialogSlideAnimation);
         dialogListDestination.setContentView(R.layout.dialog_list_destination_map);
         initDialogListDestination();
 
-        dialogStopPointInfo =  new BottomSheetDialog(getContext());
+        dialogStopPointInfo = new BottomSheetDialog(getContext());
         dialogStopPointInfo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogStopPointInfo.setContentView(R.layout.dialog_stop_point_info);
         initDialogStopPointInfo();
@@ -213,6 +237,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         dialogCreateNotification = new BottomSheetDialog(getContext());
         dialogCreateNotification.setContentView(R.layout.dialog_create_notification_on_road);
         initDialogCreateNotification();
+
+        btnShowListMember = mRoot.findViewById(R.id.btn_show_member_list);
+        dialogListMember = new BottomSheetDialog(getContext());
+        dialogListMember.setContentView(R.layout.dialog_list_member_map);
+        initDialogListMember();
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -231,6 +260,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                     mapDestinationAdapter = new ListMapDestinationAdapter(getContext(), R.layout.list_view_destination_item, tourInfo.getStopPoints(), MapFragment.this);
                     listViewDestination.setAdapter(mapDestinationAdapter);
+
+                    listTourMemberAdapter = new ListTourMemberAdapter(getContext(), R.layout.list_view_tour_member_item, tourInfo.getMembers());
+                    listViewMember.setAdapter(listTourMemberAdapter);
+
                 } else {
                     Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
@@ -241,15 +274,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
+        btnShowNotificationList = mRoot.findViewById(R.id.show_notification_list);
+        initDialogNotification();
+        btnShowNotificationList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogNotificationList.show();
+                if(firstClick){
+                    getTextNotifation();
+                    firstClick=false;
+                }
+            }
+        });
 
         btnShowListDestination.setOnClickListener(v -> dialogListDestination.show());
 
-        btnShowNotification.setOnClickListener( v -> {
+        btnShowWarningSpeedNotificationDialog.setOnClickListener(v -> {
             dialogCreateNotification.show();
             rdWarnings.clearCheck();
             textNotification.setText(null);
         });
 
+        btnShowListMember.setOnClickListener(v -> dialogListMember.show());
+
+    }
+
+    private void initDialogListMember() {
+        listViewMember = dialogListMember.findViewById(R.id.list_view_tour_member);
     }
 
     private void initDialogListDestination() {
@@ -257,7 +308,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void initDialogStopPointInfo(){
+    private void initDialogStopPointInfo() {
         nameStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_name);
         typeStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_type);
         addressStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_address);
@@ -268,44 +319,68 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         arriveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_arrive);
     }
 
-    private void initDialogCreateNotification(){
+    private void initDialogCreateNotification() {
         rdWarnings = dialogCreateNotification.findViewById(R.id.warning_speed);
         rdWarning50 = dialogCreateNotification.findViewById(R.id.warning_speed_50);
         rdWarning60 = dialogCreateNotification.findViewById(R.id.warning_speed_60);
         rdWarning70 = dialogCreateNotification.findViewById(R.id.warning_speed_70);
-        textNotification =  dialogCreateNotification.findViewById(R.id.text_notification);
+        textNotification = dialogCreateNotification.findViewById(R.id.text_notification);
         btnSendNotification = dialogCreateNotification.findViewById(R.id.send_notification);
 
-        btnSendNotification.setOnClickListener(v -> sendNotification());
+        btnSendNotification.setOnClickListener(v -> sendWarningSpeedNotification());
     }
 
-    private void sendNotification(){
+    private void initDialogNotification() {
+        dialogNotificationList = new Dialog(getContext(), R.style.DialogSlideAnimation);
+        dialogNotificationList.setContentView(R.layout.dialog_list_notification);
+
+        btnSendTextNotify = dialogNotificationList.findViewById(R.id.send_comment);
+        inputTextNotify = dialogNotificationList.findViewById(R.id.input_comment);
+        listViewNotification = dialogNotificationList.findViewById(R.id.list_view_comment);
+        tourNotificationAdapter = new ListNotificationTourAdapter(getContext(), R.layout.list_view_tour_comment_item, notificationList);
+        listViewNotification.setAdapter(tourNotificationAdapter);
+        listViewNotification.setOnScrollListener(this);
+
+        progressBar = dialogNotificationList.findViewById(R.id.progressbar_loading);
+
+        btnSendTextNotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = inputTextNotify.getText().toString();
+                if (!text.isEmpty()) {
+                    inputTextNotify.setText("");
+                    sendTextNotification(text);
+                }
+            }
+        });
+    }
+
+    private void sendWarningSpeedNotification() {
         getDeviceLocation(false);
-        if(getlocationFail){
+        if (getlocationFail) {
             return;
         }
-        int speed=0;
+        int speed = 0;
         String text = textNotification.getText().toString().trim();
-        switch (rdWarnings.getCheckedRadioButtonId()){
+        switch (rdWarnings.getCheckedRadioButtonId()) {
             case R.id.warning_speed_50:
-                speed =50;
+                speed = 50;
                 break;
             case R.id.warning_speed_60:
                 speed = 60;
                 break;
             case R.id.warning_speed_70:
-                speed=70;
+                speed = 70;
                 break;
         }
-        if(speed!=0){
-            apiTour.createNotificationOnRoad(TokenStorage.getInstance().getAccessToken(),myLocation.getLatitude(),myLocation.getLongitude(),tourId,TokenStorage.getInstance().getUserId(),3,speed,text).enqueue(new Callback<MessageResponse>() {
+        if (speed != 0) {
+            apiTour.createNotificationOnRoad(TokenStorage.getInstance().getAccessToken(), myLocation.getLatitude(), myLocation.getLongitude(), tourId, TokenStorage.getInstance().getUserId(), 3, speed, text).enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
                         dialogCreateNotification.dismiss();
-                    }
-                    else{
+                    } else {
                         Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -315,27 +390,60 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            Toast.makeText(context, R.string.empty_warning_speed, Toast.LENGTH_SHORT).show();
         }
-        else{
-            if(!text.isEmpty()){
-                apiTour.sendNotification(TokenStorage.getInstance().getAccessToken(),TokenStorage.getInstance().getUserId(),tourId,text).enqueue(new Callback<MessageResponse>() {
-                    @Override
-                    public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                        if(response.isSuccessful()){
-                            Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
-                            dialogCreateNotification.dismiss();
-                        }else{
-                            Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
-                        }
-                    }
+    }
 
-                    @Override
-                    public void onFailure(Call<MessageResponse> call, Throwable t) {
-                        Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void sendTextNotification(String text) {
+
+        apiTour.sendNotification(TokenStorage.getInstance().getAccessToken(), TokenStorage.getInstance().getUserId(), tourId, text).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
+
+                    Notification notification = new Notification(TokenStorage.getInstance().getUserId().toString(),"","",text);
+                    notificationList.add(notification);
+                    tourNotificationAdapter.notifyDataSetChanged();
+
+                } else {
+                    Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getTextNotifation() {
+        loading=true;
+        progressBar.setVisibility(View.VISIBLE);
+        apiTour.getNotificationTour(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, 10).enqueue(new Callback<NotificationList>() {
+            @Override
+            public void onResponse(Call<NotificationList> call, Response<NotificationList> response) {
+                if (response.isSuccessful()) {
+                    count = response.body().getNotiList().size();
+                    notificationList.addAll(response.body().getNotiList());
+                    tourNotificationAdapter.notifyDataSetChanged();
+                    pageIndex++;
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                }
+                loading = false;
+            }
+
+            @Override
+            public void onFailure(Call<NotificationList> call, Throwable t) {
+                Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                loading = false;
+            }
+        });
     }
 
 
@@ -371,7 +479,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         window.setAttributes(wlp);
     }
 
-    public void drawRouteToStopPoint(StopPoint stopPoint){
+    public void drawRouteToStopPoint(StopPoint stopPoint) {
 
     }
 
@@ -396,7 +504,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    if(marker.getTag()!=null) {
+                    if (marker.getTag() != null) {
                         StopPoint stopPoint = (StopPoint) marker.getTag();
                         showStopPointInfo(stopPoint);
                     }
@@ -424,19 +532,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                             Location curLocation = task.getResult();
                             if (curLocation != null) {
-                                if(toMoveCamera) {
+                                if (toMoveCamera) {
                                     moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()), DEFAULT_ZOOM, getString(R.string.map_my_location));
                                     myLocation = curLocation;
-                                    getlocationFail=false;
+                                    getlocationFail = false;
                                 }
                             } else {
                                 Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
-                                getlocationFail=true;
+                                getlocationFail = true;
                             }
                         } else {
                             //khong the lay vi tri
                             Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
-                            getlocationFail=true;
+                            getlocationFail = true;
                         }
 
                     }
@@ -550,5 +658,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        switch (view.getId()) {
+            case R.id.list_view_comment:
+                int lastItem = firstVisibleItem + visibleItemCount;
+                if (lastItem == totalItemCount) {
+                    if (count == 10 && !loading) {
+                        loading = true;
+                        progressBar.setVisibility(View.VISIBLE);
+                        getTextNotifation();
+                    }
+                }
+        }
     }
 }

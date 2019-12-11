@@ -64,6 +64,8 @@ public class ListTourCommentAdapter extends ArrayAdapter<TourComment> {
         TourComment tourMember = list.get(position);
         if(tourMember.getAvatar()!=null&&!tourMember.getAvatar().isEmpty()){
             Picasso.get().load(tourMember.getAvatar()).into(holder.imgMemberAvatar);
+        }else{
+            holder.imgMemberAvatar.setImageResource(R.drawable.unknown_user);
         }
 
         holder.tvMemberName.setText(tourMember.getName());

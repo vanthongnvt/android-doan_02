@@ -11,6 +11,7 @@ import com.ygaps.travelapp.Model.ListTour;
 import com.ygaps.travelapp.Model.ListTourInvitation;
 import com.ygaps.travelapp.Model.ListUserSearch;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.NotificationList;
 import com.ygaps.travelapp.Model.RequestOTPPassWord;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
@@ -261,4 +262,9 @@ public interface APITour {
                                                    @Field("notificationType") Integer notificationType,
                                                    @Field("speed") Integer speed,
                                                    @Field("note") String note);
+    @GET("/tour/notification-list")
+    Call<NotificationList> getNotificationTour(@Header("Authorization") String token,
+                                               @Query("tourId") Integer tourId,
+                                               @Query("pageIndex") Integer pageIndex,
+                                               @Query("pageSize") Integer pageSize);
 }

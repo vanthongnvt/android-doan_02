@@ -114,4 +114,5 @@
     <!--    Tour Direction-->
     <string name="notify_successfully">Đã gửi thông báo</string>
     <string name="invalid_notification">Thông báo không hợp lệ</string>
+    <string name="empty_warning_speed">Chưa chọn giới hạn tốc độ</string>
 </resources>

@@ -164,24 +164,27 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
     }
 
     private void getComment() {
+        loading=true;
+        progressBar.setVisibility(View.VISIBLE);
         apiTour.getComment(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, 10).enqueue(new Callback<CommentList>() {
             @Override
             public void onResponse(Call<CommentList> call, Response<CommentList> response) {
                 if (response.isSuccessful()) {
                     count = response.body().getCommentList().size();
                     tourCommentList.addAll(response.body().getCommentList());
-                    loading = false;
                     pageIndex++;
                     progressBar.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(TourInfoActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                 }
+                loading = false;
             }
 
             @Override
             public void onFailure(Call<CommentList> call, Throwable t) {
                 Toast.makeText(TourInfoActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                loading = false;
             }
         });
     }
