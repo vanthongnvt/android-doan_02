@@ -255,7 +255,7 @@ public interface APITour {
     @FormUrlEncoded
     Call<MessageResponse> createNotificationOnRoad(@Header("Authorization") String token,
                                                    @Field("lat") double mlat,
-                                                   @Field("long") long mlong,
+                                                   @Field("long") double mlong,
                                                    @Field("tourId") Integer tourId,
                                                    @Field("userId") Integer userId,
                                                    @Field("notificationType") Integer notificationType,

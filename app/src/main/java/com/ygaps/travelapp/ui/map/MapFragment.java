@@ -19,8 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,7 @@ import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.CreateStopPointActivity;
 import com.ygaps.travelapp.HomeActivity;
+import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.R;
@@ -82,12 +87,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private MarkerOptions markerOptions = null;
     private Marker marker;
-    List<Marker> markers = new ArrayList<>();
+//    private List<Marker> markers = new ArrayList<>();
 
     private Context context;
     private View mRoot;
     private ImageView btnCurLocation;
     private ImageView btnShowListDestination;
+    private ImageView btnShowNotification;
 
     private Dialog dialogListDestination;
     private ListMapDestinationAdapter mapDestinationAdapter;
@@ -104,10 +110,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private TextView arriveStopPoint;
     String ServiceArr[]={"Restaurant", "Hotel", "Rest Station", "Other"};
 
+    private BottomSheetDialog dialogCreateNotification;
+    private RadioGroup rdWarnings;
+    private RadioButton rdWarning50;
+    private RadioButton rdWarning60;
+    private RadioButton rdWarning70;
+    private EditText textNotification;
+    private Button btnSendNotification;
+
     private Integer tourId = 227;
     private TourInfo tourInfo;
     private APITour apiTour;
     private StopPoint targetStopPoint = null;
+    private Location myLocation;
+    private boolean getlocationFail=false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -183,6 +199,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void init() {
         btnCurLocation = mRoot.findViewById(R.id.map_btn_cur_location);
         btnShowListDestination = mRoot.findViewById(R.id.map_btn_direction);
+        btnShowNotification = mRoot.findViewById(R.id.show_warning_notification);
+
         dialogListDestination = new Dialog(getContext(), R.style.DialogSlideAnimation);
         dialogListDestination.setContentView(R.layout.dialog_list_destination_map);
         initDialogListDestination();
@@ -192,9 +210,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         dialogStopPointInfo.setContentView(R.layout.dialog_stop_point_info);
         initDialogStopPointInfo();
 
+        dialogCreateNotification = new BottomSheetDialog(getContext());
+        dialogCreateNotification.setContentView(R.layout.dialog_create_notification_on_road);
+        initDialogCreateNotification();
+
         apiTour = new APIRetrofitCreator().getAPIService();
 
-        btnCurLocation.setOnClickListener(v -> getDeviceLocation());
+        btnCurLocation.setOnClickListener(v -> getDeviceLocation(true));
 
         apiTour.getTourInfo(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<TourInfo>() {
             @Override
@@ -220,8 +242,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        btnShowListDestination.setOnClickListener(v -> {
-            dialogListDestination.show();
+        btnShowListDestination.setOnClickListener(v -> dialogListDestination.show());
+
+        btnShowNotification.setOnClickListener( v -> {
+            dialogCreateNotification.show();
+            rdWarnings.clearCheck();
+            textNotification.setText(null);
         });
 
     }
@@ -240,6 +266,76 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         maxCostStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_max_cost);
         leaveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_leave);
         arriveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_arrive);
+    }
+
+    private void initDialogCreateNotification(){
+        rdWarnings = dialogCreateNotification.findViewById(R.id.warning_speed);
+        rdWarning50 = dialogCreateNotification.findViewById(R.id.warning_speed_50);
+        rdWarning60 = dialogCreateNotification.findViewById(R.id.warning_speed_60);
+        rdWarning70 = dialogCreateNotification.findViewById(R.id.warning_speed_70);
+        textNotification =  dialogCreateNotification.findViewById(R.id.text_notification);
+        btnSendNotification = dialogCreateNotification.findViewById(R.id.send_notification);
+
+        btnSendNotification.setOnClickListener(v -> sendNotification());
+    }
+
+    private void sendNotification(){
+        getDeviceLocation(false);
+        if(getlocationFail){
+            return;
+        }
+        int speed=0;
+        String text = textNotification.getText().toString().trim();
+        switch (rdWarnings.getCheckedRadioButtonId()){
+            case R.id.warning_speed_50:
+                speed =50;
+                break;
+            case R.id.warning_speed_60:
+                speed = 60;
+                break;
+            case R.id.warning_speed_70:
+                speed=70;
+                break;
+        }
+        if(speed!=0){
+            apiTour.createNotificationOnRoad(TokenStorage.getInstance().getAccessToken(),myLocation.getLatitude(),myLocation.getLongitude(),tourId,TokenStorage.getInstance().getUserId(),3,speed,text).enqueue(new Callback<MessageResponse>() {
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    if(response.isSuccessful()){
+                        Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
+                        dialogCreateNotification.dismiss();
+                    }
+                    else{
+                        Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else{
+            if(!text.isEmpty()){
+                apiTour.sendNotification(TokenStorage.getInstance().getAccessToken(),TokenStorage.getInstance().getUserId(),tourId,text).enqueue(new Callback<MessageResponse>() {
+                    @Override
+                    public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
+                            dialogCreateNotification.dismiss();
+                        }else{
+                            Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MessageResponse> call, Throwable t) {
+                        Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
     }
 
 
@@ -284,7 +380,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         if (mLocationPermisstionsGranted) {
-            getDeviceLocation();
+            getDeviceLocation(true);
 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -293,20 +389,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onMapClick(LatLng latLng) {
                     moveCamera(latLng, DEFAULT_ZOOM, null);
+                    hideAllEletemt();
                 }
             });
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-
+                    if(marker.getTag()!=null) {
+                        StopPoint stopPoint = (StopPoint) marker.getTag();
+                        showStopPointInfo(stopPoint);
+                    }
                     return false;
                 }
             });
+
+            fusedLocationProviderClient.getLastLocation();
         }
     }
 
-    private void getDeviceLocation() {
+    private void hideAllEletemt() {
+
+    }
+
+    private void getDeviceLocation(boolean toMoveCamera) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         try {
             if (mLocationPermisstionsGranted) {
@@ -318,15 +424,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                             Location curLocation = task.getResult();
                             if (curLocation != null) {
-                                moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()), DEFAULT_ZOOM, getString(R.string.map_my_location));
-
+                                if(toMoveCamera) {
+                                    moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()), DEFAULT_ZOOM, getString(R.string.map_my_location));
+                                    myLocation = curLocation;
+                                    getlocationFail=false;
+                                }
                             } else {
                                 Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
-
+                                getlocationFail=true;
                             }
                         } else {
                             //khong the lay vi tri
                             Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
+                            getlocationFail=true;
                         }
 
                     }
@@ -429,7 +539,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .title(stopPoint.getName());
         Marker stopPointMarker = mMap.addMarker(stopPointMarkerOptions);
         stopPointMarker.setTag(stopPoint);
-        markers.add(stopPointMarker);
+//        markers.add(stopPointMarker);
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
