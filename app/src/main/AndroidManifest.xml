@@ -24,7 +24,11 @@
             android:name=".Service.BroadcastLocationReceiver"
             android:enabled="true"
             android:exported="true"
-            tools:ignore="ExportedReceiver" />
+            >
+            <intent-filter>
+                <action android:name="@string/receiver_action_send_coordinate"/>
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".Service.BackgroundLocationService"

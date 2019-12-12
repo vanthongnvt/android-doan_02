@@ -6,11 +6,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,7 +40,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.ygaps.travelapp.Adapter.ListMapDestinationAdapter;
 import com.ygaps.travelapp.Adapter.ListNotificationTourAdapter;
 import com.ygaps.travelapp.Adapter.ListTourCommentAdapter;
@@ -66,6 +73,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.ygaps.travelapp.Service.BackgroundLocationService;
+import com.ygaps.travelapp.Service.BroadcastLocationReceiver;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -78,7 +87,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, AbsListView.OnScrollListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, AbsListView.OnScrollListener, LocationListener {
     private MapViewModel mapViewModel;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -86,12 +95,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUESET_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final String TAG = "SHOW_MAP";
+    private static final String TAG = "MAP_DIRECTION";
 
     private boolean mLocationPermisstionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private MarkerOptions markerOptions = null;
+    private LocationManager locationManager;
     private Marker marker;
 //    private List<Marker> markers = new ArrayList<>();
 
@@ -146,8 +156,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private TourInfo tourInfo;
     private APITour apiTour;
     private StopPoint targetStopPoint = null;
-    private Location myLocation;
+    private Location myLocation=null;
     private boolean getlocationFail = false;
+    private Polyline polyline;
+
+    private BroadcastLocationReceiver broadcastLocationReceiver;
+    private IntentFilter mIntentFilter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -177,13 +191,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
             if (isOK == 1) {
                 getLocationPermission();
-//                Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
-//                serviceIntent.putExtra("tourId", tourId);
-//                context.startService(serviceIntent);
                 init();
 
-//                FirebaseMessaging.getInstance().subscribeToTopic("/topics/tour-id-"+tourId);
+                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-"+tourId);
+                Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+                serviceIntent.putExtra("tourId", tourId);
+                context.startService(serviceIntent);
 
+                broadcastLocationReceiver = new BroadcastLocationReceiver();
+                mIntentFilter =new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+                context.registerReceiver(broadcastLocationReceiver,mIntentFilter);
 
             }
         } else {
@@ -257,6 +274,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         for (StopPoint stopPoint : tourInfo.getStopPoints()) {
                             addStopPointMarker(stopPoint);
                         }
+                        if(myLocation!=null&&targetStopPoint!=null){
+                            drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(),targetStopPoint.getLongitude()));
+                        }
+                        else{
+                            Log.d(TAG, "init: NULL");
+                        }
                     }
                     mapDestinationAdapter = new ListMapDestinationAdapter(getContext(), R.layout.list_view_destination_item, tourInfo.getStopPoints(), MapFragment.this);
                     listViewDestination.setAdapter(mapDestinationAdapter);
@@ -274,6 +297,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                 Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
+
+
         btnShowNotificationList = mRoot.findViewById(R.id.show_notification_list);
         initDialogNotification();
         btnShowNotificationList.setOnClickListener(new View.OnClickListener() {
@@ -356,10 +381,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private void sendWarningSpeedNotification() {
-        getDeviceLocation(false);
-        if (getlocationFail) {
-            return;
-        }
+//        getDeviceLocation(false);
+//        if (getlocationFail) {
+//            return;
+//        }
         int speed = 0;
         String text = textNotification.getText().toString().trim();
         switch (rdWarnings.getCheckedRadioButtonId()) {
@@ -469,19 +494,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         arriveStopPoint.setText(dateFormat.format(date));
 
         dialogStopPointInfo.show();
-
-        //show dialog at bottom
-        Window window = dialogStopPointInfo.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-
-        wlp.gravity = Gravity.BOTTOM;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
     }
 
-    public void drawRouteToStopPoint(StopPoint stopPoint) {
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -511,10 +525,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     return false;
                 }
             });
-
-            fusedLocationProviderClient.getLastLocation();
+//
+//            if(myLocation!=null&&targetStopPoint!=null){
+//                drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(),targetStopPoint.getLongitude()));
+//            }
+//            else{
+//                Log.d(TAG, "init: NULL");
+//            }
         }
     }
+
+
 
     private void hideAllEletemt() {
 
@@ -603,6 +624,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         Log.d(TAG, "getLocationPermission: 2");
                     }
                 }
+                locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,0,this);
             } else {
                 ActivityCompat.requestPermissions((HomeActivity) context, permissions, LOCATION_PERMISSION_REQUESET_CODE);
             }
@@ -678,5 +702,57 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     }
                 }
         }
+    }
+
+    private void drawPolylineBetweenTwoLocation(LatLng begin,LatLng end){
+
+        // drawing a straight line between the two points
+        polyline = mMap.addPolyline(new PolylineOptions()
+                .add( begin, end )
+                .width(2)
+                .color(Color.BLUE));
+        // this point is halfway between Cleveland and San Jose
+//        LatLng halfWay = new LatLng( (begin.latitude + end.latitude)/2,
+//                (begin.longitude + end.longitude)/2 );
+        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom( begin, DEFAULT_ZOOM) );
+    }
+    public void drawRouteToStopPoint(StopPoint stopPoint){
+        if(polyline!=null) {
+            polyline.remove();
+        }
+        drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude()));
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        myLocation = location;
+//        Log.d(TAG, "onLocationChanged: "+location.getLatitude()+" , " + location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("tour-id-"+tourId);
+        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+        context.stopService(serviceIntent);
+        if(broadcastLocationReceiver != null) {
+            context.unregisterReceiver(broadcastLocationReceiver);
+            broadcastLocationReceiver = null;
+        }
+        super.onDestroy();
     }
 }

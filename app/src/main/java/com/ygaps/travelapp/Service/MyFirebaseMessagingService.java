@@ -64,58 +64,71 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(JSONObject messageBody) {
-        //if(messageBody.getString("type")=="6")
-        String hostName="",tourName="";
+        String hostName="",tourName="",type="";
         try {
-            hostName = messageBody.getString("hostName");
+            type = messageBody.getString("type");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        try {
-            tourName = messageBody.getString("name");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(type.equals("6")) {
+            // INVITE
+            try {
+                hostName = messageBody.getString("hostName");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                tourName = messageBody.getString("name");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+            String channelId = getString(R.string.project_id);
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            NotificationCompat.Builder notificationBuilder =
+                    new NotificationCompat.Builder(this, channelId)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                            .setContentTitle(getString(R.string.invite_title))
+                            .setContentText(hostName + " đã mời bạn tham gia " + tourName)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                            .addAction(new NotificationCompat.Action(
+                                    android.R.drawable.ic_delete,
+                                    "Từ chối",
+                                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)))
+                            .addAction(new NotificationCompat.Action(
+                                    android.R.drawable.ic_input_add,
+                                    "Chấp nhận",
+                                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)));
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // Since android Oreo notification channel is needed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                        channelId,
+                        "Channel human readable title",
+                        NotificationManager.IMPORTANCE_DEFAULT);
+
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            notificationManager.notify(0, notificationBuilder.build());
         }
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        String channelId = getString(R.string.project_id);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                        .setContentTitle(getString(R.string.invite_title))
-                        .setContentText(hostName+" đã mời bạn tham gia "+tourName)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent)
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setPriority(NotificationManager.IMPORTANCE_HIGH)
-                        .addAction(new NotificationCompat.Action(
-                                android.R.drawable.ic_delete,
-                                "Từ chối",
-                                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)))
-                        .addAction(new NotificationCompat.Action(
-                                android.R.drawable.ic_input_add,
-                                "Chấp nhận",
-                                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)));
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-
-            notificationManager.createNotificationChannel(channel);
+        else if(type.equals("9")){
+            //SEND LOCATION
+//            {"memPos":"[{\"id\":585,\"lat\":\"10.7793304\",\"long\":\"106.6118907\"}]","type":"9"}
+            Log.d(TAG, "sendNotification: SEND LOCATION");
         }
-
-        notificationManager.notify(0, notificationBuilder.build());
     }
 
     @Override
