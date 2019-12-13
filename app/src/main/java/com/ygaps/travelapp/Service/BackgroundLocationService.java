@@ -30,7 +30,7 @@ import retrofit2.Response;
 
 public class BackgroundLocationService extends Service implements LocationListener {
 
-    private Intent intent;
+//    private Intent intent;
     private Integer tourId;
     private static final String TAG = "MAP_DIRECTION_SERVICE";
     private Handler mHandler = new Handler();
@@ -56,7 +56,7 @@ public class BackgroundLocationService extends Service implements LocationListen
 
         apiTour = new APIRetrofitCreator().getAPIService();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        intent = new Intent(getString(R.string.receiver_action_send_coordinate));
+//        intent = new Intent(getString(R.string.receiver_action_send_coordinate));
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -72,7 +72,6 @@ public class BackgroundLocationService extends Service implements LocationListen
         Bundle extras = intent.getExtras();
         if(extras!=null){
             tourId = extras.getInt("tourId");
-//            (new RequestLocationTask(getApplicationContext(),tourId)).execute();
             mTimer.schedule(new TimerTaskToGetLocation(),5,notify_interval);
         }
         return Service.START_STICKY;
@@ -102,11 +101,8 @@ public class BackgroundLocationService extends Service implements LocationListen
         apiTour.currentCoordinate(TokenStorage.getInstance().getAccessToken(),TokenStorage.getInstance().getUserId(),tourId,location.getLatitude(),location.getLongitude()).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if(response.isSuccessful()){
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("memberCoordinate",1);
-                    intent.putExtras(bundle);
-                    sendBroadcast(intent);
+                if(!response.isSuccessful()){
+                    Log.d(TAG, "requestHttp: Send location failed " + response.code());
                 }
             }
 

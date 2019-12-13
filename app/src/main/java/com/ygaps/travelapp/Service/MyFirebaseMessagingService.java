@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -18,17 +19,24 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.MainActivity;
+import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
+import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -37,11 +45,13 @@ import retrofit2.Response;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     final static String TAG="FirebaseMessaging";
+    private Intent intent;
 
     @Override
     public void onCreate() {
 //        Log.d(TAG, "onCreate: created service");
         super.onCreate();
+        intent = new Intent(getString(R.string.receiver_action_send_coordinate));
     }
 
     @Override
@@ -125,9 +135,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         else if(type.equals("9")){
-            //SEND LOCATION
 //            {"memPos":"[{\"id\":585,\"lat\":\"10.7793304\",\"long\":\"106.6118907\"}]","type":"9"}
             Log.d(TAG, "sendNotification: SEND LOCATION");
+            Bundle bundle = new Bundle();
+            Gson gson = new Gson();
+
+            FirebaseNotifyLocation firebaseNotifyLocation= new FirebaseNotifyLocation();
+            try {
+                List<MemberLocation> locationList = gson.fromJson(messageBody.get("memPos").toString(),new TypeToken<List<MemberLocation>>(){}.getType());
+                firebaseNotifyLocation.setMemPos(locationList);
+            } catch (JSONException e) {
+                Log.d(TAG, "sendNotification: ERR "+e.getMessage());
+                e.printStackTrace();
+            }
+            bundle.putSerializable("memberCoordinate",firebaseNotifyLocation);
+            intent.putExtras(bundle);
+            sendBroadcast(intent);
+
         }
     }
 
@@ -139,23 +163,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendRegistrationToServer(String firebaseToken) {
-//        APITour apiTour = new APIRetrofitCreator().getAPIService();
-//        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-//        apiTour.registerFirebaseToken(TokenStorage.getInstance().getAccessToken(),firebaseToken,android_id,1,"1.0").enqueue(new Callback<MessageResponse>() {
-//            @Override
-//            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-//                if(response.isSuccessful()){
-//                    Log.d("Register Firebase", "onResponse: successfully");
-//                }
-//                else{
-//                    Log.d("Register Firebase", "onResponse: failed");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<MessageResponse> call, Throwable t) {
-//                Log.d("Register Firebase", "onResponse: failed");
-//            }
-//        });
+        APITour apiTour = new APIRetrofitCreator().getAPIService();
+        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        apiTour.registerFirebaseToken(TokenStorage.getInstance().getAccessToken(),firebaseToken,android_id,1,"1.0").enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if(response.isSuccessful()){
+                    Log.d("Register Firebase", "onResponse: successfully");
+                }
+                else{
+                    Log.d("Register Firebase", "onResponse: failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d("Register Firebase", "onResponse: failed");
+            }
+        });
     }
 }
