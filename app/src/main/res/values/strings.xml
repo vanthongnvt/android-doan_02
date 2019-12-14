@@ -116,4 +116,5 @@
     <string name="invalid_notification">Thông báo không hợp lệ</string>
     <string name="empty_warning_speed">Chưa chọn giới hạn tốc độ</string>
     <string name="receiver_action_send_coordinate">receiver.action.sendCoordinate</string>
+    <string name="receiver_action_send_notification_on_road">receiver.action.sendNotificationOnRoad</string>
 </resources>

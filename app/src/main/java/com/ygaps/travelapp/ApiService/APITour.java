@@ -7,11 +7,14 @@ import com.ygaps.travelapp.Model.CommentList;
 import com.ygaps.travelapp.Model.CreateTour;
 import com.ygaps.travelapp.Model.GetStatusTours;
 import com.ygaps.travelapp.Model.ListReviewPoint;
+import com.ygaps.travelapp.Model.ListSuggestedStopPoint;
 import com.ygaps.travelapp.Model.ListTour;
 import com.ygaps.travelapp.Model.ListTourInvitation;
 import com.ygaps.travelapp.Model.ListUserSearch;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.NotificationList;
+import com.ygaps.travelapp.Model.NotificationOnRoadList;
+import com.ygaps.travelapp.Model.RequestCoordinateList;
 import com.ygaps.travelapp.Model.RequestOTPPassWord;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
@@ -22,6 +25,7 @@ import com.ygaps.travelapp.Model.UserInfo;
 import com.ygaps.travelapp.Model.UserListTour;
 
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -89,6 +93,9 @@ public interface APITour {
     Call<MessageResponse> addStopPointToTour(@Header("Authorization") String token,
                                              @Body UpdateStopPointsOfTour updateStopPointsOfTour);
 
+    @POST("/tour/suggested-destination-list")
+    Call<ListSuggestedStopPoint> getSuggesteDestination(@Header("Authorization") String token,
+                                                        @Body RequestCoordinateList requestCoordList);
     @GET("/tour/info")
     Call<TourInfo> getTourInfo(@Header("Authorization") String token,
                                @Query("tourId") Integer tourId);
@@ -267,4 +274,17 @@ public interface APITour {
                                                @Query("tourId") Integer tourId,
                                                @Query("pageIndex") Integer pageIndex,
                                                @Query("pageSize") Integer pageSize);
+
+    @GET("/tour/get/noti-on-road")
+    Call<NotificationList> getNotificationOnRoadByTour(@Header("Authorization") String token,
+                                               @Query("tourId") Integer tourId,
+                                               @Query("pageIndex") Integer pageIndex,
+                                               @Query("pageSize") Integer pageSize);
+
+    @GET("/tour/get/noti-on-road-coordinate")
+    Call<NotificationOnRoadList> getNotificationOnRoadByCoordinate(@Header("Authorization") String token,
+                                                                   @Query("notificationType") Integer notificationType,
+                                                                   @Query("lat") double mlat,
+                                                                   @Query("long") double mlong);
+
 }

@@ -66,6 +66,22 @@
         app:srcCompat="@drawable/btn_gps_bg"
 
         />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_bg_btn"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/map_btn_cur_location"
+        android:layout_marginRight="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/map_btn_suggest_destination"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            app:srcCompat="@drawable/ic_wb_incandescent_black_24dp" />
+    </LinearLayout>
 
 
     <!--    <fragment android:id="@+id/autocomplete_fragment"-->

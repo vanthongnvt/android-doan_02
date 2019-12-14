@@ -19,6 +19,7 @@ import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.R;
 
 import java.util.Timer;
@@ -39,6 +40,7 @@ public class BackgroundLocationService extends Service implements LocationListen
     private LocationManager locationManager;
     private Location location;
     private APITour apiTour;
+    private Intent intent;
 
     public BackgroundLocationService() {
     }
@@ -53,7 +55,7 @@ public class BackgroundLocationService extends Service implements LocationListen
     public void onCreate() {
         super.onCreate();
         mTimer = new Timer();
-
+        intent = new Intent(getString(R.string.receiver_action_send_notification_on_road));
         apiTour = new APIRetrofitCreator().getAPIService();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        intent = new Intent(getString(R.string.receiver_action_send_coordinate));
@@ -84,17 +86,18 @@ public class BackgroundLocationService extends Service implements LocationListen
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    requestHttp();
+                    requestLocation();
+                    RequestNotificationOnRoad();
                 }
             });
         }
 
     }
 
-    private void requestHttp(){
+    private void requestLocation(){
 //        Log.e("latitude",location.getLatitude()+"");
 //        Log.e("longitude",location.getLongitude()+"");
-        Log.d(TAG, "requestHttp: HTTP");
+//        Log.d(TAG, "requestHttp: HTTP");
         if(location==null){
             return;
         }
@@ -102,13 +105,39 @@ public class BackgroundLocationService extends Service implements LocationListen
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if(!response.isSuccessful()){
-                    Log.d(TAG, "requestHttp: Send location failed " + response.code());
+                    Log.d(TAG, "requestLocation: Send location failed " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                Log.d(TAG, "requestHttp: Send location failed");
+                Log.d(TAG, "requestLocation: Send location failed");
+            }
+        });
+    }
+
+    private void RequestNotificationOnRoad(){
+        if(location==null){
+            return;
+        }
+        apiTour.getNotificationOnRoadByCoordinate(TokenStorage.getInstance().getAccessToken(),3,location.getLatitude(),location.getLongitude()).enqueue(new Callback<NotificationOnRoadList>() {
+            @Override
+            public void onResponse(Call<NotificationOnRoadList> call, Response<NotificationOnRoadList> response) {
+                if(!response.isSuccessful()){
+                    Log.d(TAG, "RequestNotificationOnRoad: failed " + response.code());
+                }
+                else{
+                    NotificationOnRoadList notificationOnRoadList = response.body();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("notificationOnRoad",notificationOnRoadList);
+                    intent.putExtras(bundle);
+                    sendBroadcast(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NotificationOnRoadList> call, Throwable t) {
+                Log.d(TAG, "RequestNotificationOnRoad: Send location failed");
             }
         });
     }

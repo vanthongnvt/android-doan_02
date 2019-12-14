@@ -64,6 +64,8 @@ import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.Notification;
 import com.ygaps.travelapp.Model.NotificationList;
+import com.ygaps.travelapp.Model.NotificationOnRoad;
+import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.TourMember;
@@ -141,6 +143,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private TextView maxCostStopPoint;
     private TextView leaveStopPoint;
     private TextView arriveStopPoint;
+    private ImageView addStopPoint;
     String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
 
     private BottomSheetDialog dialogCreateNotification;
@@ -231,6 +234,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
                 broadcastLocationReceiver = new BroadcastLocationReceiver();
                 mIntentFilter =new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+                mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
                 context.registerReceiver(broadcastLocationReceiver,mIntentFilter);
 
             }
@@ -396,6 +400,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         maxCostStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_max_cost);
         leaveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_leave);
         arriveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_arrive);
+        addStopPoint = dialogStopPointInfo.findViewById(R.id.add_suggested_stop_point);
+        addStopPoint.setVisibility(View.VISIBLE);
     }
 
     private void initDialogCreateNotification() {
@@ -563,6 +569,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         if(tourMember.getIsHost()){
             markerHost.setText(R.string.host);
         }
+        else{
+            markerHost.setText(null);
+        }
 
         dialogMemberInfoMarker.show();
     }
@@ -580,7 +589,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    moveCamera(latLng, DEFAULT_ZOOM, null);
+//                    moveCamera(latLng, DEFAULT_ZOOM, null);
+                    if (marker == null) {
+                        markerOptions = new MarkerOptions();
+                    } else {
+                        marker.remove();
+                    }
+                    markerOptions.position(latLng);
+                    marker = mMap.addMarker(markerOptions);
+
                     toggleEletemt();
                 }
             });
@@ -853,6 +870,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    public void addMarkerSpeedLimit(NotificationOnRoad notification){
+        int drawableId=-1;
+        if(notification.getSpeed()==50){
+            drawableId= R.drawable.ic_speed_limit_50;
+        }
+        else if(notification.getSpeed()==60){
+            drawableId= R.drawable.ic_speed_limit_60;
+        }
+        else if(notification.getSpeed()==70){
+            drawableId= R.drawable.ic_speed_limit_70;
+        }
+        if(drawableId!=-1) {
+            MarkerOptions memberMarkerOptions = new MarkerOptions();
+            memberMarkerOptions.position(new LatLng(notification.getLat(), notification.getLong()))
+                    .icon(bitmapDescriptorFromVector(getContext(), drawableId))
+                    .title("Limit " + notification.getSpeed());
+            Marker memberMarker = mMap.addMarker(memberMarkerOptions);
+        }
+    }
+
+    public void updateNotificationOnRoad(NotificationOnRoadList notificationOnRoadList){
+        if(notificationOnRoadList==null){
+            return;
+        }
+        //TODO
+        for (NotificationOnRoad notification : notificationOnRoadList.getNotiList()){
+            if(notification.getNotificationType()==3){
+                addMarkerSpeedLimit(notification);
             }
         }
     }

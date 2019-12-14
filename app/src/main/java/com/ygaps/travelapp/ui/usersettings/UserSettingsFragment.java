@@ -221,7 +221,7 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void openUpdateUserInfoDialog() {
-        Dialog dialog = new Dialog(getContext(), R.style.PlacesAutocompleteThemeFullscreen);
+        Dialog dialog = new Dialog(getContext(), R.style.DialogSlideAnimation);
         dialog.setContentView(R.layout.dialog_update_info_user);
         EditText edtName, edtEmail, edtPhone, edtDob;
         RadioButton rbtnMale, rbtnFemale;
@@ -307,14 +307,15 @@ public class UserSettingsFragment extends Fragment {
                 Number finalGender = gender;
                 Date finalDob = dob;
                 String finalName = name;
-
-                if(email.isEmpty()){
-                    Toast.makeText(getActivity(), "Email không được để trống", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(phone.isEmpty()){
-                    Toast.makeText(getActivity(), "Số điện thoại không được để trống", Toast.LENGTH_SHORT).show();
-                    return;
+                if(userInfo.getTypeLogin()==0) {
+                    if (email.isEmpty()) {
+                        Toast.makeText(getActivity(), "Email không được để trống", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (phone.isEmpty()) {
+                        Toast.makeText(getActivity(), "Số điện thoại không được để trống", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
                 DialogProgressBar.showProgress(getContext());
                 apiTour.updateUserInfo(TokenStorage.getInstance().getAccessToken(), finalName, email, phone, finalGender, finalDob).enqueue(new Callback<UpdateUserInfo>() {
@@ -369,7 +370,7 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void initDialogSelectAvatar(View root){
-        dialogSelectAvatar = new Dialog(root.getContext(),R.style.PlacesAutocompleteThemeFullscreen);
+        dialogSelectAvatar = new Dialog(root.getContext(),R.style.DialogSlideAnimation);
         dialogSelectAvatar.setContentView(R.layout.dialog_select_avatar);
 
         btnSelectAnotherImage= dialogSelectAvatar.findViewById(R.id.select_another_avatar);
