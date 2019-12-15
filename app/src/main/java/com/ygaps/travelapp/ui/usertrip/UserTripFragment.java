@@ -48,6 +48,7 @@ public class UserTripFragment extends Fragment {
     private  TextView tvTotalStartedTours;
     private  TextView tvTotalClosedTours;
     private int numTotalTours;
+    private TextView tvTourStatus;
 
     public static String EDIT_ID_TOUR = "EDIT ID TOUR";
 

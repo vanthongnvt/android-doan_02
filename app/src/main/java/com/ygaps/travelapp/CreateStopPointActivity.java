@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -27,6 +28,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -426,10 +428,14 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
         name.setText(stopPoint.getName());
         int numServiceID = stopPoint.getServiceTypeId();
-        type.setText(ServiceArr[numServiceID - 1]);
+        if(numServiceID>=1&&numServiceID<=4) {
+            type.setText(ServiceArr[numServiceID - 1]);
+        }
         address.setText(stopPoint.getAddress());
         int numProvinceID = stopPoint.getProvinceId();
-        provinceCity.setText(ProvinceArr[numProvinceID - 1]);
+        if(numProvinceID>=1&&numProvinceID<=64) {
+            provinceCity.setText(ProvinceArr[numProvinceID - 1]);
+        }
         int numMinCost = stopPoint.getMinCost();
         int numMaxCost = stopPoint.getMaxCost();
         minCost.setText(Integer.toString(numMinCost));
@@ -586,8 +592,24 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         spnService = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_service);
         spnProvince = (Spinner) dialogCreateStopPoint.findViewById(R.id.spn_create_stop_point_province);
 
-        ArrayAdapter<String> serviceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, ServiceArr);
-        ArrayAdapter<String> provinceAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, ProvinceArr);
+        ArrayAdapter<String> serviceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ServiceArr){
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+        ArrayAdapter<String> provinceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ProvinceArr){
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
 
         serviceAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
         provinceAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);

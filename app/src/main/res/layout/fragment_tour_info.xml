@@ -229,6 +229,19 @@
                         android:textColor="#FF7067"/>
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/btn_to_map"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_accept_bg"
+                    android:text="Bắt đầu"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorCustomPrimary"
+                    android:paddingLeft="40dp"
+                    android:paddingRight="40dp"
+                    android:layout_marginBottom="10dp"
+                    />
 
             </LinearLayout>
 

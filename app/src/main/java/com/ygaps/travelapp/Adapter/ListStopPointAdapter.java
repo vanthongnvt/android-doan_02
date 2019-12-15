@@ -1,6 +1,7 @@
 package com.ygaps.travelapp.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,11 +44,7 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         private final TextView tvStopPointArriveAt;
         private final TextView tvStopPointLeaveAt;
         private final TextView tvStopPointService;
-        private final ImageView btnDeleteStopPoint;
-        private final ImageView btnGeoLocateStopPoint;
-        private final ImageView btnEditStopPoint;
-
-        //code
+        private final TextView btnToStopPointReview;
 
         private ViewHolder(View row) {
             tvStopPointName = row.findViewById(R.id.tv_stop_point_name);
@@ -56,9 +53,7 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
             tvStopPointArriveAt=row.findViewById(R.id.tv_stop_point_startDate);
             tvStopPointLeaveAt=row.findViewById(R.id.tv_stop_point_endDate);
             tvStopPointService=row.findViewById(R.id.tv_stop_point_service);
-            btnDeleteStopPoint=row.findViewById(R.id.map_delete_stop_point);
-            btnGeoLocateStopPoint=row.findViewById(R.id.map_btn_view_stop_point);
-            btnEditStopPoint=row.findViewById(R.id.map_btn_edit_stop_point);
+            btnToStopPointReview = row.findViewById(R.id.btn_stop_point_review);
         }
     }
 
@@ -91,17 +86,11 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         cal.setTimeInMillis(stopPoint.getLeaveAt());
         String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
         holder.tvStopPointLeaveAt.setText(date2);
-        holder.btnDeleteStopPoint.setVisibility(View.GONE);
-        holder.btnEditStopPoint.setVisibility(View.GONE);
-        holder.btnGeoLocateStopPoint.setVisibility(View.GONE);
 
-
-//        holder.btnGeoLocateStopPoint.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((CreateStopPointActivity)context).moveCameraWhenSelectStopPoint(stopPoint);
-//            }
-//        });
+        holder.btnToStopPointReview.setOnClickListener(v -> {
+            //TODO
+            Intent intent = new Intent();
+        });
 
         return row;
     }

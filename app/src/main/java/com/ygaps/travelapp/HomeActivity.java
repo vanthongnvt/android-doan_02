@@ -43,7 +43,20 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-//        NavigationUI.setupWithNavController(navView, navController);
+
+        // send tourId to Map fragment
+        Intent intent = getIntent();
+        if (intent.hasExtra("directionTourId")) {
+            argumentForMapFragment = intent.getIntExtra("directionTourId",-1);
+            if(argumentForMapFragment!=-1) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("directionTourId", argumentForMapFragment);
+                MapFragment fragobj = new MapFragment();
+                fragobj.setArguments(bundle);
+                navView.getMenu().getItem(2).setChecked(true);
+                loadFragment(fragobj,R.string.title_map);
+            }
+        }
 
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -80,16 +93,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // send tourId to Map fragment
-        Intent intent = getIntent();
-        if (intent.hasExtra("directionTourId")) {
-            int argumentForMapFragment = intent.getIntExtra("directionTourId",-1);
-            if(argumentForMapFragment!=-1) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("directionTourId", argumentForMapFragment);
 
-            }
-        }
 
 
     }

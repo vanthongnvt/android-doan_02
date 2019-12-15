@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.ygaps.travelapp.Adapter.ListStopPointAdapter;
 import com.ygaps.travelapp.CreateStopPointActivity;
+import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.R;
 import com.squareup.picasso.Picasso;
@@ -50,6 +52,7 @@ public class TourInfoFragment extends Fragment {
     private ImageView btnEditStopPoints;
     private ListView listView;
     private ListStopPointAdapter stopPointAdapter;
+    private Button btnToMap;
 
     public static TourInfoFragment newInstance(TourInfo tourInfo,boolean isHostUser) {
         TourInfoFragment fragment = new TourInfoFragment();
@@ -117,9 +120,20 @@ public class TourInfoFragment extends Fragment {
         tvStartDate=root.findViewById(R.id.tv_startDate);
         tvEndDate=root.findViewById(R.id.tv_endDate);
         tvStatus=root.findViewById(R.id.tour_status);
+        btnToMap = root.findViewById(R.id.btn_to_map);
         btnEditStopPoints=root.findViewById(R.id.btn_edit_stop_points);
+        if(tourInfo.getStatus()==-1||tourInfo.getStatus()==2||tourInfo.getStopPoints().size()==0){
+            btnToMap.setVisibility(View.GONE);
+        }
+        else{
+            btnToMap.setOnClickListener(v->{
+                Intent home = new Intent(getContext(), HomeActivity.class);
+                home.putExtra("directionTourId",tourInfo.getId());
+                startActivity(home);
+            });
+        }
         listView=root.findViewById(R.id.list_view_stop_point);
-        stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.listview_temporary_stop_point_item,tourInfo.getStopPoints());
+        stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.list_view_tour_stop_point_item,tourInfo.getStopPoints());
         if(isHostUser){
             btnCloneTour.setVisibility(View.GONE);
         }

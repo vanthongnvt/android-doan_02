@@ -50,6 +50,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         private final TextView tvMinCost;
         private final TextView tvMaxCost;
         private final ImageView btnEdit;
+        private final TextView tvStatus;
 
 
         private ViewHolder(View row) {
@@ -62,6 +63,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
             tvMinCost = (TextView) row.findViewById(R.id.listusertrip_item_tv_minCost);
             tvMaxCost = (TextView) row.findViewById(R.id.listusertrip_item_tv_maxCost);
             btnEdit = (ImageView) row.findViewById(R.id.btn_edit_user_tour);
+            tvStatus = row.findViewById(R.id.tour_status);
         }
     }
 
@@ -139,6 +141,18 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         }
         else{
             holder.tvMaxCost.setText(tour.getMaxCost());
+        }
+        if(tour.getStatus()==-1){
+            holder.tvStatus.setText(R.string.tour_cancled);
+        }
+        else if(tour.getStatus()==0){
+            holder.tvStatus.setText(R.string.tour_open);
+        }
+        else if(tour.getStatus()==1){
+            holder.tvStatus.setText(R.string.tour_started);
+        }
+        else if(tour.getStatus()==2){
+            holder.tvStatus.setText(R.string.tour_closed);
         }
 
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {

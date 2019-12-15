@@ -145,6 +145,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private TextView arriveStopPoint;
     private ImageView addStopPoint;
     String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
+    String ProvinceArr[] = {"Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng"};
+
 
     private BottomSheetDialog dialogCreateNotification;
     private RadioGroup rdWarnings;
@@ -219,8 +221,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         userId = TokenStorage.getInstance().getUserId();
-        if (getArguments() == null || getArguments().getInt("directionTourId", -1) != -1) {
-//            tourId = getArguments().getInt("directionTourId");
+        if (getArguments() != null && getArguments().getInt("directionTourId", -1) != -1) {
+            tourId = getArguments().getInt("directionTourId");
             int isOK = isServiceAvailable();
 
             if (isOK == 1) {
@@ -536,7 +538,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
         nameStopPoint.setText(stopPoint.getName());
         int numServiceID = stopPoint.getServiceTypeId();
-        typeStopPoint.setText(ServiceArr[numServiceID - 1]);
+        if(numServiceID>=1&&numServiceID<=4) {
+            typeStopPoint.setText(ServiceArr[numServiceID - 1]);
+        }
+        int numProvinceID = stopPoint.getProvinceId();
+        if(numProvinceID>=1&&numProvinceID<=64) {
+            provinceCityStopPoint.setText(ProvinceArr[numProvinceID - 1]);
+        }
+
         addressStopPoint.setText(stopPoint.getAddress());
         int numMinCost = stopPoint.getMinCost();
         int numMaxCost = stopPoint.getMaxCost();

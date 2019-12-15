@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -286,5 +287,16 @@ public interface APITour {
                                                                    @Query("notificationType") Integer notificationType,
                                                                    @Query("lat") double mlat,
                                                                    @Query("long") double mlong);
+    @POST("/tour/recording")
+    @Multipart
+    Call<MessageResponse> sendRecord(@Header("Authorization") String token,
+                                     @Part MultipartBody.Part file,
+                                     @Part("tourId") RequestBody tourId,
+                                     @Part("fullname") RequestBody fullname,
+                                     @Part("avatar") RequestBody avatar,
+                                     @Part("lat") RequestBody mlat,
+                                     @Part("long") RequestBody mlong);
+
+
 
 }

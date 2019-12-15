@@ -104,7 +104,7 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
 //        holder.tvStopPointLeaveAt.setText(date2);
 
         holder.aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked&&position!=positionChecked){
+            if(isChecked){
                 positionChecked=position;
                 notifyDataSetChanged();
                 ((MapFragment)fragment).drawRouteToStopPoint(stopPoint);
