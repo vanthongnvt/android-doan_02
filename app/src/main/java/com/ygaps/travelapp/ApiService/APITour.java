@@ -297,6 +297,16 @@ public interface APITour {
                                      @Part("lat") RequestBody mlat,
                                      @Part("long") RequestBody mlong);
 
+    @POST("/tour/add/feedback-service")
+    @FormUrlEncoded
+    Call<MessageResponse> addServiceReview(@Header("Authorization") String token,
+                                    @Field("serviceId") Integer tourId,
+                                    @Field("feedback") String feedback,
+                                    @Field("point") Integer review);
+
+    @GET("/tour/get/feedback-point-stats")
+    Call<ListReviewPoint> serviceReviewPoint(@Header("Authorization") String token,
+                                      @Query("serviceId") Integer serviceId);
 
 
 }

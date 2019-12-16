@@ -10,26 +10,26 @@
 
     <application
         android:name=".AppHelper.TokenStorage"
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name="com.ygaps.travelapp.VerifyCodeRecoveryPasswordActivity"/>
-        <activity android:name="com.ygaps.travelapp.PasswordRecoveryActivity" />
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ServiceReviewActivity"></activity>
+        <activity android:name=".VerifyCodeRecoveryPasswordActivity" />
+        <activity android:name=".PasswordRecoveryActivity" />
 
         <receiver
             android:name=".Service.BroadcastLocationReceiver"
             android:enabled="true"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter android:priority="1000000">
-                <action android:name="@string/receiver_action_send_coordinate"/>
+                <action android:name="@string/receiver_action_send_coordinate" />
             </intent-filter>
             <intent-filter android:priority="1000000">
-                <action android:name="@string/receiver_action_send_notification_on_road"/>
+                <action android:name="@string/receiver_action_send_notification_on_road" />
             </intent-filter>
         </receiver>
 
@@ -37,21 +37,21 @@
             android:name=".Service.BackgroundLocationService"
             android:enabled="true"
             android:exported="true" />
-        <service android:name=".Service.MyFirebaseMessagingService"
-            android:enabled="true"
-            >
+        <service
+            android:name=".Service.MyFirebaseMessagingService"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name="com.ygaps.travelapp.UpdateTourActivity" />
+        <activity android:name=".UpdateTourActivity" />
         <activity
-            android:name="com.ygaps.travelapp.TourInfoActivity"
+            android:name=".TourInfoActivity"
             android:label="@string/title_activity_tour_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.ygaps.travelapp.CreateStopPointActivity" />
-        <activity android:name="com.ygaps.travelapp.CreateTourActivity" />
+        <activity android:name=".CreateStopPointActivity" />
+        <activity android:name=".CreateTourActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -79,7 +79,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name="com.ygaps.travelapp.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,9 +87,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ygaps.travelapp.HomeActivity"
+            android:name=".HomeActivity"
             android:label="@string/title_activity_home" />
-        <activity android:name="com.ygaps.travelapp.RegisterActivity" />
+        <activity android:name=".RegisterActivity" />
     </application>
 
 </manifest>

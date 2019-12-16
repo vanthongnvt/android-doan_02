@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.R;
+import com.ygaps.travelapp.ServiceReviewActivity;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,6 +27,8 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
     private Integer resource;
     private List<StopPoint> list;
     private List<String> listSerVice;
+
+    public static String STOPPOINT_ID = "STOPPOINT_ID";
 
     public ListStopPointAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects) {
         super(context, resource, objects);
@@ -89,7 +92,9 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
 
         holder.btnToStopPointReview.setOnClickListener(v -> {
             //TODO
-            Intent intent = new Intent();
+            Intent intent = new Intent(getContext(), ServiceReviewActivity.class);
+            intent.putExtra(STOPPOINT_ID, list.get(position).getId());
+            context.startActivity(intent);
         });
 
         return row;

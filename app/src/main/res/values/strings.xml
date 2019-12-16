@@ -92,7 +92,7 @@
     <string name="refuse_successfully">Đã từ chối</string>
     <string name="existed_member">đã ở trong nhóm</string>
     <string name="already_invited">đã được mời từ trước</string>
-    
+
     <!--    OTP-->
     <string name="sent_opt">Đã gửi mã OTP</string>
     <string name="wrong_parameter_type">Dữ liệu không hợp lệ</string>
