@@ -11,6 +11,7 @@ import com.ygaps.travelapp.Model.ReviewPoint;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.ygaps.travelapp.Adapter.ListStopPointAdapter;
 import com.ygaps.travelapp.ApiService.APITour;
@@ -44,12 +46,14 @@ public class ServiceReviewActivity extends AppCompatActivity {
     private RatingBar userRating;
     private EditText userReview;
     private Button btnSendReview;
+//    private Toolbar toolbarReviewDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_review);
-
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
+        setTitle("Đánh giá điểm dừng");
         init();
         getServiceReviewPoint();
     }
@@ -81,6 +85,9 @@ public class ServiceReviewActivity extends AppCompatActivity {
         userRating=dialogAddReview.findViewById(R.id.user_rating);
         userReview = dialogAddReview.findViewById(R.id.user_review);
         btnSendReview = dialogAddReview.findViewById(R.id.send_review);
+
+//        toolbarReviewDialog = dialogAddReview.findViewById(R.id.toolbar_review);
+//        toolbarReviewDialog.setTitle(R.string.tool_bar_review_stop_point_title);
 
         btnSendReview.setOnClickListener(v -> {
             int rating = (int)userRating.getRating();

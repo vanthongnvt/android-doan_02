@@ -53,12 +53,19 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp">
 
-        <ImageView
-            android:id="@+id/map_btn_cur_location"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/btn_gps_bg"
-            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_bg_btn"
+            >
+
+            <ImageView
+                android:id="@+id/map_btn_cur_location"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                app:srcCompat="@drawable/ic_gps_fixed_black_24dp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -85,6 +92,19 @@
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
                 app:srcCompat="@drawable/ic_member_white_24dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle_bg_btn"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/tour_setting"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                app:srcCompat="@drawable/ic_settings_black_24dp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

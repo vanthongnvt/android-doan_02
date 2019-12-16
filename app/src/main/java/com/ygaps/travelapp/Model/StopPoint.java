@@ -52,7 +52,9 @@ public class StopPoint implements Serializable {
     @SerializedName("index")
     @Expose
     private Integer index;
-
+    @SerializedName("serviceId")
+    @Expose
+    private Integer serviceId;
     public StopPoint(Integer id, String name, String address,Integer provinceId, Double longitude, Double latitude, String contact, Integer minCost, Integer maxCost, Long arrivalAt,Long leaveAt, Integer serviceTypeId) {
         this.id = id;
         this.name = name;
@@ -82,6 +84,10 @@ public class StopPoint implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
     }
 
     public String getName() {

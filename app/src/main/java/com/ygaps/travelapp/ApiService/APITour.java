@@ -296,6 +296,10 @@ public interface APITour {
                                      @Part("avatar") RequestBody avatar,
                                      @Part("lat") RequestBody mlat,
                                      @Part("long") RequestBody mlong);
+    @POST("/tour/finish-trip")
+    @FormUrlEncoded
+    Call<MessageResponse> finishTour(@Header("Authorization") String token,
+                                     @Field("tourId") Integer tourId);
 
     @POST("/tour/add/feedback-service")
     @FormUrlEncoded

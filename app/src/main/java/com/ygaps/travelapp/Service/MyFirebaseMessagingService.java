@@ -31,6 +31,8 @@ import com.ygaps.travelapp.MainActivity;
 import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
 import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
+import com.ygaps.travelapp.Model.TourNotificationText;
 import com.ygaps.travelapp.R;
 
 import org.json.JSONException;
@@ -45,13 +47,15 @@ import retrofit2.Response;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     final static String TAG="FirebaseMessaging";
-    private Intent intent;
+    private Intent intentForNotifciationType9, intentForNotifciationType3,intentForNotifciationType4;
 
     @Override
     public void onCreate() {
 //        Log.d(TAG, "onCreate: created service");
         super.onCreate();
-        intent = new Intent(getString(R.string.receiver_action_send_coordinate));
+        intentForNotifciationType9 = new Intent(getString(R.string.receiver_action_send_coordinate));
+        intentForNotifciationType4 = new Intent(getString(R.string.receiver_action_noti_text));
+        intentForNotifciationType3 = new Intent(getString(R.string.receiver_action_noti_limit_speed));
     }
 
     @Override
@@ -92,9 +96,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            Intent intentNoti = new Intent(this, HomeActivity.class);
+            intentNoti.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNoti, PendingIntent.FLAG_ONE_SHOT);
 
             String channelId = getString(R.string.project_id);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -113,11 +117,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             .addAction(new NotificationCompat.Action(
                                     android.R.drawable.ic_delete,
                                     "Từ chối",
-                                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)))
+                                    PendingIntent.getActivity(this, 0, intentNoti, PendingIntent.FLAG_CANCEL_CURRENT)))
                             .addAction(new NotificationCompat.Action(
                                     android.R.drawable.ic_input_add,
                                     "Chấp nhận",
-                                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)));
+                                    PendingIntent.getActivity(this, 0, intentNoti, PendingIntent.FLAG_CANCEL_CURRENT)));
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -136,7 +140,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         else if(type.equals("9")){
 //            {"memPos":"[{\"id\":585,\"lat\":\"10.7793304\",\"long\":\"106.6118907\"}]","type":"9"}
-            Log.d(TAG, "sendNotification: SEND LOCATION");
+//            Log.d(TAG, "sendNotification: SEND LOCATION");
             Bundle bundle = new Bundle();
             Gson gson = new Gson();
 
@@ -149,9 +153,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 e.printStackTrace();
             }
             bundle.putSerializable("memberCoordinate",firebaseNotifyLocation);
-            intent.putExtras(bundle);
-            sendBroadcast(intent);
+            intentForNotifciationType9.putExtras(bundle);
+            sendBroadcast(intentForNotifciationType9);
 
+        }
+        else if(type.equals("4")){
+            Bundle bundle = new Bundle();
+            Gson gson = new Gson();
+
+            TourNotificationText notificationText = gson.fromJson(messageBody.toString(),TourNotificationText.class);
+
+            bundle.putSerializable("notificationText",notificationText);
+            intentForNotifciationType4.putExtras(bundle);
+            sendBroadcast(intentForNotifciationType4);
+//            Intent intentNoti = new Intent(this, HomeActivity.class);
+//            intent.putExtra("notification", true);
+//            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intentNoti,PendingIntent.FLAG_ONE_SHOT);
+        }
+        else if(type.equals("3")){
+            Bundle bundle = new Bundle();
+            Gson gson = new Gson();
+
+            TourNotificationLimitSpeed notificationLimitSpeed= gson.fromJson(messageBody.toString(),TourNotificationLimitSpeed.class);
+
+            bundle.putSerializable("notificationLimitSpeed",notificationLimitSpeed);
+            intentForNotifciationType3.putExtras(bundle);
+            sendBroadcast(intentForNotifciationType3);
         }
     }
 

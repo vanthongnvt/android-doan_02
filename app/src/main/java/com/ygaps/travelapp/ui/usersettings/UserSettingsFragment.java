@@ -155,7 +155,7 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void openChangePassDialog() {
-        Dialog dialog = new Dialog(getContext(), R.style.PlacesAutocompleteThemeFullscreen);
+        Dialog dialog = new Dialog(getContext(), R.style.DialogSlideAnimation);
         dialog.setContentView(R.layout.dialog_update_password);
         EditText edtOldPass, edtNewPass, edtConfirmPass;
         Button btnUpdate;
@@ -381,9 +381,9 @@ public class UserSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DialogProgressBar.showProgress(getContext());
-                Log.d("OkHttp", "onClick: "+URI);
+//                Log.d("OkHttp", "onClick: "+URI);
                 File file = new File(getRealPathFromURI(getContext(),URI));
-                Log.d("OkHttp", "onClick: "+file.getAbsolutePath());
+//                Log.d("OkHttp", "onClick: "+file.getAbsolutePath());
                 RequestBody fileReqBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
                 MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorCustomPrimary"
-        app:title="Đánh giá chuyến đi"
+        app:title="Tạo đánh giá"
         app:titleTextColor="@color/white" />
 
     <LinearLayout

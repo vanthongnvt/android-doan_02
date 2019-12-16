@@ -27,9 +27,9 @@
             android:exported="true">
             <intent-filter android:priority="1000000">
                 <action android:name="@string/receiver_action_send_coordinate" />
-            </intent-filter>
-            <intent-filter android:priority="1000000">
                 <action android:name="@string/receiver_action_send_notification_on_road" />
+                <action android:name="@string/receiver_action_noti_text"/>
+                <action android:name="@string/receiver_action_noti_limit_speed"/>
             </intent-filter>
         </receiver>
 

@@ -23,6 +23,14 @@ public class NotificationOnRoad implements Serializable {
     @Expose
     private Integer notificationType;
 
+    public NotificationOnRoad(double lat, double _long, String note, Integer speed, Integer notificationType) {
+        this.lat = lat;
+        this._long = _long;
+        this.note = note;
+        this.speed = speed;
+        this.notificationType = notificationType;
+    }
+
     public double getLat() {
         return lat;
     }

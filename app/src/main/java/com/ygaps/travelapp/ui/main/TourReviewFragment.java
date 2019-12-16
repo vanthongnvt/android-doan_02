@@ -155,7 +155,7 @@ public class TourReviewFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser&&!hasLoadedReview){
+        if(isVisibleToUser && !hasLoadedReview){
            getReviewPoint();
            getReviewList();
            hasLoadedReview=true;
@@ -163,7 +163,7 @@ public class TourReviewFragment extends Fragment {
     }
 
     private void getReviewPoint(){
-        apiTour.reviewPoint(TokenStorage.getInstance().getAccessToken(),tourInfo.getId()).enqueue(new Callback<ListReviewPoint>() {
+        apiTour.reviewPoint(TokenStorage.getInstance().getAccessToken(), tourInfo.getId()).enqueue(new Callback<ListReviewPoint>() {
             @Override
             public void onResponse(Call<ListReviewPoint> call, Response<ListReviewPoint> response) {
 
@@ -200,6 +200,11 @@ public class TourReviewFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

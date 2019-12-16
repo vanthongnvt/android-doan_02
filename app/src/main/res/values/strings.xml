@@ -81,13 +81,14 @@
     <string name="empty_review">Chưa nhập nội dung đánh giá</string>
     <string name="empty_point_review">Chưa chọn số điểm đánh giá</string>
     <string name="add_review_successfully">Đã gửi đánh giá</string>
+    <string name="tool_bar_review_stop_point_title">Đánh giá điểm dừng</string>
 
     <!--    user info-->
     <string name="change_avatar_successfully">Thay đổi avatar thành công</string>
     <string name="image_too_large">Lỗi! Hình ảnh quá lớn</string>
     <string name="server_err">Lỗi xử lý dữ liệu</string>
 
-    <!--    inviation-->nhóm
+    <!--    inviation-->
     <string name="accept_successfully">Đã chấp nhận</string>
     <string name="refuse_successfully">Đã từ chối</string>
     <string name="existed_member">đã ở trong nhóm</string>
@@ -117,4 +118,6 @@
     <string name="empty_warning_speed">Chưa chọn giới hạn tốc độ</string>
     <string name="receiver_action_send_coordinate">receiver.action.sendCoordinate</string>
     <string name="receiver_action_send_notification_on_road">receiver.action.sendNotificationOnRoad</string>
+    <string name="receiver_action_noti_text">receiver.action.notiText</string>
+    <string name="receiver_action_noti_limit_speed">receiver.action.notiLimitSpeed</string>
 </resources>

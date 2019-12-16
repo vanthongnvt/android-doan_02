@@ -91,9 +91,8 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         holder.tvStopPointLeaveAt.setText(date2);
 
         holder.btnToStopPointReview.setOnClickListener(v -> {
-            //TODO
             Intent intent = new Intent(getContext(), ServiceReviewActivity.class);
-            intent.putExtra(STOPPOINT_ID, list.get(position).getId());
+            intent.putExtra(STOPPOINT_ID, stopPoint.getServiceId());
             context.startActivity(intent);
         });
 

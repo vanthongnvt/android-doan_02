@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
 import com.ygaps.travelapp.Model.NotificationOnRoadList;
+import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
+import com.ygaps.travelapp.Model.TourNotificationText;
 import com.ygaps.travelapp.R;
 import com.ygaps.travelapp.ui.map.MapFragment;
 
@@ -39,8 +41,25 @@ public class BroadcastLocationReceiver extends BroadcastReceiver {
             NotificationOnRoadList notificationOnRoadList = (NotificationOnRoadList) intent.getSerializableExtra("notificationOnRoad");
             Fragment fragment = ((HomeActivity)context).getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             if (fragment instanceof MapFragment) {
-//                Log.d("MAP_DIRECTION", "onReceive: CCCCCCCCC");
                 ((MapFragment)fragment).updateNotificationOnRoad(notificationOnRoadList);
+            }
+        }
+        else if(action.equals(context.getString(R.string.receiver_action_noti_text))){
+            TourNotificationText notificationText = (TourNotificationText) intent.getSerializableExtra("notificationText");
+            Fragment fragment = ((HomeActivity)context).getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            if (fragment instanceof MapFragment) {
+                if (notificationText != null) {
+                    ((MapFragment)fragment).updateNotificationText(notificationText);
+                }
+            }
+        }
+        else if(action.equals(context.getString(R.string.receiver_action_noti_limit_speed))){
+            TourNotificationLimitSpeed tourNotificationLimitSpeed = (TourNotificationLimitSpeed) intent.getSerializableExtra("notificationLimitSpeed");
+            Fragment fragment = ((HomeActivity)context).getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            if (fragment instanceof MapFragment) {
+                if (tourNotificationLimitSpeed != null) {
+                    ((MapFragment)fragment).updateNotificationLimitSpeed(tourNotificationLimitSpeed);
+                }
             }
         }
 //        Log.d("MAP_DIRECTION", "onReceive "+ intent.getAction());

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -56,6 +58,7 @@ import com.ygaps.travelapp.Adapter.ListTourCommentAdapter;
 import com.ygaps.travelapp.Adapter.ListTourMemberAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
+import com.ygaps.travelapp.AppHelper.DialogProgressBar;
 import com.ygaps.travelapp.AppHelper.PicassoMarker;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.HomeActivity;
@@ -69,6 +72,8 @@ import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.TourMember;
+import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
+import com.ygaps.travelapp.Model.TourNotificationText;
 import com.ygaps.travelapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -121,6 +126,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private HashMap markerMemberHashMap = new HashMap<Integer, Marker>();
     private PicassoMarker picassoMarker;
     private Transformation transformation;
+    private SharedPreferences sharedPreferences;
 
     private Context context;
     private View mRoot;
@@ -129,6 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private ImageView btnShowWarningSpeedNotificationDialog;
     private ImageView btnShowListMember;
     private ImageView btnShowNotificationList;
+    private ImageView btnSetting;
 
     private Dialog dialogListDestination;
     private ListMapDestinationAdapter mapDestinationAdapter;
@@ -161,10 +168,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private ListTourMemberAdapter listTourMemberAdapter;
 
     private BottomSheetDialog dialogMemberInfoMarker;
-    private  TextView markerMemberName;
-    private  ImageView markerMemberAvatar;
-    private  TextView markerMemberPhone;
-    private  TextView markerHost;
+    private TextView markerMemberName;
+    private ImageView markerMemberAvatar;
+    private TextView markerMemberPhone;
+    private TextView markerHost;
 
     private Dialog dialogNotificationList;
     private EditText inputTextNotify;
@@ -174,27 +181,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private List<Notification> notificationList = new ArrayList<>();
     private ProgressBar progressBar;
     private Integer pageIndex = 1;
-    private Integer pageSize=20;
+    private Integer pageSize = 20;
     private boolean loading = false;
     private Integer count = 0;
     private boolean firstClick = true;
 
-    private Integer tourId = 227;
+    private BottomSheetDialog dialogTourSetting;
+    private Button btnExit;
+    private Button btnFinishTour;
+
+    private Integer tourId = null;
     private Integer userId;
     private TourInfo tourInfo;
     private APITour apiTour;
     private StopPoint targetStopPoint = null;
-    private Location myLocation=null;
+    private Location myLocation = null;
     private boolean getlocationFail = false;
     private Polyline polyline;
-    private boolean elementIsHiding=false;
+    private boolean elementIsHiding = false;
 
     private BroadcastLocationReceiver broadcastLocationReceiver;
     private IntentFilter mIntentFilter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         context = root.getContext();
         transformation = new RoundedTransformationBuilder()
@@ -221,23 +232,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         userId = TokenStorage.getInstance().getUserId();
-        if (getArguments() != null && getArguments().getInt("directionTourId", -1) != -1) {
-            tourId = getArguments().getInt("directionTourId");
+        sharedPreferences = getContext().getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE);
+        tourId = sharedPreferences.getInt("tourId", -1);
+        boolean fIntent=false;
+        if(getArguments() != null){
+            tourId = getArguments().getInt("directionTourId",-2);
+            if(tourId!=-1 && tourId!=-2) {
+                fIntent = true;
+            }
+        }
+        if (tourId > 0) {
+            if(fIntent) {
+                sharedPreferences.edit().putInt("tourId", tourId).apply();
+            }
             int isOK = isServiceAvailable();
 
             if (isOK == 1) {
                 getLocationPermission();
                 init();
 
-                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-"+tourId);
+                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
                 Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
                 serviceIntent.putExtra("tourId", tourId);
                 context.startService(serviceIntent);
 
                 broadcastLocationReceiver = new BroadcastLocationReceiver();
-                mIntentFilter =new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+                mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
                 mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
-                context.registerReceiver(broadcastLocationReceiver,mIntentFilter);
+                mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
+                mIntentFilter.addAction(getString(R.string.receiver_action_noti_limit_speed));
+                context.registerReceiver(broadcastLocationReceiver, mIntentFilter);
 
             }
         } else {
@@ -300,6 +324,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         dialogMemberInfoMarker.setContentView(R.layout.dialog_member_info_marker);
         initDialogMemberInfoMarker();
 
+        btnSetting = mRoot.findViewById(R.id.tour_setting);
+        dialogTourSetting = new BottomSheetDialog(getContext());
+        dialogTourSetting.setContentView(R.layout.dialog_tour_setting);
+        initDialogTourSetting();
+
         apiTour = new APIRetrofitCreator().getAPIService();
 
         btnCurLocation.setOnClickListener(v -> getDeviceLocation(true));
@@ -314,10 +343,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         for (StopPoint stopPoint : tourInfo.getStopPoints()) {
                             addStopPointMarker(stopPoint);
                         }
-                        if(myLocation!=null&&targetStopPoint!=null){
-                            drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(),targetStopPoint.getLongitude()));
-                        }
-                        else{
+                        if (myLocation != null && targetStopPoint != null) {
+                            drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(), targetStopPoint.getLongitude()));
+                        } else {
                             Log.d(TAG, "init: NULL");
                         }
                     }
@@ -345,9 +373,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             @Override
             public void onClick(View v) {
                 dialogNotificationList.show();
-                if(firstClick){
+                if (firstClick) {
                     getTextNotifation();
-                    firstClick=false;
+                    firstClick = false;
                 }
             }
         });
@@ -362,6 +390,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
         btnShowListMember.setOnClickListener(v -> dialogListMember.show());
 
+        btnSetting.setOnClickListener(v -> dialogTourSetting.show());
+
     }
 
     private void initDialogListMember() {
@@ -369,14 +399,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
         listViewMember.setOnItemClickListener((parent, view, position, id) -> {
             TourMember member = tourInfo.getMembers().get(position);
-            if(markerMemberHashMap.containsKey(member.getId())) {
+            if (markerMemberHashMap.containsKey(member.getId())) {
                 Marker markerMember = (Marker) markerMemberHashMap.get(member.getId());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerMember.getPosition(), DEFAULT_ZOOM));
             }
         });
     }
 
-    private void initDialogMemberInfoMarker(){
+    private void initDialogMemberInfoMarker() {
         markerMemberName = dialogMemberInfoMarker.findViewById(R.id.marker_tv_member_name);
         markerMemberAvatar = dialogMemberInfoMarker.findViewById(R.id.marker_member_avatar);
         markerMemberPhone = dialogMemberInfoMarker.findViewById(R.id.marker_tv_member_phone);
@@ -387,7 +417,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         listViewDestination = dialogListDestination.findViewById(R.id.list_view_destination);
         listViewDestination.setOnItemClickListener(((parent, view, position, id) -> {
             StopPoint stopPoint = tourInfo.getStopPoints().get(position);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude()), DEFAULT_ZOOM));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(stopPoint.getLatitude(), stopPoint.getLongitude()), DEFAULT_ZOOM));
             dialogListDestination.dismiss();
         }));
 
@@ -442,6 +472,55 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         });
     }
 
+    private void initDialogTourSetting() {
+        btnExit = dialogTourSetting.findViewById(R.id.btn_exit);
+
+        btnExit.setOnClickListener(v -> {
+            dialogTourSetting.dismiss();
+            sharedPreferences.edit().remove("tourId").apply();
+            ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+        });
+        btnFinishTour = dialogTourSetting.findViewById(R.id.btn_finish_tour);
+        if(Integer.parseInt(tourInfo.getHostId())==userId) {
+
+            btnFinishTour.setOnClickListener(v -> {
+                dialogTourSetting.dismiss();
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                alert.setTitle("Kết thúc chuyến đi");
+                alert.setMessage("Bạn sẽ không thể theo dõi chuyến đi này nữa");
+                alert.setPositiveButton("Ok", (dialog, which) -> {
+                    dialog.dismiss();
+                    DialogProgressBar.showProgress(getContext());
+                    apiTour.finishTour(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<MessageResponse>() {
+                        @Override
+                        public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                            if (response.isSuccessful()) {
+                                ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+                            } else {
+                                Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                            }
+                            DialogProgressBar.closeProgress();
+                        }
+
+                        @Override
+                        public void onFailure(Call<MessageResponse> call, Throwable t) {
+                            Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                            DialogProgressBar.closeProgress();
+                        }
+                    });
+
+                });
+
+                alert.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+
+                alert.show();
+            });
+        }
+        else{
+            btnFinishTour.setVisibility(View.GONE);
+        }
+    }
+
     private void sendWarningSpeedNotification() {
 //        getDeviceLocation(false);
 //        if (getlocationFail) {
@@ -489,8 +568,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
-
-                    Notification notification = new Notification(TokenStorage.getInstance().getUserId().toString(),"","",text);
+                    Integer userId = TokenStorage.getInstance().getUserId();
+                    Notification notification = new Notification(userId.toString(), "<ID :"+userId+" >", null, text);
                     notificationList.add(notification);
                     tourNotificationAdapter.notifyDataSetChanged();
 
@@ -507,7 +586,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private void getTextNotifation() {
-        loading=true;
+        loading = true;
         progressBar.setVisibility(View.VISIBLE);
         apiTour.getNotificationTour(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, pageSize).enqueue(new Callback<NotificationList>() {
             @Override
@@ -538,11 +617,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
         nameStopPoint.setText(stopPoint.getName());
         int numServiceID = stopPoint.getServiceTypeId();
-        if(numServiceID>=1&&numServiceID<=4) {
+        if (numServiceID >= 1 && numServiceID <= 4) {
             typeStopPoint.setText(ServiceArr[numServiceID - 1]);
         }
         int numProvinceID = stopPoint.getProvinceId();
-        if(numProvinceID>=1&&numProvinceID<=64) {
+        if (numProvinceID >= 1 && numProvinceID <= 64) {
             provinceCityStopPoint.setText(ProvinceArr[numProvinceID - 1]);
         }
 
@@ -565,20 +644,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         dialogStopPointInfo.show();
     }
 
-    public void showMemberInfoMarker(TourMember tourMember){
-        if(tourMember.getAvatar()!=null&&!tourMember.getAvatar().isEmpty()){
+    public void showMemberInfoMarker(TourMember tourMember) {
+        if (tourMember.getAvatar() != null && !tourMember.getAvatar().isEmpty()) {
             Picasso.get().load(tourMember.getAvatar()).into(markerMemberAvatar);
-        }
-        else{
+        } else {
             markerMemberAvatar.setImageResource(R.drawable.unknown_user);
         }
 
         markerMemberName.setText(tourMember.getName());
         markerMemberPhone.setText(tourMember.getPhone());
-        if(tourMember.getIsHost()){
+        if (tourMember.getIsHost()) {
             markerHost.setText(R.string.host);
-        }
-        else{
+        } else {
             markerHost.setText(null);
         }
 
@@ -615,12 +692,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     if (marker.getTag() != null) {
-                        Log.d(TAG, "onMarkerClick: "+marker.getTag().getClass().getName());
-                        if(marker.getTag().getClass().equals(TourMember.class)){
+                        Log.d(TAG, "onMarkerClick: " + marker.getTag().getClass().getName());
+                        if (marker.getTag().getClass().equals(TourMember.class)) {
                             TourMember tourMember = (TourMember) marker.getTag();
                             showMemberInfoMarker(tourMember);
-                        }
-                        else {
+                        } else {
                             StopPoint stopPoint = (StopPoint) marker.getTag();
                             showStopPointInfo(stopPoint);
                         }
@@ -639,21 +715,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
 
-
     private void toggleEletemt() {
-        if(elementIsHiding){
+        if (elementIsHiding) {
             btnShowListDestination.setVisibility(View.VISIBLE);
             btnShowNotificationList.setVisibility(View.VISIBLE);
             btnShowWarningSpeedNotificationDialog.setVisibility(View.VISIBLE);
             btnShowListMember.setVisibility(View.VISIBLE);
-            elementIsHiding=false;
-        }
-        else{
+            elementIsHiding = false;
+        } else {
             btnShowListDestination.setVisibility(View.GONE);
             btnShowNotificationList.setVisibility(View.GONE);
             btnShowWarningSpeedNotificationDialog.setVisibility(View.GONE);
             btnShowListMember.setVisibility(View.GONE);
-            elementIsHiding=true;
+            elementIsHiding = true;
         }
     }
 
@@ -742,7 +816,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                 }
                 locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000,0,this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
             } else {
                 ActivityCompat.requestPermissions((HomeActivity) context, permissions, LOCATION_PERMISSION_REQUESET_CODE);
             }
@@ -811,7 +885,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             case R.id.list_view_comment:
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if (lastItem == totalItemCount) {
-                    if (count.equals(pageSize)  && !loading) {
+                    if (count.equals(pageSize) && !loading) {
                         loading = true;
                         progressBar.setVisibility(View.VISIBLE);
                         getTextNotifation();
@@ -820,38 +894,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    private void drawPolylineBetweenTwoLocation(LatLng begin,LatLng end){
+    private void drawPolylineBetweenTwoLocation(LatLng begin, LatLng end) {
 
         // drawing a straight line between the two points
         polyline = mMap.addPolyline(new PolylineOptions()
-                .add( begin, end )
+                .add(begin, end)
                 .width(2)
                 .color(Color.BLUE));
         // this point is halfway between Cleveland and San Jose
 //        LatLng halfWay = new LatLng( (begin.latitude + end.latitude)/2,
 //                (begin.longitude + end.longitude)/2 );
-        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom( begin, DEFAULT_ZOOM) );
-    }
-    public void drawRouteToStopPoint(StopPoint stopPoint){
-        if(polyline!=null) {
-            polyline.remove();
-        }
-        drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),new LatLng(stopPoint.getLatitude(),stopPoint.getLongitude()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(begin, DEFAULT_ZOOM));
     }
 
-    private void addMarkerMember(TourMember tourMember, LatLng latLng){
+    public void drawRouteToStopPoint(StopPoint stopPoint) {
+        if (polyline != null) {
+            polyline.remove();
+        }
+        drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(stopPoint.getLatitude(), stopPoint.getLongitude()));
+    }
+
+    private void addMarkerMember(TourMember tourMember, LatLng latLng) {
         if (marker != null) {
             marker.remove();
         }
         MarkerOptions memberMarkerOptions = new MarkerOptions();
         Marker memberMarker;
-        if(tourMember.getAvatar()==null) {
+        if (tourMember.getAvatar() == null) {
             memberMarkerOptions.position(new LatLng(latLng.latitude, latLng.longitude))
                     .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_none_avatar_user_marker))
                     .title(tourMember.getName());
             memberMarker = mMap.addMarker(memberMarkerOptions);
-        }
-        else{
+        } else {
             memberMarkerOptions.position(new LatLng(latLng.latitude, latLng.longitude))
                     .title(tourMember.getName());
             memberMarker = mMap.addMarker(memberMarkerOptions);
@@ -860,22 +934,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             Picasso.get().load(tourMember.getAvatar()).transform(transformation).into(picassoMarker);
         }
         memberMarker.setTag(tourMember);
-        markerMemberHashMap.put(tourMember.getId(),memberMarker);
+        markerMemberHashMap.put(tourMember.getId(), memberMarker);
     }
 
-    public void updateMemberLocation(FirebaseNotifyLocation firebaseNotifyLocation){
-        for(MemberLocation memberLocation: firebaseNotifyLocation.getMemPos()){
-            if(memberLocation.getId().equals(userId)){
+    public void updateMemberLocation(FirebaseNotifyLocation firebaseNotifyLocation) {
+        for (MemberLocation memberLocation : firebaseNotifyLocation.getMemPos()) {
+            if (memberLocation.getId().equals(userId)) {
                 continue;
             }
-            if(markerMemberHashMap.containsKey(memberLocation.getId())){
-                ((Marker)markerMemberHashMap.get(memberLocation.getId())).setPosition(new LatLng(memberLocation.getLat(),memberLocation.getLong()));
-            }
-            else{
+            if (markerMemberHashMap.containsKey(memberLocation.getId())) {
+                ((Marker) markerMemberHashMap.get(memberLocation.getId())).setPosition(new LatLng(memberLocation.getLat(), memberLocation.getLong()));
+            } else {
 
-                for(TourMember member : tourInfo.getMembers()){
-                    if(member.getId().equals(memberLocation.getId())){
-                        addMarkerMember(member,new LatLng(memberLocation.getLat(),memberLocation.getLong()));
+                for (TourMember member : tourInfo.getMembers()) {
+                    if (member.getId().equals(memberLocation.getId())) {
+                        addMarkerMember(member, new LatLng(memberLocation.getLat(), memberLocation.getLong()));
                         return;
                     }
                 }
@@ -883,18 +956,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void addMarkerSpeedLimit(NotificationOnRoad notification){
-        int drawableId=-1;
-        if(notification.getSpeed()==50){
-            drawableId= R.drawable.ic_speed_limit_50;
+    public void addMarkerSpeedLimit(NotificationOnRoad notification) {
+        int drawableId = -1;
+        if (notification.getSpeed() == 50) {
+            drawableId = R.drawable.ic_speed_limit_50;
+        } else if (notification.getSpeed() == 60) {
+            drawableId = R.drawable.ic_speed_limit_60;
+        } else if (notification.getSpeed() == 70) {
+            drawableId = R.drawable.ic_speed_limit_70;
         }
-        else if(notification.getSpeed()==60){
-            drawableId= R.drawable.ic_speed_limit_60;
-        }
-        else if(notification.getSpeed()==70){
-            drawableId= R.drawable.ic_speed_limit_70;
-        }
-        if(drawableId!=-1) {
+        if (drawableId != -1) {
             MarkerOptions memberMarkerOptions = new MarkerOptions();
             memberMarkerOptions.position(new LatLng(notification.getLat(), notification.getLong()))
                     .icon(bitmapDescriptorFromVector(getContext(), drawableId))
@@ -903,16 +974,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void updateNotificationOnRoad(NotificationOnRoadList notificationOnRoadList){
-        if(notificationOnRoadList==null){
+    public void updateNotificationOnRoad(NotificationOnRoadList notificationOnRoadList) {
+        if (notificationOnRoadList == null) {
             return;
         }
-        //TODO
-        for (NotificationOnRoad notification : notificationOnRoadList.getNotiList()){
-            if(notification.getNotificationType()==3){
+        for (NotificationOnRoad notification : notificationOnRoadList.getNotiList()) {
+            if (notification.getNotificationType() == 3) {
                 addMarkerSpeedLimit(notification);
             }
         }
+    }
+
+    public void updateNotificationText(TourNotificationText notiText){
+        Notification notification = new Notification(notiText.getUserId(),"<ID :"+notiText.getUserId()+" >",null,notiText.getNotification());
+        notificationList.add(notification);
+        tourNotificationAdapter.notifyDataSetChanged();
+    }
+
+    public void updateNotificationLimitSpeed(TourNotificationLimitSpeed notificationLimitSpeed){
+        NotificationOnRoad notification = new NotificationOnRoad(notificationLimitSpeed.getLat(),notificationLimitSpeed.getLong(),notificationLimitSpeed.getNote(),notificationLimitSpeed.getSpeed(),notificationLimitSpeed.getType());
+        addMarkerSpeedLimit(notification);
     }
 
     @Override
@@ -938,10 +1019,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
     @Override
     public void onDestroy() {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("tour-id-"+tourId);
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("tour-id-" + tourId);
         Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
         context.stopService(serviceIntent);
-        if(broadcastLocationReceiver != null) {
+        if (broadcastLocationReceiver != null) {
             context.unregisterReceiver(broadcastLocationReceiver);
             broadcastLocationReceiver = null;
         }
