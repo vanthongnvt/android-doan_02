@@ -17,34 +17,46 @@
     <RelativeLayout
         android:id="@+id/map_layout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_margin="5dp"
-        android:background="@drawable/map_search_location"
+        android:background="@null"
         android:focusableInTouchMode="true">
 
-        <ImageView
-            android:id="@+id/map_search_ic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            app:srcCompat="@drawable/ic_search_black_24dp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/map_search_ic"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            app:srcCompat="@drawable/ic_search_black_24dp" />-->
 
-        <EditText
-            android:id="@+id/edt_search_addr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/map_search_ic"
-            android:background="@null"
-            android:hint="Tìm kiếm địa điểm ..."
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:paddingLeft="5dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp" />
+<!--        <EditText-->
+<!--            android:id="@+id/edt_search_addr"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_toRightOf="@+id/map_search_ic"-->
+<!--            android:background="@null"-->
+<!--            android:hint="Tìm kiếm địa điểm ..."-->
+<!--            android:imeOptions="actionSearch"-->
+<!--            android:inputType="text"-->
+<!--            android:maxLines="1"-->
+<!--            android:paddingLeft="5dp"-->
+<!--            android:paddingTop="10dp"-->
+<!--            android:paddingBottom="10dp" />-->
+
 
     </RelativeLayout>
+    <com.mancj.materialsearchbar.MaterialSearchBar
+        style="@style/MaterialSearchBarLight"
+        app:mt_speechMode="false"
+        app:mt_hint="Tìm kiếm địa điểm..."
+        app:mt_maxSuggestionsCount="10"
+        app:mt_placeholder="Tìm kiếm địa điểm..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_bar_stop_point"
+        android:layout_margin="10dp"
+        android:elevation="10dp"/>
     <ImageView
         android:id="@+id/map_btn_show_list"
         android:layout_width="40dp"

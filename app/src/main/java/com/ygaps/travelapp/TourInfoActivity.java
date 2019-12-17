@@ -194,7 +194,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    TourComment tourComment = new TourComment(userId, null, comment, null, String.valueOf((new Date()).getTime()));
+                    TourComment tourComment = new TourComment(userId, TokenStorage.getInstance().getName(), comment, TokenStorage.getInstance().getAvatar(), String.valueOf((new Date()).getTime()));
 
                     tourCommentList.add(tourComment);
                     tourCommentAdapter.notifyDataSetChanged();

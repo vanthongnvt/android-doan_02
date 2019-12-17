@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.ygaps.travelapp.Model.UserInfo;
+
 public class TokenStorage extends Application {
     private static TokenStorage sInstance;
     private SharedPreferences sharedPreferences;
@@ -11,6 +13,8 @@ public class TokenStorage extends Application {
 
     String accessToken=null;
     Integer userId;
+    String name;
+    String avatar;
 
     @Override
     public void onCreate(){
@@ -20,6 +24,16 @@ public class TokenStorage extends Application {
         sharedPreferences = getSharedPreferences("TOKEN_STORAGE", Context.MODE_PRIVATE);
         accessToken = retrieveTokenFromSharedPrefs();
         userId = getUserIdFromSharedPrefs();
+        name = getNameFromSharedPrefs();
+        avatar = getAvatarFromSharedPrefs();
+    }
+
+    private String getAvatarFromSharedPrefs() {
+        return sharedPreferences.getString("avatar",null);
+    }
+
+    private String getNameFromSharedPrefs() {
+        return sharedPreferences.getString("name",null);
     }
 
     public static TokenStorage getInstance() {
@@ -44,6 +58,16 @@ public class TokenStorage extends Application {
 
         editor.apply();
     }
+    public void setUserInfo(String name,String avatar){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if(avatar!=null) {
+            this.avatar =avatar;
+            editor.putString("avatar", avatar);
+        }
+        editor.putString("name",name);
+        this.name=name;
+        editor.apply();
+    }
 
     public String getAccessToken() {
         return accessToken;
@@ -51,6 +75,16 @@ public class TokenStorage extends Application {
 
     public Integer getUserId(){
         return userId;
+    }
+    public String getName(){
+        if(name==null){
+            return "<ID: "+ userId+" >";
+        }
+        return name;
+    }
+
+    public String getAvatar(){
+        return avatar;
     }
 
     public boolean hasLoggedIn() {
@@ -66,7 +100,7 @@ public class TokenStorage extends Application {
         sInstance.userId=null;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(key);
-        editor.remove("Id");
+        editor.remove("Id").remove("avatar").remove("name");
         editor.apply();
     }
 }

@@ -30,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.UserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -161,6 +162,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void startNewActivity(Auth mAuth) {
         if(mAuth!=null){
+            apiTour.getUserInfo(mAuth.getToken()).enqueue(new Callback<UserInfo>() {
+                @Override
+                public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
+                    if(response.isSuccessful()){
+                        UserInfo info = response.body();
+                        TokenStorage.getInstance().setUserInfo(info.getFullName(),info.getAvatar());
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, R.string.err_get_user_info, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserInfo> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, R.string.err_get_user_info, Toast.LENGTH_SHORT).show();
+                }
+            });
             TokenStorage.getInstance().setToken(mAuth.getToken(),mAuth.getUserId());
             String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             String fmcToken= FirebaseInstanceId.getInstance().getToken();

@@ -97,6 +97,12 @@ public interface APITour {
     @POST("/tour/suggested-destination-list")
     Call<ListSuggestedStopPoint> getSuggesteDestination(@Header("Authorization") String token,
                                                         @Body RequestCoordinateList requestCoordList);
+    @GET("/tour/search/service")
+    Call<ListSuggestedStopPoint> searchService(@Header("Authorization") String token,
+                                        @Query("searchKey") String searchKey,
+                                        @Query("pageSize") Integer pageSize,
+                                        @Query("pageIndex") Integer pageIndex);
+
     @GET("/tour/info")
     Call<TourInfo> getTourInfo(@Header("Authorization") String token,
                                @Query("tourId") Integer tourId);

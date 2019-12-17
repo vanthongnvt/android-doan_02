@@ -234,15 +234,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         userId = TokenStorage.getInstance().getUserId();
         sharedPreferences = getContext().getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE);
         tourId = sharedPreferences.getInt("tourId", -1);
-        boolean fIntent=false;
-        if(getArguments() != null){
-            tourId = getArguments().getInt("directionTourId",-2);
-            if(tourId!=-1 && tourId!=-2) {
+        boolean fIntent = false;
+        if (getArguments() != null) {
+            tourId = getArguments().getInt("directionTourId", -2);
+            if (tourId != -1 && tourId != -2) {
                 fIntent = true;
             }
         }
         if (tourId > 0) {
-            if(fIntent) {
+            if (fIntent) {
                 sharedPreferences.edit().putInt("tourId", tourId).apply();
             }
             int isOK = isServiceAvailable();
@@ -348,6 +348,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         } else {
                             Log.d(TAG, "init: NULL");
                         }
+                    }
+                    if(Integer.parseInt(tourInfo.getHostId())==userId){
+                        btnFinishTour.setVisibility(View.GONE);
                     }
                     mapDestinationAdapter = new ListMapDestinationAdapter(getContext(), R.layout.list_view_destination_item, tourInfo.getStopPoints(), MapFragment.this);
                     listViewDestination.setAdapter(mapDestinationAdapter);
@@ -481,45 +484,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
         });
         btnFinishTour = dialogTourSetting.findViewById(R.id.btn_finish_tour);
-        if(Integer.parseInt(tourInfo.getHostId())==userId) {
-
-            btnFinishTour.setOnClickListener(v -> {
-                dialogTourSetting.dismiss();
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setTitle("Kết thúc chuyến đi");
-                alert.setMessage("Bạn sẽ không thể theo dõi chuyến đi này nữa");
-                alert.setPositiveButton("Ok", (dialog, which) -> {
-                    dialog.dismiss();
-                    DialogProgressBar.showProgress(getContext());
-                    apiTour.finishTour(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<MessageResponse>() {
-                        @Override
-                        public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                            if (response.isSuccessful()) {
-                                ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
-                            } else {
-                                Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
-                            }
-                            DialogProgressBar.closeProgress();
+        btnFinishTour.setOnClickListener(v -> {
+            dialogTourSetting.dismiss();
+            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            alert.setTitle("Kết thúc chuyến đi");
+            alert.setMessage("Bạn sẽ không thể theo dõi chuyến đi này nữa");
+            alert.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+                DialogProgressBar.showProgress(getContext());
+                apiTour.finishTour(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<MessageResponse>() {
+                    @Override
+                    public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                        if (response.isSuccessful()) {
+                            ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+                        } else {
+                            Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
                         }
+                        DialogProgressBar.closeProgress();
+                    }
 
-                        @Override
-                        public void onFailure(Call<MessageResponse> call, Throwable t) {
-                            Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-                            DialogProgressBar.closeProgress();
-                        }
-                    });
-
+                    @Override
+                    public void onFailure(Call<MessageResponse> call, Throwable t) {
+                        Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        DialogProgressBar.closeProgress();
+                    }
                 });
 
-                alert.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
-
-                alert.show();
             });
-        }
-        else{
-            btnFinishTour.setVisibility(View.GONE);
-        }
+
+            alert.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+
+            alert.show();
+        });
     }
+
 
     private void sendWarningSpeedNotification() {
 //        getDeviceLocation(false);
@@ -568,10 +566,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
-                    Integer userId = TokenStorage.getInstance().getUserId();
-                    Notification notification = new Notification(userId.toString(), "<ID :"+userId+" >", null, text);
-                    notificationList.add(notification);
-                    tourNotificationAdapter.notifyDataSetChanged();
+//                    Integer userId = TokenStorage.getInstance().getUserId();
+//                    Notification notification = new Notification(userId.toString(), "<ID :"+userId+" >", null, text);
+//                    notificationList.add(notification);
+//                    tourNotificationAdapter.notifyDataSetChanged();
 
                 } else {
                     Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
@@ -985,14 +983,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void updateNotificationText(TourNotificationText notiText){
-        Notification notification = new Notification(notiText.getUserId(),"<ID :"+notiText.getUserId()+" >",null,notiText.getNotification());
-        notificationList.add(notification);
-        tourNotificationAdapter.notifyDataSetChanged();
+    public void updateNotificationText(TourNotificationText notiText) {
+        for (TourMember member : tourInfo.getMembers()) {
+            if (member.getId().equals(notiText.getUserId())) {
+                Notification notification = new Notification(member.getId().toString(), member.getName(), member.getAvatar(), notiText.getNotification());
+                notificationList.add(notification);
+                tourNotificationAdapter.notifyDataSetChanged();
+                return;
+            }
+        }
     }
 
-    public void updateNotificationLimitSpeed(TourNotificationLimitSpeed notificationLimitSpeed){
-        NotificationOnRoad notification = new NotificationOnRoad(notificationLimitSpeed.getLat(),notificationLimitSpeed.getLong(),notificationLimitSpeed.getNote(),notificationLimitSpeed.getSpeed(),notificationLimitSpeed.getType());
+    public void updateNotificationLimitSpeed(TourNotificationLimitSpeed notificationLimitSpeed) {
+        NotificationOnRoad notification = new NotificationOnRoad(notificationLimitSpeed.getLat(), notificationLimitSpeed.getLong(), notificationLimitSpeed.getNote(), notificationLimitSpeed.getSpeed(), notificationLimitSpeed.getType());
         addMarkerSpeedLimit(notification);
     }
 

@@ -83,6 +83,7 @@ public class UserSettingsFragment extends Fragment {
     private UserInfo userInfoForUpdateDialg;
     private View root;
     private Uri URI;
+    private boolean isChangeName =false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -317,6 +318,10 @@ public class UserSettingsFragment extends Fragment {
                         return;
                     }
                 }
+                if(!finalName.equals(userInfo.getFullName())) {
+                    userInfo.setFullName(finalName);
+                    isChangeName= true;
+                }
                 DialogProgressBar.showProgress(getContext());
                 apiTour.updateUserInfo(TokenStorage.getInstance().getAccessToken(), finalName, email, phone, finalGender, finalDob).enqueue(new Callback<UpdateUserInfo>() {
                     @Override
@@ -324,6 +329,10 @@ public class UserSettingsFragment extends Fragment {
                         if(response.isSuccessful()){
                             Toast.makeText(getActivity(), "Cập nhật thông tin tài khoản thành công", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+                            if(isChangeName) {
+                                TokenStorage.getInstance().setUserInfo(userInfo.getFullName(),null);
+                                isChangeName=false;
+                            }
                             getUserInfo(root);
                         }
                         else if(response.code() == 400){

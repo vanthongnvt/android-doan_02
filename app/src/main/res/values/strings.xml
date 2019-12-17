@@ -14,6 +14,7 @@
     <string name="failed_fetch_api">Đã có lỗi trong quá trình gửi dữ liệu</string>
     <string name="unavailable_func">Chức năng chưa khả dụng</string>
     <string name="login_not_existed">Sai email/Số điện thoại hoặc mật khẩu</string>
+    <string name="err_get_user_info">Lỗi lấy thông tin người dùng</string>
     <string name="facebook_app_id">695588897599189</string>
     <string name="fb_login_protocol_scheme">fb695588897599189</string>
     <string name="gg_server_client_id">284288180251-89m3dhb7cplqr1opp9d2gf4d814bbv8q.apps.googleusercontent.com</string>

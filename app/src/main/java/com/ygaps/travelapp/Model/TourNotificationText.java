@@ -21,7 +21,7 @@ public class TourNotificationText implements Serializable {
     private String tourId;
     @SerializedName("userId")
     @Expose
-    private String userId;
+    private Integer userId;
 
     public String getTypeName() {
         return typeName;
@@ -55,11 +55,11 @@ public class TourNotificationText implements Serializable {
         this.tourId = tourId;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

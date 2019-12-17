@@ -55,7 +55,7 @@
             android:layout_gravity="center"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
-            android:hint="Nhập tin nhắn..."/>
+            android:hint="Nhập bình luận..."/>
 
         <ImageView
             android:id="@+id/send_comment"

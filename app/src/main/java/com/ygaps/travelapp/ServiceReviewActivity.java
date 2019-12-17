@@ -124,7 +124,7 @@ public class ServiceReviewActivity extends AppCompatActivity {
     }
 
     private void getServiceReviewPoint(){
-        apiTour.reviewPoint(TokenStorage.getInstance().getAccessToken(),stopPointID).enqueue(new Callback<ListReviewPoint>() {
+        apiTour.serviceReviewPoint(TokenStorage.getInstance().getAccessToken(),stopPointID).enqueue(new Callback<ListReviewPoint>() {
             @Override
             public void onResponse(Call<ListReviewPoint> call, Response<ListReviewPoint> response) {
 

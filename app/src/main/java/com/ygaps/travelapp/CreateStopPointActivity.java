@@ -23,10 +23,11 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.media.Image;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -44,7 +45,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.ygaps.travelapp.Adapter.ListStopPointTemporaryAdapter;
+import com.ygaps.travelapp.Adapter.ListSuggestionStopPointAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.DialogProgressBar;
@@ -101,7 +105,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private static final String TAG = "SHOW_MAP";
 
     private boolean canNotEdit = false;
-    private EditText edtSearchAddr;
+//    private EditText edtSearchAddr;
     private ImageView btnCurLocation;
     private GoogleMap mMap;
     private Boolean mLocationPermisstionsGranted = false;
@@ -149,6 +153,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
     String ProvinceArr[] = {"Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng"};
     private StopPoint selectedSuggestedStopPoint;
+    private MaterialSearchBar searchBar;
+//    private List<StopPoint> searchSuggestStopPoint;
+    private ListSuggestionStopPointAdapter suggestionStopPointAdapter;
 
 //    private AutocompleteSupportFragment autocompleteFragment;
 
@@ -164,15 +171,26 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         if (isOK == 1) {
             getLocationPermission();
             init();
-//            edtSearchAddr.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//                @Override
-//                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                    if(actionId == EditorInfo.IME_ACTION_SEARCH||actionId==EditorInfo.IME_ACTION_DONE
-//                            ||event.getAction()==KeyEvent.ACTION_DOWN|| event.getAction()==KeyEvent.KEYCODE_ENTER)
-//
-//                    return false;
-//                }
-//            });
+
+            searchBar.addTextChangeListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String searchKey = searchBar.getText().trim();
+                    if(!searchKey.isEmpty()) {
+                        searchStopPoint(searchKey);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
             btnCurLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -411,6 +429,26 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         hideKeyboard();
     }
 
+    private void searchStopPoint(String searchKey){
+        apiTour.searchService(TokenStorage.getInstance().getAccessToken(),searchKey,10,1).enqueue(new Callback<ListSuggestedStopPoint>() {
+            @Override
+            public void onResponse(Call<ListSuggestedStopPoint> call, Response<ListSuggestedStopPoint> response) {
+                if(response.isSuccessful()){
+                    suggestionStopPointAdapter.setSuggestions(response.body().getStopPoints());
+                    searchBar.updateLastSuggestions(response.body().getStopPoints());
+                }
+                else{
+                    Toast.makeText(CreateStopPointActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ListSuggestedStopPoint> call, Throwable t) {
+//                Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void showStopPointInfo(StopPoint stopPoint) {
         BottomSheetDialog dialog = new BottomSheetDialog(CreateStopPointActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -541,7 +579,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             currentSizeStopPoint = currentList.size();
             if (intentTourID.hasExtra("canNotEdit")) {
                 canNotEdit = true;
-                Log.d(TAG, "init: " + intentTourID.getExtras().getBoolean("canNotEdit"));
             } else {
                 Log.d(TAG, "init: AKAKKAKA");
             }
@@ -549,7 +586,35 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
-        edtSearchAddr = findViewById(R.id.edt_search_addr);
+//        edtSearchAddr = findViewById(R.id.edt_search_addr);
+        searchBar = findViewById(R.id.search_bar_stop_point);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        suggestionStopPointAdapter = new ListSuggestionStopPointAdapter(inflater);
+        searchBar.setCustomSuggestionAdapter(suggestionStopPointAdapter);
+
+        SuggestionsAdapter.OnItemViewClickListener listener = new SuggestionsAdapter.OnItemViewClickListener() {
+            @Override
+            public void OnItemClickListener(int position, View v) {
+                Log.d(TAG, "OnItemClickListener: GOGOGOOGGO");
+                selectedSuggestedStopPoint = suggestionStopPointAdapter.getSuggestions().get(position);
+                LatLng latLng = new LatLng(selectedSuggestedStopPoint.getLatitude(),selectedSuggestedStopPoint.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,DEFAULT_ZOOM));
+                if (marker == null) {
+                    markerOptions = new MarkerOptions();
+                } else {
+                    marker.remove();
+                }
+                markerOptions.position(latLng).title(selectedSuggestedStopPoint.getName());
+                marker = mMap.addMarker(markerOptions);
+                showStopPointInfo(selectedSuggestedStopPoint);
+            }
+
+            @Override
+            public void OnItemDeleteListener(int position, View v) {
+
+            }
+        };
+        suggestionStopPointAdapter.setListener(listener);
 
         btnCurLocation = findViewById(R.id.map_btn_cur_location);
         btnShowDialogStopPointInfo = findViewById(R.id.map_btn_show_dialog);
@@ -557,6 +622,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         if (canNotEdit) {
             btnShowDialogStopPointInfo.setVisibility(View.GONE);
             btnShowSuggestDestination.setVisibility(View.GONE);
+            searchBar.setVisibility(View.GONE);
         }
 
         dialogCreateStopPoint = new Dialog(CreateStopPointActivity.this, R.style.DialogSlideAnimation);
@@ -1049,4 +1115,5 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             }
         });
     }
+
 }
