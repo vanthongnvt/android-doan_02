@@ -3,8 +3,10 @@ package com.ygaps.travelapp;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
 import com.ygaps.travelapp.ui.home.HomeFragment;
 import com.ygaps.travelapp.ui.map.MapFragment;
 import com.ygaps.travelapp.ui.notifications.NotificationsFragment;
@@ -54,6 +56,7 @@ public class HomeActivity extends AppCompatActivity {
                 MapFragment fragobj = new MapFragment();
                 fragobj.setArguments(bundle);
                 navView.getMenu().getItem(2).setChecked(true);
+                idMenuSelected=2;
                 loadFragment(fragobj,R.string.title_map);
             }
         }
@@ -117,6 +120,43 @@ public class HomeActivity extends AppCompatActivity {
         }
         else{
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            boolean isNotiText = bundle.getBoolean("isNotiText", false);
+            if (isNotiText) {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                if (fragment instanceof MapFragment) {
+                    ((MapFragment) fragment).showNotificationListDialog();
+                }
+                else{
+                    navView.setSelectedItemId(R.id.navigation_map);
+                }
+            } else {
+                TourNotificationLimitSpeed noti = (TourNotificationLimitSpeed) bundle.getSerializable("speedNoti");
+                if (noti != null) {
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                    if (fragment instanceof MapFragment) {
+                        ((MapFragment) fragment).cameraToSpeedNoti(noti.getLat(), noti.getLong());
+                    }else {
+                        navView.setSelectedItemId(R.id.navigation_map);
+                    }
+                }
+                else{
+                    boolean isInviteNoti = bundle.getBoolean("isInviteNoti", false);
+                    if(isInviteNoti){
+                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                        if (!(fragment instanceof NotificationsFragment)) {
+                            navView.setSelectedItemId(R.id.navigation_notifications);
+                        }
+                    }
+                }
+            }
         }
     }
 

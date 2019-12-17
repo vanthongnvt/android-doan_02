@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class UserTripFragment extends Fragment {
     private  TextView tvTotalClosedTours;
     private int numTotalTours;
     private TextView tvTourStatus;
+    private ProgressBar progressBar;
 
     public static String EDIT_ID_TOUR = "EDIT ID TOUR";
 
@@ -70,6 +72,9 @@ public class UserTripFragment extends Fragment {
         setStatusTourText();
 
         // goi api lan dau de lay total tours :
+        progressBar = view.findViewById(R.id.progressbar_loading);
+
+        progressBar.setVisibility(View.VISIBLE);
         apiTour.userListTour(TokenStorage.getInstance().getAccessToken(),1,1).enqueue(new Callback<UserListTour>() {
             @Override
             public void onResponse(Call<UserListTour> call, Response<UserListTour> response) {
@@ -84,6 +89,7 @@ public class UserTripFragment extends Fragment {
             @Override
             public void onFailure(Call<UserListTour> call, Throwable t) {
                 Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
             }
         });
         return view;
@@ -136,11 +142,13 @@ public class UserTripFragment extends Fragment {
                 else{
                     Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<UserListTour> call, Throwable t) {
                 Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
             }
         });
     }

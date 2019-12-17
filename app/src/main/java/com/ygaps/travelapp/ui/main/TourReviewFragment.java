@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,8 +60,6 @@ public class TourReviewFragment extends Fragment {
     private EditText userReview;
     private Button btnSendReview;
 
-    private boolean hasLoadedReview=false;
-
     public TourReviewFragment() {
         // Required empty public constructor
     }
@@ -88,9 +87,7 @@ public class TourReviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_tour_review, container, false);
-
         init(root);
-
         return root;
     }
 
@@ -101,6 +98,8 @@ public class TourReviewFragment extends Fragment {
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
+        getReviewPoint();
+        getReviewList();
 
         initDialogAddReview(root);
 
@@ -152,15 +151,6 @@ public class TourReviewFragment extends Fragment {
         });
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser && !hasLoadedReview){
-           getReviewPoint();
-           getReviewList();
-           hasLoadedReview=true;
-        }
-    }
 
     private void getReviewPoint(){
         apiTour.reviewPoint(TokenStorage.getInstance().getAccessToken(), tourInfo.getId()).enqueue(new Callback<ListReviewPoint>() {

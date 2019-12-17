@@ -127,6 +127,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Spinner spnProvince;
     private TextView btnCancelEditAction;
 
+    private View viewUnderSearchBar;
     private ImageView btnShowSuggestDestination;
     private ImageView btnShowDialogListStopPoint;
     private Button btnCloseDialogListStopPoint;
@@ -585,6 +586,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         }
 
         apiTour = new APIRetrofitCreator().getAPIService();
+        viewUnderSearchBar=findViewById(R.id.map_layout1);
 
 //        edtSearchAddr = findViewById(R.id.edt_search_addr);
         searchBar = findViewById(R.id.search_bar_stop_point);
@@ -623,6 +625,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             btnShowDialogStopPointInfo.setVisibility(View.GONE);
             btnShowSuggestDestination.setVisibility(View.GONE);
             searchBar.setVisibility(View.GONE);
+            viewUnderSearchBar.setVisibility(View.GONE);
         }
 
         dialogCreateStopPoint = new Dialog(CreateStopPointActivity.this, R.style.DialogSlideAnimation);

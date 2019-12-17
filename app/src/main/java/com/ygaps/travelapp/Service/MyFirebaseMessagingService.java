@@ -98,6 +98,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             Intent intentNoti = new Intent(this, HomeActivity.class);
             intentNoti.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Bundle bundle = new Bundle();
+            bundle.getBoolean("isInviteNoti",true);
+            intentNoti.putExtras(bundle);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNoti, PendingIntent.FLAG_ONE_SHOT);
 
             String channelId = getString(R.string.project_id);
@@ -166,9 +169,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             bundle.putSerializable("notificationText",notificationText);
             intentForNotifciationType4.putExtras(bundle);
             sendBroadcast(intentForNotifciationType4);
-//            Intent intentNoti = new Intent(this, HomeActivity.class);
-//            intent.putExtra("notification", true);
-//            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intentNoti,PendingIntent.FLAG_ONE_SHOT);
+            pushNotificationOnTour(notificationText,null);
+
+
         }
         else if(type.equals("3")){
             Bundle bundle = new Bundle();
@@ -179,6 +182,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             bundle.putSerializable("notificationLimitSpeed",notificationLimitSpeed);
             intentForNotifciationType3.putExtras(bundle);
             sendBroadcast(intentForNotifciationType3);
+            pushNotificationOnTour(null,notificationLimitSpeed);
         }
     }
 
@@ -208,5 +212,49 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Log.d("Register Firebase", "onResponse: failed");
             }
         });
+    }
+
+    private void pushNotificationOnTour(TourNotificationText notiText, TourNotificationLimitSpeed notiSpeed){
+        Intent intentNoti = new Intent(this, HomeActivity.class);
+        Bundle bundle = new Bundle();
+        if(notiText!=null){
+            bundle.putBoolean("isNotiText",true);
+            intentNoti.putExtras(bundle);
+        }
+        else{
+            bundle.putSerializable("speedNoti",notiSpeed);
+            intentNoti.putExtras(bundle);
+        }
+        intentNoti.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNoti, PendingIntent.FLAG_ONE_SHOT);
+
+        String channelId = getString(R.string.project_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                        .setContentTitle("Thông báo mới")
+                        .setContentText("Có một thông báo mới trong chuyến đi mà bạn theo dõi")
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent)
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setPriority(NotificationManager.IMPORTANCE_HIGH);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        notificationManager.notify(0, notificationBuilder.build());
     }
 }

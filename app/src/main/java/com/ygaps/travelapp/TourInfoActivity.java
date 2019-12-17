@@ -70,6 +70,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
     private ProgressBar progressBar;
 
     private Integer pageIndex = 1;
+    private Integer pageSize=50;
     private boolean loading = false;
     private Integer count = 0;
 
@@ -166,7 +167,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
     private void getComment() {
         loading=true;
         progressBar.setVisibility(View.VISIBLE);
-        apiTour.getComment(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, 10).enqueue(new Callback<CommentList>() {
+        apiTour.getComment(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, pageSize).enqueue(new Callback<CommentList>() {
             @Override
             public void onResponse(Call<CommentList> call, Response<CommentList> response) {
                 if (response.isSuccessful()) {
@@ -238,6 +239,10 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
 
     }
 
+    public ViewPager getViewPager() {
+        return viewPager;
+    }
+
     private boolean isMemberOfTour() {
 
         for (TourMember member : tourInfo.getMembers()) {
@@ -259,7 +264,7 @@ public class TourInfoActivity extends AppCompatActivity implements TourInfoFragm
             case R.id.list_view_comment:
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if (lastItem == totalItemCount) {
-                    if (count == 10 && !loading) {
+                    if (count.equals(pageSize) && !loading) {
                         loading = true;
                         progressBar.setVisibility(View.VISIBLE);
                         getComment();

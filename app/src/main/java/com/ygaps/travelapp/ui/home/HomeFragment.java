@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
 
                 //goi api lan tiep theo de load danh sach:
                 getList(container);
-                progressBar.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -138,9 +138,11 @@ public class HomeFragment extends Fragment {
 
                         }
                     });
+                    progressBar.setVisibility(View.GONE);
                 }
                 else{
                     Toast.makeText(getActivity(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
 

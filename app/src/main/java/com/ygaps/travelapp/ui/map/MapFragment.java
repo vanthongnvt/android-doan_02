@@ -682,7 +682,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     markerOptions.position(latLng);
                     marker = mMap.addMarker(markerOptions);
 
-                    toggleEletemt();
+//                    toggleEletemt();
                 }
             });
 
@@ -997,6 +997,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     public void updateNotificationLimitSpeed(TourNotificationLimitSpeed notificationLimitSpeed) {
         NotificationOnRoad notification = new NotificationOnRoad(notificationLimitSpeed.getLat(), notificationLimitSpeed.getLong(), notificationLimitSpeed.getNote(), notificationLimitSpeed.getSpeed(), notificationLimitSpeed.getType());
         addMarkerSpeedLimit(notification);
+    }
+
+    public void showNotificationListDialog(){
+        dialogNotificationList.show();
+    }
+
+    public void cameraToSpeedNoti(double lat, double _long){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,_long), DEFAULT_ZOOM));
     }
 
     @Override
