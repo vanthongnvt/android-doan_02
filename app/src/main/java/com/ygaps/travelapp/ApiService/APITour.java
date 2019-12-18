@@ -6,6 +6,7 @@ import com.ygaps.travelapp.Model.CloneTour;
 import com.ygaps.travelapp.Model.CommentList;
 import com.ygaps.travelapp.Model.CreateTour;
 import com.ygaps.travelapp.Model.GetStatusTours;
+import com.ygaps.travelapp.Model.ListFeedbackService;
 import com.ygaps.travelapp.Model.ListReviewPoint;
 import com.ygaps.travelapp.Model.ListSuggestedStopPoint;
 import com.ygaps.travelapp.Model.ListTour;
@@ -17,6 +18,7 @@ import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.Model.RequestCoordinateList;
 import com.ygaps.travelapp.Model.RequestOTPPassWord;
 import com.ygaps.travelapp.Model.StopPoint;
+import com.ygaps.travelapp.Model.TotalTourReview;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.UpdateStopPointsOfTour;
 import com.ygaps.travelapp.Model.UpdateUserInfo;
@@ -29,6 +31,7 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.internal.Internal;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -317,6 +320,29 @@ public interface APITour {
     @GET("/tour/get/feedback-point-stats")
     Call<ListReviewPoint> serviceReviewPoint(@Header("Authorization") String token,
                                       @Query("serviceId") Integer serviceId);
+
+    @GET("/tour/get/review-list")
+    Call<TotalTourReview> getTotalTourReview(@Header("Authorization") String token,
+                                             @Query("tourId") Integer tourId,
+                                             @Query("pageIndex") Integer numPage,
+                                             @Query("pageSize") Integer numPerPage);
+
+    @GET("/tour/get/feedback-service")
+    Call<ListFeedbackService> getListFeedbackService(@Header("Authorization") String token,
+                                                     @Query("serviceId") Integer serviceId,
+                                                     @Query("pageIndex") Integer numPage,
+                                                     @Query("pageSize") Integer numPerPage);
+
+    @POST("/tour/report/feedback")
+    @FormUrlEncoded
+    Call<MessageResponse> reportFeedbackService(@Header("Authorization") String token,
+                                           @Field("feedbackId") Integer feedbackId);
+
+    @POST("/tour/report/review")
+    @FormUrlEncoded
+    Call<MessageResponse> reportReviewTour(@Header("Authorization") String token,
+                                                @Field("reviewId") Integer reviewId);
+
 
 
 }

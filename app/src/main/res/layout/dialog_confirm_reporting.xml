@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:background="@color/white"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:textColor="@color/colorCustomPrimary"
+        android:id="@+id/report_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="ARE U SURE MEN ??"
+        android:textSize="18sp"
+ />
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:background="@drawable/btn_accept_bg"
+            android:textColor="@color/colorCustomPrimary"
+            android:layout_margin="10dp"
+            android:id="@+id/report_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đồng ý" />
+        <Button
+            android:background="@drawable/btn_accept_bg"
+            android:textColor="@color/colorCustomPrimary"
+            android:layout_margin="10dp"
+            android:id="@+id/report_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy" />
+
+    </LinearLayout>
+</LinearLayout>

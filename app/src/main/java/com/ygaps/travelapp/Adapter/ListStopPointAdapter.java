@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.R;
-import com.ygaps.travelapp.ServiceReviewActivity;
+import com.ygaps.travelapp.ui.main.ServiceReviewActivity;
 
 import java.util.Arrays;
 import java.util.Calendar;

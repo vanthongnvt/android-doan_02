@@ -21,15 +21,19 @@ import android.widget.Toast;
 
 import com.taufiqrahman.reviewratings.BarLabels;
 import com.taufiqrahman.reviewratings.RatingReviews;
+import com.ygaps.travelapp.Adapter.ListTourReviewAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.Model.ListReviewPoint;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.ReviewPoint;
+import com.ygaps.travelapp.Model.TotalTourReview;
 import com.ygaps.travelapp.Model.TourInfo;
+import com.ygaps.travelapp.Model.TourReview;
 import com.ygaps.travelapp.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -53,6 +57,8 @@ public class TourReviewFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private APITour apiTour;
+    private ListTourReviewAdapter listReviewApdater;
+    private List<TourReview> listTourReview;
 
     private RatingBar tourRatingBar;
     private TextView ratingPoint;
@@ -65,6 +71,8 @@ public class TourReviewFragment extends Fragment {
     private RatingBar userRating;
     private EditText userReview;
     private Button btnSendReview;
+
+    private static int maxPageSize = 1000;
 
     public TourReviewFragment() {
         // Required empty public constructor
@@ -98,6 +106,9 @@ public class TourReviewFragment extends Fragment {
     }
 
     private void init(View root) {
+
+
+
         tourRatingBar = root.findViewById(R.id.ratingBar);
         tvShowDialogRating = root.findViewById(R.id.show_dialog_rate_tour);
         listViewRating = root.findViewById(R.id.list_view_tour_review);
@@ -117,6 +128,8 @@ public class TourReviewFragment extends Fragment {
         tvShowDialogRating.setOnClickListener(v -> {
             dialogAddReview.show();
         });
+
+
 
     }
 
@@ -213,7 +226,27 @@ public class TourReviewFragment extends Fragment {
     }
 
     private void getReviewList(){
+        apiTour.getTotalTourReview(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), 1, 1000).enqueue(new Callback<TotalTourReview>() {
+            @Override
+            public void onResponse(Call<TotalTourReview> call, Response<TotalTourReview> response) {
+                if(response.isSuccessful()){
 
+                    listTourReview = response.body().getReviewList();
+                    listReviewApdater = new ListTourReviewAdapter(getContext(), R.layout.list_view_tour_review_item, listTourReview);
+                    listReviewApdater.notifyDataSetChanged();
+                    listViewRating.setAdapter(listReviewApdater);
+
+                }
+                else if(response.code() == 500){
+                    Toast.makeText(getContext(), "Lỗi server, không thể hiển thị danh sách tour review", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TotalTourReview> call, Throwable t) {
+                Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

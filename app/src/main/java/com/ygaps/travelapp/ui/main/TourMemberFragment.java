@@ -199,15 +199,15 @@ public class TourMemberFragment extends Fragment {
     public void requestJoinTour() {
         String yourID = TokenStorage.getInstance().getUserId().toString();
         String tourID = tourInfo.getId().toString();
+        apiTour = new APIRetrofitCreator().getAPIService();
         apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(), tourID, yourID, false).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                String msg = response.body().toString();
-                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-                if (response.body().getMessage() == "Not valid") {
-                    Toast.makeText(getContext(), "Lỗi Not valid", Toast.LENGTH_SHORT).show();
-                } else if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Yêu cầu tham gia tour thành công", Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()) {
+                    if (response.body().getMessage() == "Not valid") {
+                        Toast.makeText(getContext(), "Lỗi Not valid", Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(getContext(), "Yêu cầu tham gia tour thành công", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
@@ -222,7 +222,6 @@ public class TourMemberFragment extends Fragment {
 
         });
     }
-
     public void searchMember(String key) {
         apiTour.searchUser(TokenStorage.getInstance().getAccessToken(), key, currPage, 10).enqueue(new Callback<ListUserSearch>() {
             @Override

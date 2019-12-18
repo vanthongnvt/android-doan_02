@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ServiceReviewActivity"></activity>
+        <activity android:name=".ui.main.ServiceReviewActivity"></activity>
         <activity android:name=".VerifyCodeRecoveryPasswordActivity" />
         <activity android:name=".PasswordRecoveryActivity" />
 
