@@ -343,11 +343,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         for (StopPoint stopPoint : tourInfo.getStopPoints()) {
                             addStopPointMarker(stopPoint);
                         }
-                        if (myLocation != null && targetStopPoint != null) {
-                            drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(), targetStopPoint.getLongitude()));
-                        } else {
-                            Log.d(TAG, "init: NULL");
-                        }
+//                        if (myLocation != null && targetStopPoint != null) {
+//                            drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(), targetStopPoint.getLongitude()));
+//                        } else {
+//                            Log.d(TAG, "init: NULL");
+//                        }
                     }
                     if(Integer.parseInt(tourInfo.getHostId())==userId){
                         btnFinishTour.setVisibility(View.GONE);
@@ -910,6 +910,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             polyline.remove();
         }
         drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(stopPoint.getLatitude(), stopPoint.getLongitude()));
+        dialogListDestination.dismiss();
+    }
+    public void removeRouteToStopPoint(){
+        if (polyline != null) {
+            polyline.remove();
+        }
+        dialogListDestination.dismiss();
     }
 
     private void addMarkerMember(TourMember tourMember, LatLng latLng) {

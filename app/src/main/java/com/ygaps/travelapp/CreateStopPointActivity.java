@@ -332,6 +332,8 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                         }
                         markerOptions.position(latLng);
                         marker = mMap.addMarker(markerOptions);
+                        mlat = latLng.latitude;
+                        mlong = latLng.longitude;
                     } else {
                         isPOIclick = false;
                     }

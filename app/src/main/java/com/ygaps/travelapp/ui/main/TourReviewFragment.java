@@ -2,6 +2,7 @@ package com.ygaps.travelapp.ui.main;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +19,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.taufiqrahman.reviewratings.BarLabels;
+import com.taufiqrahman.reviewratings.RatingReviews;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
@@ -52,8 +55,11 @@ public class TourReviewFragment extends Fragment {
     private APITour apiTour;
 
     private RatingBar tourRatingBar;
+    private TextView ratingPoint;
+    private TextView totalRatings;
     private TextView tvShowDialogRating;
     private ListView listViewRating;
+    private RatingReviews ratingReviews;
 
     private Dialog dialogAddReview;
     private RatingBar userRating;
@@ -92,9 +98,14 @@ public class TourReviewFragment extends Fragment {
     }
 
     private void init(View root) {
-        tourRatingBar = root.findViewById(R.id.tour_rating);
+        tourRatingBar = root.findViewById(R.id.ratingBar);
         tvShowDialogRating = root.findViewById(R.id.show_dialog_rate_tour);
         listViewRating = root.findViewById(R.id.list_view_tour_review);
+        ratingPoint = root.findViewById(R.id.rating_point);
+        totalRatings = root.findViewById(R.id.total_ratings);
+
+        ratingReviews = (RatingReviews) root.findViewById(R.id.rating_reviews);
+
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -158,16 +169,36 @@ public class TourReviewFragment extends Fragment {
             public void onResponse(Call<ListReviewPoint> call, Response<ListReviewPoint> response) {
 
                 if(response.isSuccessful()){
-                    int totalPoint =0,count=0,stat=0;
+                    int totalPoint =0,count=0;
+                    double stat=0;
                     List<ReviewPoint> reviewPointList = response.body().getPointStats();
                     for (ReviewPoint reviewPoint : reviewPointList){
                         totalPoint += reviewPoint.getPoint()*reviewPoint.getTotal();
                         count += reviewPoint.getTotal();
                     }
                     if(count!=0){
-                        stat = totalPoint/count;
+                        stat = totalPoint/(count*1.0);
+                        stat = Math.round(stat*10)/10.0;
                     }
-                    tourRatingBar.setRating(stat);
+                    totalRatings.setText(String.valueOf(count));
+                    ratingPoint.setText(String.valueOf(stat));
+                    tourRatingBar.setRating((int)stat);
+                    int colors[] = new int[]{
+                            Color.parseColor("#0e9d58"),
+                            Color.parseColor("#bfd047"),
+                            Color.parseColor("#ffc105"),
+                            Color.parseColor("#ef7e14"),
+                            Color.parseColor("#d36259")};
+
+                    int raters[] = new int[]{
+                            reviewPointList.get(4).getTotal(),
+                            reviewPointList.get(3).getTotal(),
+                            reviewPointList.get(2).getTotal(),
+                            reviewPointList.get(1).getTotal(),
+                            reviewPointList.get(0).getTotal()
+                    };
+
+                    ratingReviews.createRatingBars(100, BarLabels.STYPE1, colors, raters);
                 }
                 else{
                     Toast.makeText(getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();

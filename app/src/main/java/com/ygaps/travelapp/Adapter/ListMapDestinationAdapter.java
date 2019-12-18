@@ -29,7 +29,7 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
     private Integer resource;
     private List<StopPoint> list;
     private List<String> listSerVice;
-    private int positionChecked=0;
+    private int positionChecked=-1;
     private Fragment fragment;
 
     public ListMapDestinationAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects, Fragment fragment) {
@@ -44,11 +44,6 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
     private static class ViewHolder {
 
         private final TextView tvStopPointName;
-//        private final TextView tvStopPointMinCost;
-//        private final TextView tvStopPointMaxCost;
-//        private final TextView tvStopPointArriveAt;
-//        private final TextView tvStopPointLeaveAt;
-//        private final TextView tvStopPointService;
 
         private final Switch aSwitch;
         private final ImageView showDestinationInfo;
@@ -57,11 +52,6 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
 
         private ViewHolder(View row) {
             tvStopPointName = row.findViewById(R.id.tv_stop_point_name);
-//            tvStopPointMinCost = row.findViewById(R.id.tv_stop_point_min_cost);
-//            tvStopPointMaxCost = row.findViewById(R.id.tv_stop_point_max_cost);
-//            tvStopPointArriveAt = row.findViewById(R.id.tv_stop_point_startDate);
-//            tvStopPointLeaveAt = row.findViewById(R.id.tv_stop_point_endDate);
-//            tvStopPointService = row.findViewById(R.id.tv_stop_point_service);
             aSwitch = row.findViewById(R.id.switch_select_destination);
             showDestinationInfo = row.findViewById(R.id.show_destination_info);
         }
@@ -85,29 +75,21 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
         }
 
         StopPoint stopPoint = list.get(position);
-        if(position==positionChecked){
-            holder.aSwitch.setChecked(true);
-        }
-        else{
+        if(!(position==positionChecked)){
             holder.aSwitch.setChecked(false);
         }
         holder.tvStopPointName.setText(stopPoint.getName());
-//        holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId() - 1));
-//        holder.tvStopPointMinCost.setText(stopPoint.getMinCost() + " VND");
-//        holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() + " VND");
-//        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-//        cal.setTimeInMillis(stopPoint.getArrivalAt());
-//        String date1 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
-//        holder.tvStopPointArriveAt.setText(date1);
-//        cal.setTimeInMillis(stopPoint.getLeaveAt());
-//        String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
-//        holder.tvStopPointLeaveAt.setText(date2);
 
         holder.aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 positionChecked=position;
                 notifyDataSetChanged();
                 ((MapFragment)fragment).drawRouteToStopPoint(stopPoint);
+            }
+            else{
+                positionChecked=-1;
+                notifyDataSetChanged();
+                ((MapFragment)fragment).removeRouteToStopPoint();
             }
         });
 

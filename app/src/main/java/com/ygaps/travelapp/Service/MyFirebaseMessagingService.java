@@ -48,6 +48,7 @@ import retrofit2.Response;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     final static String TAG="FirebaseMessaging";
     private Intent intentForNotifciationType9, intentForNotifciationType3,intentForNotifciationType4;
+    private Integer userId;
 
     @Override
     public void onCreate() {
@@ -56,6 +57,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intentForNotifciationType9 = new Intent(getString(R.string.receiver_action_send_coordinate));
         intentForNotifciationType4 = new Intent(getString(R.string.receiver_action_noti_text));
         intentForNotifciationType3 = new Intent(getString(R.string.receiver_action_noti_limit_speed));
+        userId = TokenStorage.getInstance().getUserId();
     }
 
     @Override
@@ -169,8 +171,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             bundle.putSerializable("notificationText",notificationText);
             intentForNotifciationType4.putExtras(bundle);
             sendBroadcast(intentForNotifciationType4);
-            pushNotificationOnTour(notificationText,null);
-
+            if(!userId.equals(notificationText.getUserId())) {
+                pushNotificationOnTour(notificationText, null);
+            }
 
         }
         else if(type.equals("3")){
@@ -182,7 +185,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             bundle.putSerializable("notificationLimitSpeed",notificationLimitSpeed);
             intentForNotifciationType3.putExtras(bundle);
             sendBroadcast(intentForNotifciationType3);
-            pushNotificationOnTour(null,notificationLimitSpeed);
+            if(!userId.equals(Integer.parseInt(notificationLimitSpeed.getUserId()))) {
+                pushNotificationOnTour(null, notificationLimitSpeed);
+            }
         }
     }
 
