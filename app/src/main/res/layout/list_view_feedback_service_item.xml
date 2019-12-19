@@ -107,12 +107,13 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/img_report_feedback"
+                <Spinner
+                    android:dropDownHeight="1dp"
+                    android:id="@+id/spn_feedback_report"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_warning"
+                    style="@style/SpinnerTheme"
                     android:layout_width="50dp"
-                    android:layout_height="50dp"/>
+                    android:layout_height="25dp"/>
 
             </LinearLayout>
 

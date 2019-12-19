@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center"
-    android:background="@color/white"
+    android:background="@drawable/roundedborder2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="16dp"
@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="ARE U SURE MEN ??"
+        android:text="Are u sure men ??"
         android:textSize="18sp"
  />
 
@@ -25,7 +25,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:background="@drawable/btn_accept_bg"
             android:textColor="@color/colorCustomPrimary"
             android:layout_margin="10dp"
             android:id="@+id/report_ok"
@@ -33,7 +32,6 @@
             android:layout_height="wrap_content"
             android:text="Đồng ý" />
         <Button
-            android:background="@drawable/btn_accept_bg"
             android:textColor="@color/colorCustomPrimary"
             android:layout_margin="10dp"
             android:id="@+id/report_cancel"

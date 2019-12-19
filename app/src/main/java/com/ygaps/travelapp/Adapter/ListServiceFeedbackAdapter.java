@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,15 +24,19 @@ import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.Model.FeedbackService;
 import com.ygaps.travelapp.Model.MessageResponse;
+import com.ygaps.travelapp.Model.SpinnerReportItem;
 import com.ygaps.travelapp.Model.TourReview;
 import com.ygaps.travelapp.R;
 
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.net.ssl.SNIHostName;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,7 +61,7 @@ public class ListServiceFeedbackAdapter extends ArrayAdapter<FeedbackService> {
         private TextView date;
         private TextView feedback;
         private TextView phone;
-        private ImageView report;
+        private Spinner report;
 
         private ViewHolder(View row){
             avatar = (ImageView)row.findViewById(R.id.lv_feedbackservice_item_avatar);
@@ -64,7 +70,7 @@ public class ListServiceFeedbackAdapter extends ArrayAdapter<FeedbackService> {
             date = (TextView) row.findViewById(R.id.lv_feedbackservice_item_date_created);
             feedback = (TextView) row.findViewById(R.id.lv_feedbackservice_item_review);
             phone = (TextView) row.findViewById(R.id.lv_feedbackservice_item_phone);
-            report = (ImageView) row.findViewById(R.id.img_report_feedback);
+            report = (Spinner) row.findViewById(R.id.spn_feedback_report);
         }
     }
 
@@ -108,52 +114,67 @@ public class ListServiceFeedbackAdapter extends ArrayAdapter<FeedbackService> {
         holder.feedback.setText(item.getFeedback());
         holder.phone.setText(item.getPhone());
 
-        holder.report.setOnClickListener(new View.OnClickListener() {
+        List<SpinnerReportItem> spnList = new ArrayList<>();
+        spnList.add(new SpinnerReportItem("Báo cáo", R.drawable.ic_warning));
+        spnList.add(new SpinnerReportItem("Quay lại", R.drawable.ic_back));
+        SpinnerReportAdapter spnAdapter = new SpinnerReportAdapter(getContext(), R.layout.spinner_report_row, spnList);
+        spnAdapter.notifyDataSetChanged();
+        holder.report.setAdapter(spnAdapter);
+
+        holder.report.setSelection(1);
+        holder.report.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Dialog dialog = new Dialog(row.getContext());
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.dialog_confirm_reporting);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0){
+                    Dialog dialog = new Dialog(row.getContext());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_confirm_reporting);
 
-                TextView content = (TextView) dialog.findViewById(R.id.report_content);
-                content.setText("Báo cáo feedback này ?");
-                Button btnOk = (Button) dialog.findViewById(R.id.report_ok);
-                Button btnCancel = (Button) dialog.findViewById(R.id.report_cancel);
+                    TextView content = (TextView) dialog.findViewById(R.id.report_content);
+                    content.setText("Báo cáo feedback này ?");
+                    Button btnOk = (Button) dialog.findViewById(R.id.report_ok);
+                    Button btnCancel = (Button) dialog.findViewById(R.id.report_cancel);
 
-                btnOk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        APITour apiTour = new APIRetrofitCreator().getAPIService();
-                        apiTour.reportFeedbackService(TokenStorage.getInstance().getAccessToken(), item.getId()).enqueue(new Callback<MessageResponse>() {
-                            @Override
-                            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                                if(response.isSuccessful()){
-                                    Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
+                    btnOk.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            APITour apiTour = new APIRetrofitCreator().getAPIService();
+                            apiTour.reportFeedbackService(TokenStorage.getInstance().getAccessToken(), item.getId()).enqueue(new Callback<MessageResponse>() {
+                                @Override
+                                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                                    if(response.isSuccessful()){
+                                        Toast.makeText(context, "Báo cáo thành công", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                    else if(response.code() == 500){
+                                        Toast.makeText(getContext(), "Lỗi server, báo cáo thất bại", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                                else if(response.code() == 500){
-                                    Toast.makeText(getContext(), "Lỗi server, báo cáo thất bại", Toast.LENGTH_SHORT).show();
+
+                                @Override
+                                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                                    Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                                 }
-                            }
+                            });
+                        }
+                    });
 
-                            @Override
-                            public void onFailure(Call<MessageResponse> call, Throwable t) {
-                                Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                    dialog.show();
+                    holder.report.setSelection(1);
+                }
 
-                dialog.show();
+            }
 
-
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                holder.report.setSelection(1);
             }
         });
 
