@@ -205,9 +205,9 @@ public class TourMemberFragment extends Fragment {
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getMessage() == "Not valid") {
-                        Toast.makeText(getContext(), "Lỗi Not valid", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi", Toast.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(getContext(), "Yêu cầu tham gia tour thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Yêu cầu tham gia chuyến đi thành công", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
                 }

@@ -51,7 +51,8 @@
         android:background="@drawable/login_btn_bg"
         android:padding="15dp"
         android:text="Cập nhật danh sách điểm dừng"
-        android:textAllCaps="false"
+        android:textAllCaps="true"
+        android:textStyle="bold"
         android:textColor="#ffffff"
         android:textSize="18sp" />
 </LinearLayout>

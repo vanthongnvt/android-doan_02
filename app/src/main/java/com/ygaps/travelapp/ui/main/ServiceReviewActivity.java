@@ -80,7 +80,6 @@ public class ServiceReviewActivity extends AppCompatActivity {
                     listFeedbackAdapter = new ListServiceFeedbackAdapter(ServiceReviewActivity.this, R.layout.list_view_feedback_service_item, feedbackList);
                     listFeedbackAdapter.notifyDataSetChanged();
                     lvFeedbackList.setAdapter(listFeedbackAdapter);
-                    setListViewHeightBasedOnChildren(lvFeedbackList);
                 }
                 else if(response.code() == 500){
                     Toast.makeText(ServiceReviewActivity.this, "Lỗi server, không thể hiển thị feedback list", Toast.LENGTH_SHORT).show();
@@ -100,12 +99,15 @@ public class ServiceReviewActivity extends AppCompatActivity {
         if(intent != null){
             stopPointID = (int)intent.getIntExtra(ListStopPointAdapter.STOPPOINT_ID, 0);
         }
-        serviceRating = (RatingBar) findViewById(R.id.service_ratingBar);
-        tvShowFeedbackDialog = (TextView) findViewById(R.id.show_dialog_rate_service);
         lvFeedbackList = (ListView) findViewById(R.id.list_view_service_review);
-        ratingPoint = findViewById(R.id.service_rating_point);
-        totalRating = findViewById(R.id.service_total_ratings);
-        ratingReviews = (RatingReviews) findViewById(R.id.rating_reviews);
+        View headerReviewPoint = getLayoutInflater().inflate(R.layout.header_for_list_view_feedback_service,lvFeedbackList,false);
+        lvFeedbackList.addHeaderView(headerReviewPoint);
+        serviceRating = (RatingBar) headerReviewPoint.findViewById(R.id.service_ratingBar);
+        tvShowFeedbackDialog = (TextView) headerReviewPoint.findViewById(R.id.show_dialog_rate_service);
+
+        ratingPoint = headerReviewPoint.findViewById(R.id.service_rating_point);
+        totalRating = headerReviewPoint.findViewById(R.id.service_total_ratings);
+        ratingReviews = (RatingReviews) headerReviewPoint.findViewById(R.id.rating_reviews);
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
@@ -217,35 +219,6 @@ public class ServiceReviewActivity extends AppCompatActivity {
                 Toast.makeText(ServiceReviewActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-    public static void setListViewHeightBasedOnChildren(ListView listView){
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
     }
 
 }

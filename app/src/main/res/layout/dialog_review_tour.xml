@@ -50,11 +50,13 @@
             android:padding="5dp"
             android:id="@+id/user_review"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="140dp"
             android:scrollbars="vertical"
             android:gravity="top|start"
             android:layout_marginTop="10dp"
             android:minLines="6"
+            android:hint="..."
+            android:maxHeight="140dp"
             android:background="@drawable/roundedborder2" />
 
         <Button
@@ -64,6 +66,8 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/login_btn_bg"
             android:text="Gửi đánh giá"
+            android:textAllCaps="true"
+            android:textStyle="bold"
             android:textColor="@color/white"
             android:textSize="18sp" />
     </LinearLayout>

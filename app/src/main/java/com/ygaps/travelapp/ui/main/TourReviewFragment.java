@@ -72,6 +72,7 @@ public class TourReviewFragment extends Fragment {
     private RatingBar userRating;
     private EditText userReview;
     private Button btnSendReview;
+    private View root;
 
     private static int maxPageSize = 1000;
 
@@ -102,22 +103,24 @@ public class TourReviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_tour_review, container, false);
-        init(root);
+        this.root= root;
+        listViewRating = root.findViewById(R.id.list_view_tour_review);
+        View headerReviewPoint = inflater.inflate(R.layout.header_for_list_view_tour_review, listViewRating, false);
+        listViewRating.addHeaderView(headerReviewPoint);
+        init(headerReviewPoint);
         return root;
     }
 
-    private void init(View root) {
+    private void init(View headerReviewPoint) {
 
 
+        tourRatingBar = headerReviewPoint.findViewById(R.id.ratingBar);
+        tvShowDialogRating = headerReviewPoint.findViewById(R.id.show_dialog_rate_tour);
 
-        tourRatingBar = root.findViewById(R.id.ratingBar);
-        tvShowDialogRating = root.findViewById(R.id.show_dialog_rate_tour);
-        listViewRating = root.findViewById(R.id.list_view_tour_review);
-        ratingPoint = root.findViewById(R.id.rating_point);
-        totalRatings = root.findViewById(R.id.total_ratings);
-//        listViewRating.addHeaderView((View)tvShowDialogRating);
+        ratingPoint = headerReviewPoint.findViewById(R.id.rating_point);
+        totalRatings = headerReviewPoint.findViewById(R.id.total_ratings);
 
-        ratingReviews = (RatingReviews) root.findViewById(R.id.rating_reviews);
+        ratingReviews = (RatingReviews) headerReviewPoint.findViewById(R.id.rating_reviews);
 
 
         apiTour = new APIRetrofitCreator().getAPIService();
@@ -235,20 +238,19 @@ public class TourReviewFragment extends Fragment {
         });
     }
 
-    private void getReviewList(){
+    private void getReviewList() {
         apiTour.getTotalTourReview(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), 1, 1000).enqueue(new Callback<TotalTourReview>() {
             @Override
             public void onResponse(Call<TotalTourReview> call, Response<TotalTourReview> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     listTourReview = response.body().getReviewList();
                     listReviewApdater = new ListTourReviewAdapter(getContext(), R.layout.list_view_tour_review_item, listTourReview);
-                    listReviewApdater.notifyDataSetChanged();
                     listViewRating.setAdapter(listReviewApdater);
-                    setListViewHeightBasedOnChildren(listViewRating);
+                    listReviewApdater.notifyDataSetChanged();
+//                    setListViewHeightBasedOnChildren(listViewRating);
 
-                }
-                else if(response.code() == 500){
+                } else if (response.code() == 500) {
                     Toast.makeText(getContext(), "Lỗi server, không thể hiển thị danh sách tour review", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -258,35 +260,6 @@ public class TourReviewFragment extends Fragment {
                 Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-    public static void setListViewHeightBasedOnChildren(ListView listView){
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

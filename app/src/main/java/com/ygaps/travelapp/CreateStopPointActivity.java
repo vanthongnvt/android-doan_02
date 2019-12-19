@@ -993,11 +993,10 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                     .setCancelable(false)
                     .setPositiveButton("Thoát và bỏ lưu", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            dialogListStopPoint.show();
                             CreateStopPointActivity.super.onBackPressed();
                         }
                     })
-                    .setNegativeButton("Hủy", null)
+                    .setNegativeButton("Hủy", (dialog, which) -> dialogListStopPoint.show())
                     .show();
         } else {
             super.onBackPressed();
