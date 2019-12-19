@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -114,6 +115,7 @@ public class TourReviewFragment extends Fragment {
         listViewRating = root.findViewById(R.id.list_view_tour_review);
         ratingPoint = root.findViewById(R.id.rating_point);
         totalRatings = root.findViewById(R.id.total_ratings);
+//        listViewRating.addHeaderView((View)tvShowDialogRating);
 
         ratingReviews = (RatingReviews) root.findViewById(R.id.rating_reviews);
 
@@ -159,6 +161,14 @@ public class TourReviewFragment extends Fragment {
                     if(response.isSuccessful()){
                         userRating.setRating(0);
                         userReview.setText(null);
+                        TourReview review1 = new TourReview();
+                        review1.setAvatar(TokenStorage.getInstance().getAvatar());
+                        review1.setName(TokenStorage.getInstance().getName());
+                        review1.setPoint(rating);
+                        review1.setReview(review);
+                        review1.setCreatedOn(String.valueOf(System.currentTimeMillis()));
+                        listTourReview.add(0,review1);
+                        listReviewApdater.notifyDataSetChanged();
                         Toast.makeText(getContext(), R.string.add_review_successfully, Toast.LENGTH_SHORT).show();
                         dialogAddReview.dismiss();
                     }
@@ -235,6 +245,7 @@ public class TourReviewFragment extends Fragment {
                     listReviewApdater = new ListTourReviewAdapter(getContext(), R.layout.list_view_tour_review_item, listTourReview);
                     listReviewApdater.notifyDataSetChanged();
                     listViewRating.setAdapter(listReviewApdater);
+                    setListViewHeightBasedOnChildren(listViewRating);
 
                 }
                 else if(response.code() == 500){
@@ -247,6 +258,35 @@ public class TourReviewFragment extends Fragment {
                 Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    public static void setListViewHeightBasedOnChildren(ListView listView){
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight=0;
+        View view = null;
+
+        for (int i = 0; i < listAdapter.getCount(); i++)
+        {
+            view = listAdapter.getView(i, view, listView);
+
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

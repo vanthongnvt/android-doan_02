@@ -7,138 +7,146 @@
     android:background="@color/white"
     tools:context=".ui.main.TourReviewFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Đánh giá chuyến đi"
-                android:textColor="@color/colorCustomPrimary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingTop="10dp">
 
                 <TextView
-                    android:id="@+id/rating_point"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="?android:selectableItemBackground"
-                    android:text="4.7"
-                    android:textColor="#333333"
-                    android:textSize="36sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/ratingBar"
-                    app:layout_constraintHorizontal_bias="0.36"
-                    app:layout_constraintStart_toStartOf="@+id/ratingBar"
-                    app:layout_constraintTop_toTopOf="@+id/rating_reviews" />
+                    android:layout_weight="1"
+                    android:text="Đánh giá chuyến đi"
+                    android:textColor="@color/colorCustomPrimary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#0f9d58"
-                    android:numStars="5"
-                    android:progressTint="#0f9d58"
-                    android:rating="4"
-                    android:stepSize="1"
-                    app:layout_constraintBottom_toBottomOf="@+id/rating_reviews"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rating_point"
-                    app:layout_constraintVertical_bias="0.07999998" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+
                     <TextView
-                        android:id="@+id/total_ratings"
+                        android:id="@+id/rating_point"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="756, 800"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?android:selectableItemBackground"
+                        android:text="4.7"
                         android:textColor="#333333"
-                        android:textSize="14sp"
+                        android:textSize="36sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/ratingBar"
+                        app:layout_constraintHorizontal_bias="0.36"
                         app:layout_constraintStart_toStartOf="@+id/ratingBar"
-                        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginLeft="10dp"
-                        app:srcCompat="@drawable/ic_multiple_users_silhouette"/>
+                        app:layout_constraintTop_toTopOf="@+id/rating_reviews" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#0f9d58"
+                        android:numStars="5"
+                        android:progressTint="#0f9d58"
+                        android:rating="4"
+                        android:stepSize="1"
+                        app:layout_constraintBottom_toBottomOf="@+id/rating_reviews"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/rating_point"
+                        app:layout_constraintVertical_bias="0.07999998" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/total_ratings"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="756, 800"
+                            android:textColor="#333333"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="@+id/ratingBar"
+                            app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginLeft="10dp"
+                            app:srcCompat="@drawable/ic_multiple_users_silhouette" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <com.taufiqrahman.reviewratings.RatingReviews xmlns:bar="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/rating_reviews"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rating_point"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.499"
+                    bar:animation="true"
+                    bar:max_value="100"
+                    bar:rounded="false"
+                    bar:show_label="true"
+                    bar:show_raters="true"
+                    bar:spaces="7dp"
+                    bar:text_color="#333333"
+                    bar:text_size="10sp"
+                    bar:width="12dp" />
             </LinearLayout>
 
-            <com.taufiqrahman.reviewratings.RatingReviews xmlns:bar="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/rating_reviews"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/show_dialog_rate_tour"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/rating_point"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.499"
-                bar:animation="true"
-                bar:max_value="100"
-                bar:rounded="false"
-                bar:show_label="true"
-                bar:show_raters="true"
-                bar:spaces="7dp"
-                bar:text_color="#333333"
-                bar:text_size="10sp"
-                bar:width="12dp" />
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="Viết đánh giá"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorCustomPrimary"
+                android:textSize="18sp" />
+
+            <ListView
+                android:id="@+id/list_view_tour_review"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/white"
+                android:divider="@null" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/show_dialog_rate_tour"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:text="Viết đánh giá"
-            android:textColor="@color/colorCustomPrimary"
-            android:textSize="18sp" />
-
-        <ListView
-            android:id="@+id/list_view_tour_review"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:divider="@null" />
-    </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

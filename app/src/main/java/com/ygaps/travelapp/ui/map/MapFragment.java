@@ -249,24 +249,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
             if (isOK == 1) {
                 getLocationPermission();
-                init();
-
-                FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
-                Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
-                serviceIntent.putExtra("tourId", tourId);
-                context.startService(serviceIntent);
-
-                broadcastLocationReceiver = new BroadcastLocationReceiver();
-                mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
-                mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
-                mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
-                mIntentFilter.addAction(getString(R.string.receiver_action_noti_limit_speed));
-                context.registerReceiver(broadcastLocationReceiver, mIntentFilter);
+                if(mLocationPermisstionsGranted) {
+                    initWhenGrantedPermission();
+                }
 
             }
         } else {
             showDialogSelectTour();
         }
+    }
+
+    public void initWhenGrantedPermission(){
+        init();
+
+        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
+        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+        serviceIntent.putExtra("tourId", tourId);
+        context.startService(serviceIntent);
+
+        broadcastLocationReceiver = new BroadcastLocationReceiver();
+        mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+        mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
+        mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
+        mIntentFilter.addAction(getString(R.string.receiver_action_noti_limit_speed));
+        context.registerReceiver(broadcastLocationReceiver, mIntentFilter);
     }
 
     private void showDialogSelectTour() {
@@ -690,7 +696,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     if (marker.getTag() != null) {
-                        Log.d(TAG, "onMarkerClick: " + marker.getTag().getClass().getName());
+//                        Log.d(TAG, "onMarkerClick: " + marker.getTag().getClass().getName());
                         if (marker.getTag().getClass().equals(TourMember.class)) {
                             TourMember tourMember = (TourMember) marker.getTag();
                             showMemberInfoMarker(tourMember);
@@ -702,13 +708,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     return false;
                 }
             });
-//
-//            if(myLocation!=null&&targetStopPoint!=null){
-//                drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()), new LatLng(targetStopPoint.getLatitude(),targetStopPoint.getLongitude()));
-//            }
-//            else{
-//                Log.d(TAG, "init: NULL");
-//            }
         }
     }
 
@@ -808,24 +807,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_follow_tour);
                     if (supportMapFragment != null) {
                         supportMapFragment.getMapAsync(this);
+                        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
                     } else {
                         Log.d(TAG, "getLocationPermission: 2");
                     }
                 }
-                locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
             } else {
-                ActivityCompat.requestPermissions((HomeActivity) context, permissions, LOCATION_PERMISSION_REQUESET_CODE);
+                requestPermissions(permissions, LOCATION_PERMISSION_REQUESET_CODE);
             }
         } else {
-            ActivityCompat.requestPermissions((HomeActivity) context, permissions, LOCATION_PERMISSION_REQUESET_CODE);
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUESET_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mLocationPermisstionsGranted = true;
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUESET_CODE: {
@@ -839,6 +838,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     mLocationPermisstionsGranted = true;
                     SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_follow_tour);
                     supportMapFragment.getMapAsync(this);
+                    initWhenGrantedPermission();
                 }
             }
         }

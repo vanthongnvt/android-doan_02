@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:background="@null"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,121 +15,112 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="10dp">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/lv_feedbackservice_item_avatar"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/unknown_user"
                 app:civ_border_color="@color/colorCustomPrimary"
-                app:civ_border_width="2dp" />
-            
+                app:civ_border_width="1dp" />
+
             <TextView
                 android:id="@+id/lv_feedbackservice_item_phone"
-                android:layout_margin="2dp"
-                android:text="0934942095"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toBottomOf = "@+id/lv_feedbackservice_item_avatar"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingLeft="10dp">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="2dp"
+                android:visibility="gone"
+                android:text="0934942095"
+                app:layout_constraintTop_toBottomOf="@+id/lv_feedbackservice_item_avatar" />
 
             <LinearLayout
-                android:weightSum="2"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lv_feedbackservice_item_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Name"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1">
+
+                        <RatingBar
+                            android:id="@+id/lv_feedbackservice_item_ratingbar"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#0f9d58"
+                            android:numStars="5"
+                            android:progressTint="#0f9d58"
+                            android:rating="4"
+                            android:stepSize="1"
+                            app:layout_constraintBottom_toBottomOf="@+id/rating_reviews"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/rating_point"
+                            app:layout_constraintVertical_bias="0.07999998" />
 
                         <TextView
-                            android:id="@+id/lv_feedbackservice_item_name"
+                            android:id="@+id/lv_feedbackservice_item_date_created"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Name"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <RatingBar
-                                android:layout_marginTop="5dp"
-                                android:id="@+id/lv_feedbackservice_item_ratingbar"
-                                style="?android:attr/ratingBarStyleSmall"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:backgroundTint="#0f9d58"
-                                android:numStars="5"
-                                android:progressTint="#0f9d58"
-                                android:rating="4"
-                                android:stepSize="1"
-                                app:layout_constraintBottom_toBottomOf="@+id/rating_reviews"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/rating_point"
-                                app:layout_constraintVertical_bias="0.07999998" />
-                        </LinearLayout>
-
-
+                            android:layout_marginLeft="10dp"
+                            android:text="12/12/2012"
+                            android:textSize="13sp" />
                     </LinearLayout>
-
-                    <TextView
-                        android:text="12/12/2012"
-                        android:id="@+id/lv_feedbackservice_item_date_created"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="13sp" />
 
                 </LinearLayout>
 
                 <Spinner
-                    android:dropDownHeight="1dp"
                     android:id="@+id/spn_feedback_report"
-                    android:layout_weight="1"
                     style="@style/SpinnerTheme"
                     android:layout_width="50dp"
-                    android:layout_height="25dp"/>
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:dropDownHeight="1dp" />
 
             </LinearLayout>
 
-
-            <TextView
-                android:textStyle="italic"
-                android:text="Tour gi ma chan nhu con gian, buon nhu con chuong chuon !!!"
-                android:id="@+id/lv_feedbackservice_item_review"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/lv_feedbackservice_item_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorCustomPrimary"/>
 
     </LinearLayout>
 

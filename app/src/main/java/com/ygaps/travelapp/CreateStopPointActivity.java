@@ -544,7 +544,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mLocationPermisstionsGranted = true;
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUESET_CODE: {
@@ -977,9 +977,9 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         edtStopPointName.setText(stopPoint.getName());
         edtStopPointMinCost.setText(String.valueOf(stopPoint.getMinCost()));
         edtStopPointMaxCost.setText(String.valueOf(stopPoint.getMaxCost()));
-        edtStopPointTimeArrive.setText(arriveAt.substring(0, 4));
+        edtStopPointTimeArrive.setText(arriveAt.substring(0, 5));
         edtStopPointDateArrive.setText(arriveAt.substring(6));
-        edtStopPointTimeLeave.setText(leaveAt.substring(0, 4));
+        edtStopPointTimeLeave.setText(leaveAt.substring(0, 5));
         edtStopPointDateLeave.setText(leaveAt.substring(6));
         spnService.setSelection(mServiceTypeId - 1);
         spnProvince.setSelection(mProvinceId - 1);
@@ -1074,7 +1074,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 if (response.isSuccessful()) {
                     Toast.makeText(CreateStopPointActivity.this, R.string.updated_stop_point_info, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateStopPointActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
                 DialogProgressBar.closeProgress();
             }
