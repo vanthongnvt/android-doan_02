@@ -479,8 +479,8 @@ public class UserSettingsFragment extends Fragment {
                     tvUserEmaill.setText(userInfo.getEmail());
                     tvUserAddress.setText(userInfo.getAddress());
                     Integer gender = userInfo.getGender();
-                    if(userInfo.getTypeLogin()!=0){
-                        btnChangePassword.setVisibility(View.GONE);
+                    if(userInfo.getTypeLogin()==0){
+                        btnChangePassword.setVisibility(View.VISIBLE);
                     }
                     if(gender == null)
                         tvGender.setText("(Trống)");

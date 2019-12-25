@@ -84,6 +84,7 @@
                         android:paddingLeft="20dp"
                         android:paddingRight="20dp"
                         android:text="Đổi mật khẩu"
+                        android:visibility="gone"
                         android:textColor="@color/white" />
                 </LinearLayout>
             </LinearLayout>

@@ -2,6 +2,7 @@ package com.ygaps.travelapp.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.R;
 import com.ygaps.travelapp.ui.main.ServiceReviewActivity;
@@ -35,7 +37,7 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         this.resource = resource;
         this.list = objects;
 
-        listSerVice = Arrays.asList("Restaurant", "Hotel", "Rest Station", "Other");
+        listSerVice = Arrays.asList("Nhà hàng", "Khách sạn", "Trạm nghỉ", "Khác");
     }
 
     private static class ViewHolder {
@@ -93,8 +95,19 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
             holder.tvStopPointLeaveAt.setText(date2);
         }
         holder.btnToStopPointReview.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
             Intent intent = new Intent(getContext(), ServiceReviewActivity.class);
-            intent.putExtra(STOPPOINT_ID, stopPoint.getServiceId());
+            if(context instanceof HomeActivity) {
+                bundle.putInt(STOPPOINT_ID, stopPoint.getId());
+//                intent.putExtra(STOPPOINT_ID, stopPoint.getId());
+            }
+            else{
+                bundle.putInt(STOPPOINT_ID, stopPoint.getServiceId());
+//                intent.putExtra(STOPPOINT_ID, stopPoint.getServiceId());
+            }
+
+            bundle.putSerializable("STOP_POINT",stopPoint);
+            intent.putExtras(bundle);
             context.startActivity(intent);
         });
 

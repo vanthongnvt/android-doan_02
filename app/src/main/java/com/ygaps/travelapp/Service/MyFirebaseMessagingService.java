@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
+import com.ygaps.travelapp.FollowTourActivity;
 import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
 import com.ygaps.travelapp.Model.MemberLocation;
@@ -217,7 +218,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void pushNotificationOnTour(TourNotificationText notiText, FirebaseNotificationOnRoad notification){
-        Intent intentNoti = new Intent(this, HomeActivity.class);
+        Intent intentNoti = new Intent(this, FollowTourActivity.class);
         Bundle bundle = new Bundle();
         if(notiText!=null){
             bundle.putBoolean("isNotiText",true);
