@@ -1,4 +1,4 @@
-package com.ygaps.travelapp.ui.map;
+package com.ygaps.travelapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -11,23 +11,19 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,6 +36,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -54,14 +51,13 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.ygaps.travelapp.Adapter.ListMapDestinationAdapter;
 import com.ygaps.travelapp.Adapter.ListNotificationTourAdapter;
-import com.ygaps.travelapp.Adapter.ListTourCommentAdapter;
 import com.ygaps.travelapp.Adapter.ListTourMemberAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.DialogProgressBar;
 import com.ygaps.travelapp.AppHelper.PicassoMarker;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
-import com.ygaps.travelapp.HomeActivity;
+import com.ygaps.travelapp.Model.FirebaseNotificationOnRoad;
 import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
 import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
@@ -72,9 +68,7 @@ import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.TourMember;
-import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
 import com.ygaps.travelapp.Model.TourNotificationText;
-import com.ygaps.travelapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -93,7 +87,6 @@ import com.google.android.gms.tasks.Task;
 import com.ygaps.travelapp.Service.BackgroundLocationService;
 import com.ygaps.travelapp.Service.BroadcastLocationReceiver;
 
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -106,8 +99,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, AbsListView.OnScrollListener, LocationListener {
-    private MapViewModel mapViewModel;
+public class FollowTourActivity extends AppCompatActivity implements OnMapReadyCallback, AbsListView.OnScrollListener, LocationListener {
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -128,8 +120,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private Transformation transformation;
     private SharedPreferences sharedPreferences;
 
-    private Context context;
-    private View mRoot;
     private ImageView btnCurLocation;
     private ImageView btnShowListDestination;
     private ImageView btnShowWarningSpeedNotificationDialog;
@@ -160,6 +150,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private RadioButton rdWarning50;
     private RadioButton rdWarning60;
     private RadioButton rdWarning70;
+    private RadioButton rdPolicePosition;
+    private RadioButton rdAccidentPosition;
     private EditText textNotification;
     private Button btnSendNotification;
 
@@ -203,40 +195,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private BroadcastLocationReceiver broadcastLocationReceiver;
     private IntentFilter mIntentFilter;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        View root = inflater.inflate(R.layout.fragment_map, container, false);
-        context = root.getContext();
+
+        super.onCreate(savedInstanceState);
+        setTitle(R.string.title_map);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
+        setContentView(R.layout.activity_follow_tour);
         transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.RED)
                 .borderWidthDp(1)
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-//        mapViewModel =
-//                ViewModelProviders.of(this).get(MapViewModel.class);
-//        final TextView textView = root.findViewById(R.id.text_map);
-//        mapViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
-        mRoot = root;
-
-        return root;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         userId = TokenStorage.getInstance().getUserId();
-        sharedPreferences = getContext().getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE);
         tourId = sharedPreferences.getInt("tourId", -1);
         boolean fIntent = false;
-        if (getArguments() != null) {
-            tourId = getArguments().getInt("directionTourId", -2);
+        // send tourId to Map fragment
+        Intent intent = getIntent();
+        if (intent.hasExtra("directionTourId")) {
+            tourId = intent.getIntExtra("directionTourId", -2);
             if (tourId != -1 && tourId != -2) {
                 fIntent = true;
             }
@@ -249,7 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
             if (isOK == 1) {
                 getLocationPermission();
-                if(mLocationPermisstionsGranted) {
+                if (mLocationPermisstionsGranted) {
                     initWhenGrantedPermission();
                 }
 
@@ -259,24 +239,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void initWhenGrantedPermission(){
+    public void initWhenGrantedPermission() {
         init();
 
         FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
-        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
+        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
         serviceIntent.putExtra("tourId", tourId);
-        context.startService(serviceIntent);
+        startService(serviceIntent);
 
         broadcastLocationReceiver = new BroadcastLocationReceiver();
         mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
         mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
         mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
-        mIntentFilter.addAction(getString(R.string.receiver_action_noti_limit_speed));
-        context.registerReceiver(broadcastLocationReceiver, mIntentFilter);
+        mIntentFilter.addAction(getString(R.string.receiver_action_firebase_noti_on_road));
+        registerReceiver(broadcastLocationReceiver, mIntentFilter);
     }
 
     private void showDialogSelectTour() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Không có chuyến đi nào");
         alert.setMessage("Vui lòng chọn chuyến đi để theo dõi");
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -284,12 +264,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-//                UserTripFragment nextFrag= new UserTripFragment();
-//                getActivity().getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.nav_host_fragment, nextFrag)
-//                        .addToBackStack(null)
-//                        .commit();
-                ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+                Intent intent = new Intent(FollowTourActivity.this, HomeActivity.class);
+                intent.putExtra("MENU", R.id.navigation_history);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -305,33 +284,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private void init() {
-        btnCurLocation = mRoot.findViewById(R.id.map_btn_cur_location);
-        btnShowListDestination = mRoot.findViewById(R.id.map_btn_direction);
-        btnShowWarningSpeedNotificationDialog = mRoot.findViewById(R.id.show_warning_notification);
+        btnCurLocation = findViewById(R.id.map_btn_cur_location);
+        btnShowListDestination = findViewById(R.id.map_btn_direction);
+        btnShowWarningSpeedNotificationDialog = findViewById(R.id.show_warning_notification);
 
-        dialogListDestination = new Dialog(getContext(), R.style.DialogSlideAnimation);
+        dialogListDestination = new Dialog(this, R.style.DialogSlideAnimation);
         dialogListDestination.setContentView(R.layout.dialog_list_destination_map);
         initDialogListDestination();
 
-        dialogStopPointInfo = new BottomSheetDialog(getContext());
+        dialogStopPointInfo = new BottomSheetDialog(this);
         dialogStopPointInfo.setContentView(R.layout.dialog_stop_point_info);
         initDialogStopPointInfo();
 
-        dialogCreateNotification = new BottomSheetDialog(getContext());
+        dialogCreateNotification = new BottomSheetDialog(this);
         dialogCreateNotification.setContentView(R.layout.dialog_create_notification_on_road);
         initDialogCreateNotification();
 
-        btnShowListMember = mRoot.findViewById(R.id.btn_show_member_list);
-        dialogListMember = new BottomSheetDialog(getContext());
+        btnShowListMember = findViewById(R.id.btn_show_member_list);
+        dialogListMember = new BottomSheetDialog(this);
         dialogListMember.setContentView(R.layout.dialog_list_member_map);
         initDialogListMember();
 
-        dialogMemberInfoMarker = new BottomSheetDialog(getContext());
+        dialogMemberInfoMarker = new BottomSheetDialog(this);
         dialogMemberInfoMarker.setContentView(R.layout.dialog_member_info_marker);
         initDialogMemberInfoMarker();
 
-        btnSetting = mRoot.findViewById(R.id.tour_setting);
-        dialogTourSetting = new BottomSheetDialog(getContext());
+        btnSetting = findViewById(R.id.tour_setting);
+        dialogTourSetting = new BottomSheetDialog(this);
         dialogTourSetting.setContentView(R.layout.dialog_tour_setting);
         initDialogTourSetting();
 
@@ -355,28 +334,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 //                            Log.d(TAG, "init: NULL");
 //                        }
                     }
-                    if(Integer.parseInt(tourInfo.getHostId())==userId){
+                    if (Integer.parseInt(tourInfo.getHostId()) == userId) {
                         btnFinishTour.setVisibility(View.GONE);
                     }
-                    mapDestinationAdapter = new ListMapDestinationAdapter(getContext(), R.layout.list_view_destination_item, tourInfo.getStopPoints(), MapFragment.this);
+                    mapDestinationAdapter = new ListMapDestinationAdapter(FollowTourActivity.this, R.layout.list_view_destination_item, tourInfo.getStopPoints());
                     listViewDestination.setAdapter(mapDestinationAdapter);
 
-                    listTourMemberAdapter = new ListTourMemberAdapter(getContext(), R.layout.list_view_tour_member_item, tourInfo.getMembers());
+                    listTourMemberAdapter = new ListTourMemberAdapter(FollowTourActivity.this, R.layout.list_view_tour_member_item, tourInfo.getMembers());
                     listViewMember.setAdapter(listTourMemberAdapter);
 
                 } else {
-                    Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowTourActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<TourInfo> call, Throwable t) {
-                Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        btnShowNotificationList = mRoot.findViewById(R.id.show_notification_list);
+        btnShowNotificationList = findViewById(R.id.show_notification_list);
         initDialogNotification();
         btnShowNotificationList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -450,20 +429,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         rdWarning50 = dialogCreateNotification.findViewById(R.id.warning_speed_50);
         rdWarning60 = dialogCreateNotification.findViewById(R.id.warning_speed_60);
         rdWarning70 = dialogCreateNotification.findViewById(R.id.warning_speed_70);
+        rdPolicePosition = dialogCreateNotification.findViewById(R.id.warning_police_position);
+        rdAccidentPosition = dialogCreateNotification.findViewById(R.id.warning_accident);
         textNotification = dialogCreateNotification.findViewById(R.id.text_notification);
         btnSendNotification = dialogCreateNotification.findViewById(R.id.send_notification);
 
-        btnSendNotification.setOnClickListener(v -> sendWarningSpeedNotification());
+
+        btnSendNotification.setOnClickListener(v -> sendNotificationOnRoad());
     }
 
     private void initDialogNotification() {
-        dialogNotificationList = new Dialog(getContext(), R.style.DialogSlideAnimation);
+        dialogNotificationList = new Dialog(this, R.style.DialogSlideAnimation);
         dialogNotificationList.setContentView(R.layout.dialog_list_notification);
 
         btnSendTextNotify = dialogNotificationList.findViewById(R.id.send_comment);
         inputTextNotify = dialogNotificationList.findViewById(R.id.input_comment);
         listViewNotification = dialogNotificationList.findViewById(R.id.list_view_comment);
-        tourNotificationAdapter = new ListNotificationTourAdapter(getContext(), R.layout.list_view_tour_comment_item, notificationList);
+        tourNotificationAdapter = new ListNotificationTourAdapter(this, R.layout.list_view_tour_comment_item, notificationList);
         listViewNotification.setAdapter(tourNotificationAdapter);
         listViewNotification.setOnScrollListener(this);
 
@@ -487,31 +469,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         btnExit.setOnClickListener(v -> {
             dialogTourSetting.dismiss();
             sharedPreferences.edit().remove("tourId").apply();
-            ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+            Intent intent = new Intent(FollowTourActivity.this, HomeActivity.class);
+            intent.putExtra("MENU", R.id.navigation_history);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         });
         btnFinishTour = dialogTourSetting.findViewById(R.id.btn_finish_tour);
         btnFinishTour.setOnClickListener(v -> {
             dialogTourSetting.dismiss();
-            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Kết thúc chuyến đi");
             alert.setMessage("Bạn sẽ không thể theo dõi chuyến đi này nữa");
             alert.setPositiveButton("Ok", (dialog, which) -> {
                 dialog.dismiss();
-                DialogProgressBar.showProgress(getContext());
+                DialogProgressBar.showProgress(this);
                 apiTour.finishTour(TokenStorage.getInstance().getAccessToken(), tourId).enqueue(new Callback<MessageResponse>() {
                     @Override
                     public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                         if (response.isSuccessful()) {
-                            ((HomeActivity) getActivity()).getNavigation().setSelectedItemId(R.id.navigation_history);
+                            Intent intent = new Intent(FollowTourActivity.this, HomeActivity.class);
+                            intent.putExtra("MENU", R.id.navigation_history);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
                         } else {
-                            Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FollowTourActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
                         }
                         DialogProgressBar.closeProgress();
                     }
 
                     @Override
                     public void onFailure(Call<MessageResponse> call, Throwable t) {
-                        Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                         DialogProgressBar.closeProgress();
                     }
                 });
@@ -525,43 +515,53 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
 
-    private void sendWarningSpeedNotification() {
+    private void sendNotificationOnRoad() {
 //        getDeviceLocation(false);
 //        if (getlocationFail) {
 //            return;
 //        }
-        int speed = 0;
+        int speed = 0, notificationType = 0;
         String text = textNotification.getText().toString().trim();
         switch (rdWarnings.getCheckedRadioButtonId()) {
             case R.id.warning_speed_50:
                 speed = 50;
+                notificationType = 3;
                 break;
             case R.id.warning_speed_60:
                 speed = 60;
+                notificationType = 3;
                 break;
             case R.id.warning_speed_70:
                 speed = 70;
+                notificationType = 3;
                 break;
+            case R.id.warning_police_position:
+                notificationType = 1;
+                break;
+            case R.id.warning_accident:
+                notificationType = 2;
+                break;
+
         }
-        if (speed != 0) {
-            apiTour.createNotificationOnRoad(TokenStorage.getInstance().getAccessToken(), myLocation.getLatitude(), myLocation.getLongitude(), tourId, TokenStorage.getInstance().getUserId(), 3, speed, text).enqueue(new Callback<MessageResponse>() {
+        if (notificationType != 0) {
+            apiTour.createNotificationOnRoad(TokenStorage.getInstance().getAccessToken(), myLocation.getLatitude(), myLocation.getLongitude(), tourId, TokenStorage.getInstance().getUserId(), notificationType, speed, text).enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                     if (response.isSuccessful()) {
-                        Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FollowTourActivity.this, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
                         dialogCreateNotification.dismiss();
                     } else {
-                        Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FollowTourActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<MessageResponse> call, Throwable t) {
-                    Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
-            Toast.makeText(context, R.string.empty_warning_speed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(FollowTourActivity.this, R.string.empty_warning_speed, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -571,25 +571,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowTourActivity.this, R.string.notify_successfully, Toast.LENGTH_SHORT).show();
 //                    Integer userId = TokenStorage.getInstance().getUserId();
 //                    Notification notification = new Notification(userId.toString(), "<ID :"+userId+" >", null, text);
 //                    notificationList.add(notification);
 //                    tourNotificationAdapter.notifyDataSetChanged();
 
                 } else {
-                    Toast.makeText(context, R.string.server_err, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowTourActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                Toast.makeText(context, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void getTextNotifation() {
+        if (tourInfo == null) {
+            Toast.makeText(this, "Đang khởi tạo dữ liệu", Toast.LENGTH_SHORT).show();
+            return;
+        }
         loading = true;
         progressBar.setVisibility(View.VISIBLE);
         apiTour.getNotificationTour(TokenStorage.getInstance().getAccessToken(), tourInfo.getId(), pageIndex, pageSize).enqueue(new Callback<NotificationList>() {
@@ -602,7 +606,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                     pageIndex++;
                     progressBar.setVisibility(View.GONE);
                 } else {
-                    Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                 }
                 loading = false;
@@ -610,7 +614,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
 
             @Override
             public void onFailure(Call<NotificationList> call, Throwable t) {
-                Toast.makeText(getContext(), R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FollowTourActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
                 loading = false;
             }
         });
@@ -729,7 +733,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private void getDeviceLocation(boolean toMoveCamera) {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
             if (mLocationPermisstionsGranted) {
                 Task<Location> location = fusedLocationProviderClient.getLastLocation();
@@ -746,12 +750,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                                     getlocationFail = false;
                                 }
                             } else {
-                                Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(FollowTourActivity.this, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
                                 getlocationFail = true;
                             }
                         } else {
                             //khong the lay vi tri
-                            Toast.makeText(context, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FollowTourActivity.this, R.string.map_failed_to_get_device_location, Toast.LENGTH_SHORT).show();
                             getlocationFail = true;
                         }
 
@@ -785,11 +789,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private int isServiceAvailable() {
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         if (available == ConnectionResult.SUCCESS) {
             return 1;
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
-            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
             return 0;
         }
@@ -799,26 +803,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     private void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), FINE_LOCATION) ==
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(context.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermisstionsGranted = true;
-                if (getActivity() != null) {
-                    SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_follow_tour);
-                    if (supportMapFragment != null) {
-                        supportMapFragment.getMapAsync(this);
-                        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
-                    } else {
-                        Log.d(TAG, "getLocationPermission: 2");
-                    }
+                SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_follow_tour);
+                if (supportMapFragment != null) {
+                    supportMapFragment.getMapAsync(this);
+                    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, this);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, this);
+                } else {
+                    Log.d(TAG, "getLocationPermission: 2");
                 }
             } else {
-                requestPermissions(permissions, LOCATION_PERMISSION_REQUESET_CODE);
+                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESET_CODE);
             }
         } else {
-            requestPermissions(permissions, LOCATION_PERMISSION_REQUESET_CODE);
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESET_CODE);
         }
     }
 
@@ -836,7 +838,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
                         }
                     }
                     mLocationPermisstionsGranted = true;
-                    SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_follow_tour);
+                    SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_follow_tour);
                     supportMapFragment.getMapAsync(this);
                     initWhenGrantedPermission();
                 }
@@ -855,7 +857,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
         MarkerOptions stopPointMarkerOptions = new MarkerOptions();
         stopPointMarkerOptions.position(new LatLng(stopPoint.getLatitude(), stopPoint.getLongitude()))
-                .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_pin))
+                .icon(bitmapDescriptorFromVector(this, R.drawable.ic_pin))
                 .title(stopPoint.getName());
         Marker stopPointMarker = mMap.addMarker(stopPointMarkerOptions);
         stopPointMarker.setTag(stopPoint);
@@ -863,6 +865,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        if (context == null) {
+            return null;
+        }
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -912,7 +917,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         drawPolylineBetweenTwoLocation(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()), new LatLng(stopPoint.getLatitude(), stopPoint.getLongitude()));
         dialogListDestination.dismiss();
     }
-    public void removeRouteToStopPoint(){
+
+    public void removeRouteToStopPoint() {
         if (polyline != null) {
             polyline.remove();
         }
@@ -927,7 +933,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         Marker memberMarker;
         if (tourMember.getAvatar() == null) {
             memberMarkerOptions.position(new LatLng(latLng.latitude, latLng.longitude))
-                    .icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_none_avatar_user_marker))
+                    .icon(bitmapDescriptorFromVector(this, R.drawable.ic_none_avatar_user_marker))
                     .title(tourMember.getName());
             memberMarker = mMap.addMarker(memberMarkerOptions);
         } else {
@@ -961,20 +967,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void addMarkerSpeedLimit(NotificationOnRoad notification) {
+    public void addMarkerNotiOnRoad(int type, double lat, double lon, String note, int speed) {
         int drawableId = -1;
-        if (notification.getSpeed() == 50) {
-            drawableId = R.drawable.ic_speed_limit_50;
-        } else if (notification.getSpeed() == 60) {
-            drawableId = R.drawable.ic_speed_limit_60;
-        } else if (notification.getSpeed() == 70) {
-            drawableId = R.drawable.ic_speed_limit_70;
+        if (type == 3) {
+            if (speed == 50) {
+                drawableId = R.drawable.ic_speed_limit_50;
+            } else if (speed == 60) {
+                drawableId = R.drawable.ic_speed_limit_60;
+            } else if (speed == 70) {
+                drawableId = R.drawable.ic_speed_limit_70;
+            }
+        } else if (type == 1) {
+            drawableId = R.drawable.ic_police_car;
+        } else if (type == 2) {
+            drawableId = R.drawable.ic_car_accident;
         }
         if (drawableId != -1) {
             MarkerOptions memberMarkerOptions = new MarkerOptions();
-            memberMarkerOptions.position(new LatLng(notification.getLat(), notification.getLong()))
-                    .icon(bitmapDescriptorFromVector(getContext(), drawableId))
-                    .title("Limit " + notification.getSpeed());
+            memberMarkerOptions.position(new LatLng(lat, lon))
+                    .icon(bitmapDescriptorFromVector(this, drawableId))
+                    .title(note);
             Marker memberMarker = mMap.addMarker(memberMarkerOptions);
         }
     }
@@ -984,8 +996,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
             return;
         }
         for (NotificationOnRoad notification : notificationOnRoadList.getNotiList()) {
-            if (notification.getNotificationType() == 3) {
-                addMarkerSpeedLimit(notification);
+            int type = notification.getNotificationType();
+            if (type == 1 || type == 2 || type == 3) {
+                addMarkerNotiOnRoad(3, notification.getLat(), notification.getLong(), notification.getNote(), notification.getSpeed());
             }
         }
     }
@@ -1001,17 +1014,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
         }
     }
 
-    public void updateNotificationLimitSpeed(TourNotificationLimitSpeed notificationLimitSpeed) {
-        NotificationOnRoad notification = new NotificationOnRoad(notificationLimitSpeed.getLat(), notificationLimitSpeed.getLong(), notificationLimitSpeed.getNote(), notificationLimitSpeed.getSpeed(), notificationLimitSpeed.getType());
-        addMarkerSpeedLimit(notification);
-    }
-
-    public void showNotificationListDialog(){
+    public void showNotificationListDialog() {
         dialogNotificationList.show();
     }
 
-    public void cameraToSpeedNoti(double lat, double _long){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,_long), DEFAULT_ZOOM));
+    public void cameraToNotiOnRoad(double lat, double _long) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, _long), DEFAULT_ZOOM));
     }
 
     @Override
@@ -1038,12 +1046,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, AbsList
     @Override
     public void onDestroy() {
         FirebaseMessaging.getInstance().unsubscribeFromTopic("tour-id-" + tourId);
-        Intent serviceIntent = new Intent(context, BackgroundLocationService.class);
-        context.stopService(serviceIntent);
+        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
+        stopService(serviceIntent);
         if (broadcastLocationReceiver != null) {
-            context.unregisterReceiver(broadcastLocationReceiver);
+            unregisterReceiver(broadcastLocationReceiver);
             broadcastLocationReceiver = null;
         }
         super.onDestroy();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            boolean isNotiText = bundle.getBoolean("isNotiText", false);
+            if (isNotiText) {
+                showNotificationListDialog();
+            } else {
+                FirebaseNotificationOnRoad noti = (FirebaseNotificationOnRoad) bundle.getSerializable("firebaseNotiOnRoad");
+                if (noti != null) {
+                    cameraToNotiOnRoad(noti.getLat(), noti.getLong());
+                }
+            }
+        }
     }
 }

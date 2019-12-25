@@ -41,36 +41,36 @@
                 android:background="@drawable/roundedborder2"
                 android:padding="15dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Email :" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="10dp"-->
+<!--                android:text="Email :" />-->
 
 
 
-            <EditText
-                android:id="@+id/updateuserinfo_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/roundedborder2"
-                android:padding="15dp" />
+<!--            <EditText-->
+<!--                android:id="@+id/updateuserinfo_email"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:background="@drawable/roundedborder2"-->
+<!--                android:padding="15dp" />-->
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Số điện thoại :" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="10dp"-->
+<!--                android:text="Số điện thoại :" />-->
 
-            <EditText
-                android:id="@+id/updateuserinfo_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/roundedborder2"
-                android:padding="15dp" />
+<!--            <EditText-->
+<!--                android:id="@+id/updateuserinfo_phone"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:background="@drawable/roundedborder2"-->
+<!--                android:padding="15dp" />-->
 
             <TextView
                 android:layout_width="wrap_content"

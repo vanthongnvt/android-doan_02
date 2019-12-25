@@ -20,18 +20,15 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.HomeActivity;
-import com.ygaps.travelapp.MainActivity;
 import com.ygaps.travelapp.Model.FirebaseNotifyLocation;
 import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
-import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
+import com.ygaps.travelapp.Model.FirebaseNotificationOnRoad;
 import com.ygaps.travelapp.Model.TourNotificationText;
 import com.ygaps.travelapp.R;
 
@@ -56,7 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onCreate();
         intentForNotifciationType9 = new Intent(getString(R.string.receiver_action_send_coordinate));
         intentForNotifciationType4 = new Intent(getString(R.string.receiver_action_noti_text));
-        intentForNotifciationType3 = new Intent(getString(R.string.receiver_action_noti_limit_speed));
+        intentForNotifciationType3 = new Intent(getString(R.string.receiver_action_firebase_noti_on_road));
         userId = TokenStorage.getInstance().getUserId();
     }
 
@@ -176,17 +173,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
 
         }
-        else if(type.equals("3")){
+        else if(type.equals("3")||type.equals("1")||type.equals("2")){
             Bundle bundle = new Bundle();
             Gson gson = new Gson();
 
-            TourNotificationLimitSpeed notificationLimitSpeed= gson.fromJson(messageBody.toString(),TourNotificationLimitSpeed.class);
+            FirebaseNotificationOnRoad notificationOnRoad= gson.fromJson(messageBody.toString(), FirebaseNotificationOnRoad.class);
 
-            bundle.putSerializable("notificationLimitSpeed",notificationLimitSpeed);
+            bundle.putSerializable("firebaseNotificationOnRoad",notificationOnRoad);
             intentForNotifciationType3.putExtras(bundle);
             sendBroadcast(intentForNotifciationType3);
-            if(!userId.equals(Integer.parseInt(notificationLimitSpeed.getUserId()))) {
-                pushNotificationOnTour(null, notificationLimitSpeed);
+            if(!userId.equals(Integer.parseInt(notificationOnRoad.getUserId()))) {
+                pushNotificationOnTour(null, notificationOnRoad);
             }
         }
     }
@@ -219,7 +216,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         });
     }
 
-    private void pushNotificationOnTour(TourNotificationText notiText, TourNotificationLimitSpeed notiSpeed){
+    private void pushNotificationOnTour(TourNotificationText notiText, FirebaseNotificationOnRoad notification){
         Intent intentNoti = new Intent(this, HomeActivity.class);
         Bundle bundle = new Bundle();
         if(notiText!=null){
@@ -227,7 +224,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             intentNoti.putExtras(bundle);
         }
         else{
-            bundle.putSerializable("speedNoti",notiSpeed);
+            bundle.putSerializable("firebaseNotiOnRoad",notification);
             intentNoti.putExtras(bundle);
         }
         intentNoti.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

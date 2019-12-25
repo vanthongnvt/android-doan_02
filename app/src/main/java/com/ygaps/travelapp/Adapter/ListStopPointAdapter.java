@@ -78,17 +78,20 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
 
         StopPoint stopPoint = list.get(position);
         holder.tvStopPointName.setText(stopPoint.getName());
-        holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId()-1));
-        holder.tvStopPointMinCost.setText(stopPoint.getMinCost()+ " VND");
-        holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() +" VND");
+        holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId() - 1));
+        holder.tvStopPointMinCost.setText(stopPoint.getMinCost() + " VND");
+        holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() + " VND");
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(stopPoint.getArrivalAt());
-        String date1 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
-        holder.tvStopPointArriveAt.setText(date1);
-        cal.setTimeInMillis(stopPoint.getLeaveAt());
-        String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
-        holder.tvStopPointLeaveAt.setText(date2);
-
+        if (stopPoint.getArrivalAt() != null){
+            cal.setTimeInMillis(stopPoint.getArrivalAt());
+            String date1 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
+            holder.tvStopPointArriveAt.setText(date1);
+        }
+        if(stopPoint.getLeaveAt() != null) {
+            cal.setTimeInMillis(stopPoint.getLeaveAt());
+            String date2 = DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
+            holder.tvStopPointLeaveAt.setText(date2);
+        }
         holder.btnToStopPointReview.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ServiceReviewActivity.class);
             intent.putExtra(STOPPOINT_ID, stopPoint.getServiceId());

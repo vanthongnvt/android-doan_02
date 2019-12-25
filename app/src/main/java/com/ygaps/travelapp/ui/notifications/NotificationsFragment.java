@@ -89,6 +89,7 @@ public class NotificationsFragment extends Fragment implements AbsListView.OnScr
     }
 
     private void getInvitation(){
+        loading=true;
         progressBar.setVisibility(View.VISIBLE);
         apiTour.userInvitation(TokenStorage.getInstance().getAccessToken(),pageIndex,10).enqueue(new Callback<ListTourInvitation>() {
             @Override

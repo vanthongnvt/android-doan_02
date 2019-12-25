@@ -5,16 +5,15 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home" />
+    <item
+        android:id="@+id/navigation_explore"
+        android:icon="@drawable/ic_pin_drop_black_24dp"
+        android:title="@string/title_explore" />
 
     <item
         android:id="@+id/navigation_history"
         android:icon="@drawable/ic_history_solid"
         android:title="@string/title_user_trip" />
-
-    <item
-        android:id="@+id/navigation_map"
-        android:icon="@drawable/ic_map_icon"
-        android:title="@string/title_map" />
 
     <item
         android:id="@+id/navigation_notifications"

@@ -25,6 +25,7 @@
     <!--    Navigation-->
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_home">Trang chủ</string>
+    <string name="title_explore">Điểm dừng</string>
     <string name="title_map">Bản đồ</string>
     <string name="title_notifications">Lời mời</string>
     <string name="title_user_settings">Tài khoản của bạn</string>
@@ -116,9 +117,9 @@
     <!--    Tour Direction-->
     <string name="notify_successfully">Đã gửi thông báo</string>
     <string name="invalid_notification">Thông báo không hợp lệ</string>
-    <string name="empty_warning_speed">Chưa chọn giới hạn tốc độ</string>
+    <string name="empty_warning_speed">Chưa chọn loại thông báo</string>
     <string name="receiver_action_send_coordinate">receiver.action.sendCoordinate</string>
     <string name="receiver_action_send_notification_on_road">receiver.action.sendNotificationOnRoad</string>
     <string name="receiver_action_noti_text">receiver.action.notiText</string>
-    <string name="receiver_action_noti_limit_speed">receiver.action.notiLimitSpeed</string>
+    <string name="receiver_action_firebase_noti_on_road">receiver.action.firebaseNotiOnRoad</string>
 </resources>

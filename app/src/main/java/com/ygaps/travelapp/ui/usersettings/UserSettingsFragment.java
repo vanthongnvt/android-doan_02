@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -123,6 +124,8 @@ public class UserSettingsFragment extends Fragment {
                             Toast.makeText(root.getContext(), R.string.server_err, Toast.LENGTH_SHORT).show();
                         }
                         TokenStorage.getInstance().removeToken();
+                        SharedPreferences sharedPreferences = getContext().getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE);
+                        sharedPreferences.edit().remove("tourId").apply();
                         DialogProgressBar.closeProgress();
                         Intent intent = new Intent(root.getContext(), MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -227,16 +230,16 @@ public class UserSettingsFragment extends Fragment {
         EditText edtName, edtEmail, edtPhone, edtDob;
         RadioButton rbtnMale, rbtnFemale;
         edtName = (EditText) dialog.findViewById(R.id.updateuserinfo_name);
-        edtEmail = (EditText) dialog.findViewById(R.id.updateuserinfo_email);
-        edtPhone = (EditText) dialog.findViewById(R.id.updateuserinfo_phone);
+//        edtEmail = (EditText) dialog.findViewById(R.id.updateuserinfo_email);
+//        edtPhone = (EditText) dialog.findViewById(R.id.updateuserinfo_phone);
         edtDob = (EditText) dialog.findViewById(R.id.updateuserinfo_dob);
         rbtnMale = (RadioButton) dialog.findViewById(R.id.updateuserinfo_rbtn_male);
         rbtnFemale = (RadioButton) dialog.findViewById(R.id.updateuserinfo_rbtn_female);
         Button btnUpdate = (Button) dialog.findViewById(R.id.btn_update_user_info);
 
         edtName.setText(userInfo.getFullName());
-        edtEmail.setText(userInfo.getEmail());
-        edtPhone.setText(userInfo.getPhone());
+//        edtEmail.setText(userInfo.getEmail());
+//        edtPhone.setText(userInfo.getPhone());
         String strGetDob =userInfo.getDob();
         if(strGetDob!=null) {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -289,8 +292,8 @@ public class UserSettingsFragment extends Fragment {
                 String name = edtName.getText().toString().trim();
                 if(name.isEmpty())
                     name = null;
-                String email = edtEmail.getText().toString().trim();
-                String phone = edtPhone.getText().toString().trim();
+//                String email = edtEmail.getText().toString().trim();
+//                String phone = edtPhone.getText().toString().trim();
                 Number gender = null;
                 if(rbtnMale.isChecked())
                     gender = 1;
@@ -308,22 +311,22 @@ public class UserSettingsFragment extends Fragment {
                 Number finalGender = gender;
                 Date finalDob = dob;
                 String finalName = name;
-                if(userInfo.getTypeLogin()==0) {
-                    if (email.isEmpty()) {
-                        Toast.makeText(getActivity(), "Email không được để trống", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (phone.isEmpty()) {
-                        Toast.makeText(getActivity(), "Số điện thoại không được để trống", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
+//                if(userInfo.getTypeLogin()==0) {
+//                    if (email.isEmpty()) {
+//                        Toast.makeText(getActivity(), "Email không được để trống", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                    if (phone.isEmpty()) {
+//                        Toast.makeText(getActivity(), "Số điện thoại không được để trống", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                }
                 if(!finalName.equals(userInfo.getFullName())) {
                     userInfo.setFullName(finalName);
                     isChangeName= true;
                 }
                 DialogProgressBar.showProgress(getContext());
-                apiTour.updateUserInfo(TokenStorage.getInstance().getAccessToken(), finalName, email, phone, finalGender, finalDob).enqueue(new Callback<UpdateUserInfo>() {
+                apiTour.updateUserInfo(TokenStorage.getInstance().getAccessToken(), finalName, null, null, finalGender, finalDob).enqueue(new Callback<UpdateUserInfo>() {
                     @Override
                     public void onResponse(Call<UpdateUserInfo> call, Response<UpdateUserInfo> response) {
                         if(response.isSuccessful()){

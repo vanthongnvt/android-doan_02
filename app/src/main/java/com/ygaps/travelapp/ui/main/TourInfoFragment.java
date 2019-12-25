@@ -17,9 +17,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.ygaps.travelapp.Adapter.ListStopPointAdapter;
+import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.CreateStopPointActivity;
+import com.ygaps.travelapp.FollowTourActivity;
 import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.TourInfo;
+import com.ygaps.travelapp.Model.TourMember;
 import com.ygaps.travelapp.R;
 import com.squareup.picasso.Picasso;
 
@@ -122,12 +125,12 @@ public class TourInfoFragment extends Fragment {
         tvStatus=root.findViewById(R.id.tour_status);
         btnToMap = root.findViewById(R.id.btn_to_map);
         btnEditStopPoints=root.findViewById(R.id.btn_edit_stop_points);
-        if(tourInfo.getStatus()==-1||tourInfo.getStatus()==2||tourInfo.getStopPoints().size()==0){
+        if(tourInfo.getStatus()==-1||tourInfo.getStatus()==2||tourInfo.getStopPoints().size()==0||!isMemberOfTour()){
             btnToMap.setVisibility(View.GONE);
         }
         else{
             btnToMap.setOnClickListener(v->{
-                Intent home = new Intent(getContext(), HomeActivity.class);
+                Intent home = new Intent(getContext(), FollowTourActivity.class);
                 home.putExtra("directionTourId",tourInfo.getId());
                 startActivity(home);
             });
@@ -260,5 +263,14 @@ public class TourInfoFragment extends Fragment {
     public interface OnFragmentInteractionListener {
 //         TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private boolean isMemberOfTour() {
+        Integer userId = TokenStorage.getInstance().getUserId();
+        for (TourMember member : tourInfo.getMembers()) {
+            if (member.getId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

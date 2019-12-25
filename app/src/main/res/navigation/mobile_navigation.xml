@@ -10,18 +10,17 @@
         android:name="com.ygaps.travelapp.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/navigation_explore"
+        android:name="com.ygaps.travelapp.ui.explore.ExploreFragment"
+        android:label="@string/title_explore"
+        tools:layout="@layout/fragment_explore_stop_point" />
 
     <fragment
         android:id="@+id/navigation_user_trip"
         android:name="com.ygaps.travelapp.ui.home.HomeFragment"
         android:label="@string/title_user_trip"
         tools:layout="@layout/fragment_user_trip" />
-
-    <fragment
-        android:id="@+id/navigation_map"
-        android:name="com.ygaps.travelapp.ui.dashboard.DashboardFragment"
-        android:label="@string/title_map"
-        tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_notifications"

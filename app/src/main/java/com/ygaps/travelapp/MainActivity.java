@@ -2,6 +2,7 @@ package com.ygaps.travelapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -57,13 +58,16 @@ public class MainActivity extends AppCompatActivity {
     private EditText txtEmailPhone;
     private EditText txtPassword;
     private CallbackManager mCallbackManager;
+    Integer tourId = -1;
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(TokenStorage.getInstance().hasLoggedIn()){
+        tourId = getSharedPreferences("FOLLOW_TOUR", Context.MODE_PRIVATE).getInt("tourId", -1);
+        if (TokenStorage.getInstance().hasLoggedIn()) {
             startNewActivity(null);
+            return;
         }
         setContentView(R.layout.activity_main);
         setTitle(R.string.login_title_bar);
@@ -161,15 +165,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startNewActivity(Auth mAuth) {
-        if(mAuth!=null){
+        if (mAuth != null) {
             apiTour.getUserInfo(mAuth.getToken()).enqueue(new Callback<UserInfo>() {
                 @Override
                 public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         UserInfo info = response.body();
-                        TokenStorage.getInstance().setUserInfo(info.getFullName(),info.getAvatar());
-                    }
-                    else{
+                        TokenStorage.getInstance().setUserInfo(info.getFullName(), info.getAvatar());
+                    } else {
                         Toast.makeText(MainActivity.this, R.string.err_get_user_info, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -179,16 +182,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, R.string.err_get_user_info, Toast.LENGTH_SHORT).show();
                 }
             });
-            TokenStorage.getInstance().setToken(mAuth.getToken(),mAuth.getUserId());
+            TokenStorage.getInstance().setToken(mAuth.getToken(), mAuth.getUserId());
             String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            String fmcToken= FirebaseInstanceId.getInstance().getToken();
-            apiTour.registerFirebaseToken(mAuth.getToken(),fmcToken,android_id,1,"1.0").enqueue(new Callback<MessageResponse>() {
+            String fmcToken = FirebaseInstanceId.getInstance().getToken();
+            apiTour.registerFirebaseToken(mAuth.getToken(), fmcToken, android_id, 1, "1.0").enqueue(new Callback<MessageResponse>() {
                 @Override
                 public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         Log.d("Register Firebase", "onResponse: successfully");
-                    }
-                    else{
+                    } else {
                         Log.d("Register Firebase", "onResponse: failed");
                     }
                 }
@@ -199,9 +201,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        Intent itenthome = new Intent(MainActivity.this, HomeActivity.class);
-        itenthome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(itenthome);
+        Intent intent;
+        if(tourId!=-1){
+            intent = new Intent(MainActivity.this, FollowTourActivity.class);
+        }
+        else {
+            intent = new Intent(MainActivity.this, HomeActivity.class);
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void normaLogin(String emailorPhone, String password) {

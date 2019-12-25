@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class TourNotificationLimitSpeed implements Serializable {
+public class FirebaseNotificationOnRoad implements Serializable {
 
     @SerializedName("type")
     @Expose
@@ -46,7 +46,10 @@ public class TourNotificationLimitSpeed implements Serializable {
     }
 
     public Integer getSpeed() {
-        return speed;
+        if(speed!=null) {
+            return speed;
+        }
+        return 0;
     }
 
     public void setSpeed(Integer speed) {

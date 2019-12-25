@@ -3,12 +3,10 @@ package com.ygaps.travelapp;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.ygaps.travelapp.Model.TourNotificationLimitSpeed;
+import com.ygaps.travelapp.ui.explore.ExploreFragment;
 import com.ygaps.travelapp.ui.home.HomeFragment;
-import com.ygaps.travelapp.ui.map.MapFragment;
 import com.ygaps.travelapp.ui.notifications.NotificationsFragment;
 import com.ygaps.travelapp.ui.usersettings.UserSettingsFragment;
 import com.ygaps.travelapp.ui.usertrip.UserTripFragment;
@@ -27,10 +25,11 @@ import androidx.navigation.ui.NavigationUI;
 public class HomeActivity extends AppCompatActivity {
     private ActionBar toolbar;
     private FragmentTransaction transaction;
-    private int idMenuSelected=1;
+    private int idMenuSelected = 1;
     private BottomNavigationView navView;
 
-    private int argumentForMapFragment=-1;
+    private int menu = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
         navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_user_trip, R.id.navigation_map, R.id.navigation_notifications, R.id.navigation_user_settings)
+                R.id.navigation_home, R.id.navigation_explore, R.id.navigation_user_trip, R.id.navigation_notifications, R.id.navigation_user_settings)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -48,16 +47,13 @@ public class HomeActivity extends AppCompatActivity {
 
         // send tourId to Map fragment
         Intent intent = getIntent();
-        if (intent.hasExtra("directionTourId")) {
-            argumentForMapFragment = intent.getIntExtra("directionTourId",-1);
-            if(argumentForMapFragment!=-1) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("directionTourId", argumentForMapFragment);
-                MapFragment fragobj = new MapFragment();
-                fragobj.setArguments(bundle);
+        if (intent.hasExtra("MENU")) {
+            menu = intent.getIntExtra("MENU", -1);
+            if (menu == R.id.navigation_history) {
+                UserTripFragment fragobj = new UserTripFragment();
                 navView.getMenu().getItem(2).setChecked(true);
-                idMenuSelected=2;
-                loadFragment(fragobj,R.string.title_map);
+                idMenuSelected = 2;
+                loadFragment(fragobj, R.string.title_user_trip);
             }
         }
 
@@ -68,28 +64,28 @@ public class HomeActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         fragment = new HomeFragment();
-                        loadFragment(fragment,R.string.title_home);
-                        idMenuSelected=1;
+                        loadFragment(fragment, R.string.title_home);
+                        idMenuSelected = 1;
+                        return true;
+                    case R.id.navigation_explore:
+                        fragment = new ExploreFragment();
+                        loadFragment(fragment, R.string.title_explore);
+                        idMenuSelected = 2;
                         return true;
                     case R.id.navigation_history:
                         fragment = new UserTripFragment();
-                        loadFragment(fragment,R.string.title_user_trip);
-                        idMenuSelected=2;
-                        return true;
-                    case R.id.navigation_map:
-                        fragment = new MapFragment();
-                        loadFragment(fragment,R.string.title_map);
-                        idMenuSelected=3;
+                        loadFragment(fragment, R.string.title_user_trip);
+                        idMenuSelected = 3;
                         return true;
                     case R.id.navigation_notifications:
-                        fragment= new NotificationsFragment();
-                        loadFragment(fragment,R.string.title_notifications);
-                        idMenuSelected=4;
+                        fragment = new NotificationsFragment();
+                        loadFragment(fragment, R.string.title_notifications);
+                        idMenuSelected = 4;
                         return true;
                     case R.id.navigation_user_settings:
                         fragment = new UserSettingsFragment();
-                        loadFragment(fragment,R.string.title_user_settings);
-                        idMenuSelected=5;
+                        loadFragment(fragment, R.string.title_user_settings);
+                        idMenuSelected = 5;
                         return true;
                 }
                 return false;
@@ -97,12 +93,12 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-
-
     }
-    public void setTitleBar(String title){
+
+    public void setTitleBar(String title) {
         toolbar.setTitle(title);
     }
+
     private void loadFragment(Fragment fragment, int resId) {
         // load fragment
         toolbar.setTitle(resId);
@@ -114,11 +110,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(idMenuSelected!=1) {
+        if (idMenuSelected != 1) {
             navView.setSelectedItemId(R.id.navigation_home);
-            idMenuSelected=1;
-        }
-        else{
+            idMenuSelected = 1;
+        } else {
             super.onBackPressed();
         }
     }
@@ -128,39 +123,17 @@ public class HomeActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
-            boolean isNotiText = bundle.getBoolean("isNotiText", false);
-            if (isNotiText) {
+            boolean isInviteNoti = bundle.getBoolean("isInviteNoti", false);
+            if (isInviteNoti) {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                if (fragment instanceof MapFragment) {
-                    ((MapFragment) fragment).showNotificationListDialog();
-                }
-                else{
-                    navView.setSelectedItemId(R.id.navigation_map);
-                }
-            } else {
-                TourNotificationLimitSpeed noti = (TourNotificationLimitSpeed) bundle.getSerializable("speedNoti");
-                if (noti != null) {
-                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                    if (fragment instanceof MapFragment) {
-                        ((MapFragment) fragment).cameraToSpeedNoti(noti.getLat(), noti.getLong());
-                    }else {
-                        navView.setSelectedItemId(R.id.navigation_map);
-                    }
-                }
-                else{
-                    boolean isInviteNoti = bundle.getBoolean("isInviteNoti", false);
-                    if(isInviteNoti){
-                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-                        if (!(fragment instanceof NotificationsFragment)) {
-                            navView.setSelectedItemId(R.id.navigation_notifications);
-                        }
-                    }
+                if (!(fragment instanceof NotificationsFragment)) {
+                    navView.setSelectedItemId(R.id.navigation_notifications);
                 }
             }
         }
     }
 
-    public BottomNavigationView getNavigation(){
+    public BottomNavigationView getNavigation() {
         return navView;
     }
 }

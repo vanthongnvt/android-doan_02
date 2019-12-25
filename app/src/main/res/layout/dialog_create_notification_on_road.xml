@@ -1,67 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:text="Giới hạn tốc độ"
         android:textAllCaps="true"
-        android:textSize="18sp"
         android:textColor="@color/colorCustomPrimary"
-        />
+        android:textSize="18sp" />
+
     <RadioGroup
         android:id="@+id/warning_speed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:weightSum="3">
+        android:layout_marginBottom="10dp">
+
         <RadioButton
             android:id="@+id/warning_speed_50"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50 km/h"
             android:layout_weight="1"
-            />
+            android:layout_marginLeft="20dp"
+            android:text="50 km/h" />
+
         <RadioButton
             android:id="@+id/warning_speed_60"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="60 km/h"
             android:layout_weight="1"
-            />
+            android:layout_marginLeft="20dp"
+            android:text="60 km/h" />
+
         <RadioButton
             android:id="@+id/warning_speed_70"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="70 km/h"
             android:layout_weight="1"
-            />
+            android:layout_marginLeft="20dp"
+            android:text="70 km/h" />
+
+        <RadioButton
+            android:id="@+id/warning_police_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vị trí CSGT"
+            android:textAllCaps="true"
+            android:textColor="@color/colorCustomPrimary"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/warning_accident"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vị trí tai nạn giao thông"
+            android:textAllCaps="true"
+            android:textColor="@color/colorCustomPrimary"
+            android:textSize="18sp" />
     </RadioGroup>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tin nhắn"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Ghi chú"
         android:textAllCaps="true"
-        android:textSize="18sp"
         android:textColor="@color/colorCustomPrimary"
-        />
+        android:textSize="18sp" />
+
     <EditText
         android:id="@+id/text_notification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp" />
+
     <Button
         android:id="@+id/send_notification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/login_btn_bg"
-        android:textColor="@color/white"
-        android:textSize="20sp"
         android:text="gửi"
-        />
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 </LinearLayout>

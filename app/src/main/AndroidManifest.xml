@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.main.ServiceReviewActivity"></activity>
+        <activity android:name=".FollowTourActivity"></activity>
+        <activity android:name=".ui.main.ServiceReviewActivity" />
         <activity android:name=".VerifyCodeRecoveryPasswordActivity" />
         <activity android:name=".PasswordRecoveryActivity" />
 
@@ -28,8 +29,8 @@
             <intent-filter android:priority="1000000">
                 <action android:name="@string/receiver_action_send_coordinate" />
                 <action android:name="@string/receiver_action_send_notification_on_road" />
-                <action android:name="@string/receiver_action_noti_text"/>
-                <action android:name="@string/receiver_action_noti_limit_speed"/>
+                <action android:name="@string/receiver_action_noti_text" />
+                <action android:name="@string/receiver_action_firebase_noti_on_road" />
             </intent-filter>
         </receiver>
 

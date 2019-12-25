@@ -15,9 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.ygaps.travelapp.FollowTourActivity;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.R;
-import com.ygaps.travelapp.ui.map.MapFragment;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,12 +32,11 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
     private int positionChecked=-1;
     private Fragment fragment;
 
-    public ListMapDestinationAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects, Fragment fragment) {
+    public ListMapDestinationAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         this.list = objects;
-        this.fragment =fragment;
         listSerVice = Arrays.asList("Restaurant", "Hotel", "Rest Station", "Other");
     }
 
@@ -84,17 +83,17 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
             if(isChecked){
                 positionChecked=position;
                 notifyDataSetChanged();
-                ((MapFragment)fragment).drawRouteToStopPoint(stopPoint);
+                ((FollowTourActivity)context).drawRouteToStopPoint(stopPoint);
             }
             else{
                 positionChecked=-1;
                 notifyDataSetChanged();
-                ((MapFragment)fragment).removeRouteToStopPoint();
+                ((FollowTourActivity)context).removeRouteToStopPoint();
             }
         });
 
         holder.showDestinationInfo.setOnClickListener(v -> {
-            ((MapFragment)fragment).showStopPointInfo(stopPoint);
+            ((FollowTourActivity)context).showStopPointInfo(stopPoint);
         });
 
 

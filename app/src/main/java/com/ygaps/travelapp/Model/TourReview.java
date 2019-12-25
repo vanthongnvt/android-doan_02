@@ -32,6 +32,9 @@ public class TourReview {
     }
 
     public String getName() {
+        if(name == null){
+            return "<ID:  >";
+        }
         return name;
     }
 
