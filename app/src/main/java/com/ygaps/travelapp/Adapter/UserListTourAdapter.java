@@ -154,15 +154,20 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         else if(tour.getStatus()==2){
             holder.tvStatus.setText(R.string.tour_closed);
         }
-
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, UpdateTourActivity.class);
-                intent.putExtra("UserTour", tour);
-                context.startActivity(intent);
-            }
-        });
+        if(!tour.getIsHost()){
+            holder.btnEdit.setVisibility(View.GONE);
+        }
+        else {
+            holder.btnEdit.setVisibility(View.VISIBLE);
+            holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, UpdateTourActivity.class);
+                    intent.putExtra("UserTour", tour);
+                    context.startActivity(intent);
+                }
+            });
+        }
 
         return row;
 

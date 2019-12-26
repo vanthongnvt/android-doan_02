@@ -32,7 +32,7 @@ public class TourMember implements Serializable {
     }
 
     public String getName() {
-        if(name==null){
+        if(name==null||name.isEmpty()){
             return "<ID: "+ id+" >";
         }
         return name;

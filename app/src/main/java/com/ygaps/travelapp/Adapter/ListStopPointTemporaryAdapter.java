@@ -28,6 +28,7 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
     private Integer resource;
     private List<StopPoint> list;
     private List<String> listSerVice;
+    private List<String> listProvince;
     private boolean canNotEdit;
 
     public ListStopPointTemporaryAdapter(@NonNull Context context, int resource, @NonNull List<StopPoint> objects, boolean canNotEdit) {
@@ -38,6 +39,8 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         this.canNotEdit=canNotEdit;
 
         listSerVice = Arrays.asList("Restaurant", "Hotel", "Rest Station", "Other");
+        listProvince = Arrays.asList("Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng");
+
     }
 
     private static class ViewHolder {
@@ -51,8 +54,9 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
         private final ImageView btnDeleteStopPoint;
         private final ImageView btnGeoLocateStopPoint;
         private final ImageView btnEditStopPoint;
+        private final TextView tvProvince;
+        private final TextView tvAddress;
 
-        //code
 
         private ViewHolder(View row) {
             tvStopPointName = row.findViewById(R.id.tv_stop_point_name);
@@ -64,6 +68,8 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
             btnDeleteStopPoint=row.findViewById(R.id.map_delete_stop_point);
             btnGeoLocateStopPoint=row.findViewById(R.id.map_btn_view_stop_point);
             btnEditStopPoint=row.findViewById(R.id.map_btn_edit_stop_point);
+            tvProvince = row.findViewById(R.id.stop_point_info_province_city);
+            tvAddress = row.findViewById(R.id.stop_point_info_address);
         }
     }
 
@@ -86,7 +92,15 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
 
         StopPoint stopPoint = list.get(position);
         holder.tvStopPointName.setText(stopPoint.getName());
-        holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId()-1));
+        if(stopPoint.getServiceTypeId() <= 4 && stopPoint.getServiceTypeId()>=1){
+            holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId()-1));
+        }
+        if (stopPoint.getProvinceId() >= 1 && stopPoint.getProvinceId() <= 64) {
+            holder.tvProvince.setText(listProvince.get(stopPoint.getProvinceId() - 1));
+        }
+
+        holder.tvAddress.setText(stopPoint.getAddress());
+
         holder.tvStopPointMinCost.setText(stopPoint.getMinCost()+ " VND");
         holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() +" VND");
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
@@ -154,13 +168,11 @@ public class ListStopPointTemporaryAdapter extends ArrayAdapter<StopPoint> {
                 ((CreateStopPointActivity)context).removeStopPointMarker(stopPoint);
 
                 if(stopPoint.getId()!=null){
-                    ((CreateStopPointActivity)context).addToDeleteList(stopPoint.getId());
+                    ((CreateStopPointActivity)context).addToDeleteList(position);
                 }
                 else{
-                    ((CreateStopPointActivity)context).removeTemporaryStopPoint(stopPoint);
+                    ((CreateStopPointActivity)context).removeTemporaryStopPoint(position);
                 }
-                list.remove(position);
-                notifyDataSetChanged();
                 dialog.dismiss();
             }
         });

@@ -12,6 +12,7 @@ import com.ygaps.travelapp.Model.ListSuggestedStopPoint;
 import com.ygaps.travelapp.Model.ListTour;
 import com.ygaps.travelapp.Model.ListTourInvitation;
 import com.ygaps.travelapp.Model.ListUserSearch;
+import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.NotificationList;
 import com.ygaps.travelapp.Model.NotificationOnRoadList;
@@ -230,11 +231,11 @@ public interface APITour {
 
     @POST("/tour/current-users-coordinate")
     @FormUrlEncoded
-    Call<MessageResponse> currentCoordinate(@Header("Authorization") String token,
-                                              @Field("userId") Integer userId,
-                                              @Field("tourId") Integer tourId,
-                                              @Field("lat") double mlat,
-                                              @Field("long") double mlong);
+    Call<List<MemberLocation>> currentCoordinate(@Header("Authorization") String token,
+                                                 @Field("userId") Integer userId,
+                                                 @Field("tourId") Integer tourId,
+                                                 @Field("lat") double mlat,
+                                                 @Field("long") double mlong);
 
     @POST("/user/request-otp-recovery")
     @FormUrlEncoded

@@ -56,6 +56,7 @@ public class TourInfoFragment extends Fragment {
     private ListView listView;
     private ListStopPointAdapter stopPointAdapter;
     private Button btnToMap;
+    private View root;
 
     public static TourInfoFragment newInstance(TourInfo tourInfo,boolean isHostUser) {
         TourInfoFragment fragment = new TourInfoFragment();
@@ -87,15 +88,12 @@ public class TourInfoFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_tour_info, container, false);
-//        final TextView textView = root.findViewById(R.id.section_label);
-//        pageViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
 
-        init(root);
+        this.root = root;
+        listView = root.findViewById(R.id.list_view_stop_point);
+        View headerTour = inflater.inflate(R.layout.header_for_list_view_stop_point_tour_info, listView, false);
+        listView.addHeaderView(headerTour);
+        init(headerTour);
 
         btnEditStopPoints.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,19 +110,19 @@ public class TourInfoFragment extends Fragment {
         return root;
     }
 
-    private void init(View root){
-        btnCloneTour=root.findViewById(R.id.btn_clone_tour);
-        imageAvatar=root.findViewById(R.id.img_avatar);
-        tvTourName=root.findViewById(R.id.tv_tourName);
-        tvAdults=root.findViewById(R.id.tv_adults);
-        tvChilds=root.findViewById(R.id.tv_childs);
-        tvMinCost=root.findViewById(R.id.tv_minCost);
-        tvMaxCost=root.findViewById(R.id.tv_maxCost);
-        tvStartDate=root.findViewById(R.id.tv_startDate);
-        tvEndDate=root.findViewById(R.id.tv_endDate);
-        tvStatus=root.findViewById(R.id.tour_status);
-        btnToMap = root.findViewById(R.id.btn_to_map);
-        btnEditStopPoints=root.findViewById(R.id.btn_edit_stop_points);
+    private void init(View headerTour){
+        btnCloneTour=headerTour.findViewById(R.id.btn_clone_tour);
+        imageAvatar=headerTour.findViewById(R.id.img_avatar);
+        tvTourName=headerTour.findViewById(R.id.tv_tourName);
+        tvAdults=headerTour.findViewById(R.id.tv_adults);
+        tvChilds=headerTour.findViewById(R.id.tv_childs);
+        tvMinCost=headerTour.findViewById(R.id.tv_minCost);
+        tvMaxCost=headerTour.findViewById(R.id.tv_maxCost);
+        tvStartDate=headerTour.findViewById(R.id.tv_startDate);
+        tvEndDate=headerTour.findViewById(R.id.tv_endDate);
+        tvStatus=headerTour.findViewById(R.id.tour_status);
+        btnToMap = headerTour.findViewById(R.id.btn_to_map);
+        btnEditStopPoints=headerTour.findViewById(R.id.btn_edit_stop_points);
         if(tourInfo.getStatus()==-1||tourInfo.getStatus()==2||tourInfo.getStopPoints().size()==0||!isMemberOfTour()){
             btnToMap.setVisibility(View.GONE);
         }
@@ -135,8 +133,8 @@ public class TourInfoFragment extends Fragment {
                 startActivity(home);
             });
         }
-        listView=root.findViewById(R.id.list_view_stop_point);
         stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.list_view_tour_stop_point_item,tourInfo.getStopPoints());
+        listView.setAdapter(stopPointAdapter);
         if(isHostUser){
             btnCloneTour.setVisibility(View.GONE);
         }
@@ -206,40 +204,6 @@ public class TourInfoFragment extends Fragment {
         else if(tourInfo.getStatus()==2){
             tvStatus.setText(R.string.tour_closed);
         }
-
-        listView.setAdapter(stopPointAdapter);
-
-        setListViewHeightBasedOnChildren(listView);
-
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView){
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
 
     }
 

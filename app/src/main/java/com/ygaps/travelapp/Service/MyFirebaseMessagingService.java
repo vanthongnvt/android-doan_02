@@ -97,7 +97,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 e.printStackTrace();
             }
             Intent intentNoti = new Intent(this, HomeActivity.class);
-            intentNoti.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intentNoti.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
             Bundle bundle = new Bundle();
             bundle.getBoolean("isInviteNoti",true);
             intentNoti.putExtras(bundle);
@@ -111,7 +111,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                             .setContentTitle(getString(R.string.invite_title))
-                            .setContentText(hostName + " đã mời bạn tham gia " + tourName)
+                            .setContentText("Bạn có một lời mời tham gia " + tourName)
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
                             .setContentIntent(pendingIntent)

@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.STORAGE"/>
 
     <application
         android:name=".AppHelper.TokenStorage"
@@ -17,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".FollowTourActivity"></activity>
+        <activity android:name=".FollowTourActivity"/>
         <activity android:name=".ui.main.ServiceReviewActivity" />
         <activity android:name=".VerifyCodeRecoveryPasswordActivity" />
         <activity android:name=".PasswordRecoveryActivity" />

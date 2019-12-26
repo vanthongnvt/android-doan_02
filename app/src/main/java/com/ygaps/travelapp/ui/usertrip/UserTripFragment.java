@@ -48,7 +48,7 @@ public class UserTripFragment extends Fragment {
     private  TextView tvTotalOpenTours;
     private  TextView tvTotalStartedTours;
     private  TextView tvTotalClosedTours;
-    private int numTotalTours;
+    private int numTotalTours=9999;
     private TextView tvTourStatus;
     private ProgressBar progressBar;
 
@@ -75,23 +75,8 @@ public class UserTripFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressbar_loading);
 
         progressBar.setVisibility(View.VISIBLE);
-        apiTour.userListTour(TokenStorage.getInstance().getAccessToken(),1,1).enqueue(new Callback<UserListTour>() {
-            @Override
-            public void onResponse(Call<UserListTour> call, Response<UserListTour> response) {
-                userlistTourResponse = response.body();
-                numTotalTours = userlistTourResponse.getTotal().intValue();
 
-                //goi api lan tiep theo de load danh sach:
-                getUserTourList(container);
-            }
-
-
-            @Override
-            public void onFailure(Call<UserListTour> call, Throwable t) {
-                Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+        getUserTourList(container);
         return view;
     }
 
@@ -101,7 +86,7 @@ public class UserTripFragment extends Fragment {
             public void onResponse(Call<UserListTour> call, Response<UserListTour> response) {
                 if(response.isSuccessful()){
                     userlistTourResponse= response.body();
-                    totalTours.setText(numTotalTours + "");
+                    totalTours.setText(userlistTourResponse.getTotal().toString());
 
                     tours = userlistTourResponse.getTours();
                     userListTourAdapter = new UserListTourAdapter(container.getContext(),R.layout.listview_usertrip_item,tours);

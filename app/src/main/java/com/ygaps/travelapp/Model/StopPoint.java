@@ -189,4 +189,8 @@ public class StopPoint implements Serializable {
     public Integer getIndex(){
         return index;
     }
+
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
+    }
 }

@@ -90,16 +90,6 @@ public class ExploreFragment extends Fragment implements AbsListView.OnScrollLis
             }
         });
 
-        listViewStopPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StopPoint stopPoint = stopPointList.get(position);
-                Intent intent = new Intent(view.getContext(), TourInfoActivity.class);
-                intent.putExtra("STOPPOINT_ID", stopPoint.getServiceId());
-                startActivity(intent);
-            }
-        });
-
         return view;
     }
 

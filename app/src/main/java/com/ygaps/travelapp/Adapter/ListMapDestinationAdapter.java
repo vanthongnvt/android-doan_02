@@ -37,7 +37,7 @@ public class ListMapDestinationAdapter extends ArrayAdapter<StopPoint> {
         this.context = context;
         this.resource = resource;
         this.list = objects;
-        listSerVice = Arrays.asList("Restaurant", "Hotel", "Rest Station", "Other");
+        listSerVice = Arrays.asList("Nhà hàng", "Khách sạn", "Trạm nghỉ", "Khác");
     }
 
     private static class ViewHolder {

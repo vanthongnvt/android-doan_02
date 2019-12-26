@@ -147,15 +147,15 @@ public class UpdateTourActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkInput() == true) {
+                if (checkInput()) {
                     String id = tour.getId().toString();
                     String name = edtTourName.getText().toString().trim();
                     Number startDate = DateToMiliSeconds(edtStartDate.getText().toString().trim());
                     Number endDate = DateToMiliSeconds(edtEndDate.getText().toString().trim());
-                    Number adults = Integer.parseInt(edtAdult.getText().toString().trim());
-                    Number childs = Integer.parseInt(edtChild.getText().toString().trim());
-                    Number minCost = Integer.parseInt(edtMinCost.getText().toString().trim());
-                    Number maxCost = Integer.parseInt(edtMaxCost.getText().toString().trim());
+                    Number adults = Long.parseLong(edtAdult.getText().toString().trim());
+                    Number childs = Long.parseLong(edtChild.getText().toString().trim());
+                    Number minCost = Long.parseLong(edtMinCost.getText().toString().trim());
+                    Number maxCost = Long.parseLong(edtMaxCost.getText().toString().trim());
                     boolean isPrivate = true;
                     if (rbtnPublic.isChecked()) {
                         isPrivate = false;
@@ -285,7 +285,7 @@ public class UpdateTourActivity extends AppCompatActivity {
         rbtnPrivate.setChecked(true);
         int status = tour.getStatus().intValue();
         if (status == -1)
-            rbtnClosed.setChecked(true);
+            rbtnCanceled.setChecked(true);
         else if(status == 0)
             rbtnOpen.setChecked(true);
         else if(status == 1)

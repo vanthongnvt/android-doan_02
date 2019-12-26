@@ -28,6 +28,7 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
     private Integer resource;
     private List<StopPoint> list;
     private List<String> listSerVice;
+    private List<String> listProvince;
 
     public static String STOPPOINT_ID = "STOPPOINT_ID";
 
@@ -38,6 +39,8 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         this.list = objects;
 
         listSerVice = Arrays.asList("Nhà hàng", "Khách sạn", "Trạm nghỉ", "Khác");
+        listProvince = Arrays.asList("Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng");
+
     }
 
     private static class ViewHolder {
@@ -49,6 +52,8 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         private final TextView tvStopPointLeaveAt;
         private final TextView tvStopPointService;
         private final TextView btnToStopPointReview;
+        private final TextView tvProvince;
+        private final TextView tvAddress;
 
         private ViewHolder(View row) {
             tvStopPointName = row.findViewById(R.id.tv_stop_point_name);
@@ -58,6 +63,8 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
             tvStopPointLeaveAt=row.findViewById(R.id.tv_stop_point_endDate);
             tvStopPointService=row.findViewById(R.id.tv_stop_point_service);
             btnToStopPointReview = row.findViewById(R.id.btn_stop_point_review);
+            tvProvince = row.findViewById(R.id.stop_point_info_province_city);
+            tvAddress = row.findViewById(R.id.stop_point_info_address);
         }
     }
 
@@ -80,7 +87,15 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
 
         StopPoint stopPoint = list.get(position);
         holder.tvStopPointName.setText(stopPoint.getName());
-        holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId() - 1));
+        if (stopPoint.getServiceTypeId() >= 1 && stopPoint.getServiceTypeId() <= 4) {
+            holder.tvStopPointService.setText(listSerVice.get(stopPoint.getServiceTypeId() - 1));
+        }
+        if (stopPoint.getProvinceId() >= 1 && stopPoint.getProvinceId() <= 64) {
+            holder.tvProvince.setText(listProvince.get(stopPoint.getProvinceId() - 1));
+        }
+
+        holder.tvAddress.setText(stopPoint.getAddress());
+
         holder.tvStopPointMinCost.setText(stopPoint.getMinCost() + " VND");
         holder.tvStopPointMaxCost.setText(stopPoint.getMaxCost() + " VND");
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
@@ -96,14 +111,12 @@ public class ListStopPointAdapter extends ArrayAdapter<StopPoint> {
         }
         holder.btnToStopPointReview.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            Intent intent = new Intent(getContext(), ServiceReviewActivity.class);
+            Intent intent = new Intent(context, ServiceReviewActivity.class);
             if(context instanceof HomeActivity) {
                 bundle.putInt(STOPPOINT_ID, stopPoint.getId());
-//                intent.putExtra(STOPPOINT_ID, stopPoint.getId());
             }
             else{
                 bundle.putInt(STOPPOINT_ID, stopPoint.getServiceId());
-//                intent.putExtra(STOPPOINT_ID, stopPoint.getServiceId());
             }
 
             bundle.putSerializable("STOP_POINT",stopPoint);

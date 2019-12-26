@@ -18,19 +18,28 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +60,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.ygaps.travelapp.Adapter.ListMapDestinationAdapter;
 import com.ygaps.travelapp.Adapter.ListNotificationTourAdapter;
+import com.ygaps.travelapp.Adapter.ListRecordAdapter;
 import com.ygaps.travelapp.Adapter.ListTourMemberAdapter;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
@@ -65,6 +75,7 @@ import com.ygaps.travelapp.Model.Notification;
 import com.ygaps.travelapp.Model.NotificationList;
 import com.ygaps.travelapp.Model.NotificationOnRoad;
 import com.ygaps.travelapp.Model.NotificationOnRoadList;
+import com.ygaps.travelapp.Model.Record;
 import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.TourMember;
@@ -86,7 +97,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.ygaps.travelapp.Service.BackgroundLocationService;
 import com.ygaps.travelapp.Service.BroadcastLocationReceiver;
+import com.ygaps.travelapp.ui.main.ServiceReviewActivity;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,12 +112,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FollowTourActivity extends AppCompatActivity implements OnMapReadyCallback, AbsListView.OnScrollListener, LocationListener {
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+public class FollowTourActivity extends AppCompatActivity implements OnMapReadyCallback, AbsListView.OnScrollListener, LocationListener,
+        SeekBar.OnSeekBarChangeListener {
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUESET_CODE = 1234;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static final float DEFAULT_ZOOM = 15f;
     private static final String TAG = "MAP_DIRECTION";
 
@@ -126,6 +144,7 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     private ImageView btnShowListMember;
     private ImageView btnShowNotificationList;
     private ImageView btnSetting;
+    private ImageView btnShowRecordList;
 
     private Dialog dialogListDestination;
     private ListMapDestinationAdapter mapDestinationAdapter;
@@ -141,7 +160,8 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     private TextView leaveStopPoint;
     private TextView arriveStopPoint;
     private ImageView addStopPoint;
-    String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
+    private TextView showReview;
+    String ServiceArr[] = {"Nhà Hàng", "Khách Sạn", "Trạm nghỉ", "Khác"};
     String ProvinceArr[] = {"Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng"};
 
 
@@ -182,6 +202,26 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     private Button btnExit;
     private Button btnFinishTour;
 
+    private BottomSheetDialog dialogRecordList;
+    private boolean permissionToRecordAccepted = false;
+    private String recordFileBaseName;
+    private ImageView recordButton = null;
+    private MediaRecorder recorder = null;
+    private MediaPlayer mediaPlayer = null;
+    private TextView recordSignal;
+    private List<Record> recordList = new ArrayList<>();
+    private ImageView pauseResumPlayer;
+    private boolean isRecording = false;
+    private boolean isPlaying = false;
+    private Handler handler = new Handler();
+    private SeekBar seekBar;
+    private Integer seekChange = 500;
+    private LinearLayout audioView;
+    private TextView tvduration;
+    private ListView lvRecords;
+    private ListRecordAdapter listRecordAdapter;
+    private String fileNameIsCreating;
+
     private Integer tourId = null;
     private Integer userId;
     private TourInfo tourInfo;
@@ -198,11 +238,13 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-
         super.onCreate(savedInstanceState);
         setTitle(R.string.title_map);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorCustomPrimary)));
         setContentView(R.layout.activity_follow_tour);
+        recordFileBaseName = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        mediaController = new MediaController(this);
+
         transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.RED)
                 .borderWidthDp(1)
@@ -242,17 +284,17 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     public void initWhenGrantedPermission() {
         init();
 
-        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
-        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
-        serviceIntent.putExtra("tourId", tourId);
-        startService(serviceIntent);
-
-        broadcastLocationReceiver = new BroadcastLocationReceiver();
-        mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
-        mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
-        mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
-        mIntentFilter.addAction(getString(R.string.receiver_action_firebase_noti_on_road));
-        registerReceiver(broadcastLocationReceiver, mIntentFilter);
+//        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
+//        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
+//        serviceIntent.putExtra("tourId", tourId);
+//        startService(serviceIntent);
+//
+//        broadcastLocationReceiver = new BroadcastLocationReceiver();
+//        mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+//        mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
+//        mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
+//        mIntentFilter.addAction(getString(R.string.receiver_action_firebase_noti_on_road));
+//        registerReceiver(broadcastLocationReceiver, mIntentFilter);
     }
 
     private void showDialogSelectTour() {
@@ -314,6 +356,11 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         dialogTourSetting.setContentView(R.layout.dialog_tour_setting);
         initDialogTourSetting();
 
+        btnShowRecordList = findViewById(R.id.show_record_list);
+        dialogRecordList = new BottomSheetDialog(this);
+        dialogRecordList.setContentView(R.layout.dialog_record_list);
+        initDialogRecordList();
+
         apiTour = new APIRetrofitCreator().getAPIService();
 
         btnCurLocation.setOnClickListener(v -> getDeviceLocation(true));
@@ -323,8 +370,37 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
             public void onResponse(Call<TourInfo> call, Response<TourInfo> response) {
                 if (response.isSuccessful()) {
                     tourInfo = response.body();
+                    if (tourInfo.getStatus() != 1 && tourInfo.getStatus() != 0) {
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic("tour-id-" + tourId);
+                        Intent serviceIntent = new Intent(FollowTourActivity.this, BackgroundLocationService.class);
+                        stopService(serviceIntent);
+                        if (broadcastLocationReceiver != null) {
+                            unregisterReceiver(broadcastLocationReceiver);
+                            broadcastLocationReceiver = null;
+                        }
+
+                        AlertDialog.Builder alert = new AlertDialog.Builder(FollowTourActivity.this);
+                        alert.setTitle("Chuyến đi đã kết thúc");
+                        alert.setMessage("Vui lòng chọn chuyến đi khác để theo dõi");
+                        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent = new Intent(FollowTourActivity.this, HomeActivity.class);
+                                intent.putExtra("MENU", R.id.navigation_history);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+
+                        alert.show();
+
+                        return;
+                    }
                     if (tourInfo.getStopPoints().size() > 0) {
-                        targetStopPoint = tourInfo.getStopPoints().get(0);
+//                        targetStopPoint = tourInfo.getStopPoints().get(0);
                         for (StopPoint stopPoint : tourInfo.getStopPoints()) {
                             addStopPointMarker(stopPoint);
                         }
@@ -334,7 +410,7 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
 //                            Log.d(TAG, "init: NULL");
 //                        }
                     }
-                    if (Integer.parseInt(tourInfo.getHostId()) == userId) {
+                    if (Integer.parseInt(tourInfo.getHostId()) != userId) {
                         btnFinishTour.setVisibility(View.GONE);
                     }
                     mapDestinationAdapter = new ListMapDestinationAdapter(FollowTourActivity.this, R.layout.list_view_destination_item, tourInfo.getStopPoints());
@@ -380,6 +456,82 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
 
         btnSetting.setOnClickListener(v -> dialogTourSetting.show());
 
+        btnShowRecordList.setOnClickListener(v -> {
+//            String [] permissions = {RECORD_AUDIO};
+            if (permissionToRecordAccepted) {
+                dialogRecordList.show();
+            } else {
+//                checkAudioPermissions();
+                requestAudioPermissions();
+            }
+        });
+
+    }
+
+    private void initDialogRecordList() {
+        recordButton = dialogRecordList.findViewById(R.id.start_record);
+        recordSignal = dialogRecordList.findViewById(R.id.record_signal);
+        seekBar = dialogRecordList.findViewById(R.id.seek_bar);
+        pauseResumPlayer = dialogRecordList.findViewById(R.id.audio_control);
+        audioView = dialogRecordList.findViewById(R.id.main_audio_view);
+        tvduration = dialogRecordList.findViewById(R.id.tv_duration);
+        lvRecords = dialogRecordList.findViewById(R.id.lv_record);
+        listRecordAdapter = new ListRecordAdapter(this,R.layout.list_view_record_item,recordList);
+        lvRecords.setAdapter(listRecordAdapter);
+
+        lvRecords.setOnItemClickListener((parent, view, position, id) -> {
+            String file = recordList.get(position).getFilename();
+            isPlaying = true;
+            pauseResumPlayer.setImageResource(R.drawable.ic_pause_black_24dp);
+            audioView.setVisibility(View.VISIBLE);
+            startPlaying(file);
+            FollowTourActivity.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (mediaPlayer != null) {
+                        int mCurrentPosition = mediaPlayer.getCurrentPosition() / seekChange;
+                        seekBar.setProgress(mCurrentPosition);
+                    }
+                    seekBar.postDelayed(this, seekChange);
+                }
+            });
+        });
+
+
+        recordButton.setOnClickListener(v -> {
+            if (!isRecording) {
+                isRecording = true;
+                recordSignal.setVisibility(View.VISIBLE);
+                fileNameIsCreating = recordFileBaseName + "/tour_record"+(recordList.size()+1)+".3gp";
+                recordButton.setImageResource(R.drawable.ic_pause_black_24dp);
+                startRecording(fileNameIsCreating);
+            } else {
+                isRecording = false;
+                recordSignal.setVisibility(View.GONE);
+                recordButton.setImageResource(R.drawable.ic_mic_black_24dp);
+                stopRecording();
+                recordList.add(new Record(fileNameIsCreating));
+                listRecordAdapter.notifyDataSetChanged();
+
+            }
+        });
+        pauseResumPlayer.setOnClickListener(v -> {
+            if (isPlaying) {
+                isPlaying = false;
+                pauseResumPlayer.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+                if (mediaPlayer != null) {
+                    mediaPlayer.pause();
+                }
+            } else {
+                isPlaying = true;
+                pauseResumPlayer.setImageResource(R.drawable.ic_pause_black_24dp);
+                if (mediaPlayer != null) {
+                    mediaPlayer.start();
+                }
+            }
+        });
+
     }
 
     private void initDialogListMember() {
@@ -415,13 +567,16 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         nameStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_name);
         typeStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_type);
         addressStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_address);
-        provinceCityStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_provice_city);
+        provinceCityStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_province_city);
         minCostStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_min_cost);
         maxCostStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_max_cost);
         leaveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_leave);
         arriveStopPoint = dialogStopPointInfo.findViewById(R.id.stop_point_info_arrive);
         addStopPoint = dialogStopPointInfo.findViewById(R.id.add_suggested_stop_point);
-        addStopPoint.setVisibility(View.VISIBLE);
+        addStopPoint.setVisibility(View.GONE);
+        showReview = dialogStopPointInfo.findViewById(R.id.btn_stop_point_review);
+
+
     }
 
     private void initDialogCreateNotification() {
@@ -649,6 +804,15 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         date = cal.getTime();
         arriveStopPoint.setText(dateFormat.format(date));
 
+        showReview.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            Intent intent = new Intent(this, ServiceReviewActivity.class);
+            bundle.putInt("STOPPOINT_ID", targetStopPoint.getId());
+            bundle.putSerializable("STOP_POINT", targetStopPoint);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        });
+
         dialogStopPointInfo.show();
     }
 
@@ -842,6 +1006,20 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
                     supportMapFragment.getMapAsync(this);
                     initWhenGrantedPermission();
                 }
+                break;
+            }
+            case REQUEST_RECORD_AUDIO_PERMISSION: {
+                if (grantResults.length > 0) {
+                    boolean permissionToRecord = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean permissionToStore = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (permissionToRecord && permissionToStore) {
+                        permissionToRecordAccepted = true;
+                        dialogRecordList.show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
             }
         }
     }
@@ -899,14 +1077,10 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
 
     private void drawPolylineBetweenTwoLocation(LatLng begin, LatLng end) {
 
-        // drawing a straight line between the two points
         polyline = mMap.addPolyline(new PolylineOptions()
                 .add(begin, end)
                 .width(2)
                 .color(Color.BLUE));
-        // this point is halfway between Cleveland and San Jose
-//        LatLng halfWay = new LatLng( (begin.latitude + end.latitude)/2,
-//                (begin.longitude + end.longitude)/2 );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(begin, DEFAULT_ZOOM));
     }
 
@@ -1022,6 +1196,65 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, _long), DEFAULT_ZOOM));
     }
 
+    public boolean checkAudioPermissions() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestAudioPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_RECORD_AUDIO_PERMISSION);
+    }
+
+    private void startRecording(String filename) {
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setOutputFile(filename);
+
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            Log.e(TAG, "prepare() failed");
+        }
+
+        recorder.start();
+    }
+
+    private void stopRecording() {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+    }
+
+    private void startPlaying(String fileName) {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                audioView.setVisibility(View.GONE);
+            }
+        });
+        try {
+            mediaPlayer.setDataSource(fileName);
+            mediaPlayer.prepare();
+            tvduration.setText(convertDuration(mediaPlayer.getDuration()));
+            seekBar.setMax(mediaPlayer.getDuration() / seekChange);
+            mediaPlayer.start();
+        } catch (IOException e) {
+            Log.e(TAG, "prepare() failed");
+        }
+    }
+
+    private void stopPlaying() {
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         myLocation = location;
@@ -1055,6 +1288,21 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         super.onDestroy();
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
+        }
+
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -1070,5 +1318,52 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (mediaPlayer != null && fromUser) {
+            mediaPlayer.seekTo(progress * seekChange);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    private String convertDuration(long duration) {
+        String out = null;
+        long hours=0;
+        try {
+            hours = (duration / 3600000);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return out;
+        }
+        long remaining_minutes = (duration - (hours * 3600000)) / 60000;
+        String minutes = String.valueOf(remaining_minutes);
+        if (minutes.equals(0)) {
+            minutes = "00";
+        }
+        long remaining_seconds = ((duration - (hours * 3600000) - (remaining_minutes * 60000)))/1000;
+        String seconds = String.valueOf(remaining_seconds);
+        if(seconds.length()==1){
+            seconds="0" + seconds;
+        }
+
+        if (hours > 0) {
+            out = hours + ":" + minutes + ":" + seconds;
+        } else {
+            out = minutes + ":" + seconds;
+        }
+
+        return out;
+
     }
 }

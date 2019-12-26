@@ -43,11 +43,52 @@
 
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="15dp"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                app:srcCompat="@drawable/ic_city_solid" />
+
+            <TextView
+                android:id="@+id/stop_point_info_province_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:textSize="16sp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="15dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/ic_address" />
+
+            <TextView
+                android:id="@+id/stop_point_info_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:textSize="16sp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal"
             android:paddingLeft="15dp"
@@ -64,8 +105,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:paddingTop="3dp"
-                android:text=""
                 android:textSize="18sp"
                 />
 

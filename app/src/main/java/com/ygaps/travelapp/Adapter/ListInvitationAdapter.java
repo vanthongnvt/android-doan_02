@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,6 +63,7 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
         private final ImageView hostAvatar;
         private final TextView hostName;
         private final TextView hostPhone;
+        private final TextView tvCreated;
 
         private Button btnAccept;
         private Button btnRefuse;
@@ -81,6 +83,7 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
             hostAvatar = row.findViewById(R.id.host_avatar);
             hostName = row.findViewById(R.id.tv_host_name);
             hostPhone =row.findViewById(R.id.tv_host_phone);
+            tvCreated = row.findViewById(R.id.created);
 
             btnAccept = row.findViewById(R.id.btn_accept_invitation);
             btnRefuse = row.findViewById(R.id.btn_refuse_invitation);
@@ -177,6 +180,12 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
 
         if (tour.getHostAvatar() != null){
             Picasso.get().load(tour.getHostAvatar()).into(holder.hostAvatar);
+        }
+
+        if(tour.getCreatedOn()!=null){
+            cal.setTimeInMillis(Long.parseLong(tour.getCreatedOn()));
+            String date1 = android.text.format.DateFormat.format("HH:mm dd/MM/yyyy", cal).toString();
+            holder.tvCreated.setText(date1);
         }
 
         if(tour.getHostName()==null){

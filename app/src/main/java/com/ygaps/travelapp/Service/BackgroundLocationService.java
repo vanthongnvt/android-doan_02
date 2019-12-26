@@ -18,10 +18,12 @@ import androidx.core.content.ContextCompat;
 import com.ygaps.travelapp.ApiService.APIRetrofitCreator;
 import com.ygaps.travelapp.ApiService.APITour;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
+import com.ygaps.travelapp.Model.MemberLocation;
 import com.ygaps.travelapp.Model.MessageResponse;
 import com.ygaps.travelapp.Model.NotificationOnRoadList;
 import com.ygaps.travelapp.R;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,7 +49,6 @@ public class BackgroundLocationService extends Service implements LocationListen
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -101,16 +102,16 @@ public class BackgroundLocationService extends Service implements LocationListen
         if(location==null){
             return;
         }
-        apiTour.currentCoordinate(TokenStorage.getInstance().getAccessToken(),TokenStorage.getInstance().getUserId(),tourId,location.getLatitude(),location.getLongitude()).enqueue(new Callback<MessageResponse>() {
+        apiTour.currentCoordinate(TokenStorage.getInstance().getAccessToken(),TokenStorage.getInstance().getUserId(),tourId,location.getLatitude(),location.getLongitude()).enqueue(new Callback<List<MemberLocation>>() {
             @Override
-            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+            public void onResponse(Call<List<MemberLocation>> call, Response<List<MemberLocation>> response) {
                 if(!response.isSuccessful()){
                     Log.d(TAG, "requestLocation: Send location failed " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<MessageResponse> call, Throwable t) {
+            public void onFailure(Call<List<MemberLocation>> call, Throwable t) {
                 Log.d(TAG, "requestLocation: Send location failed");
             }
         });

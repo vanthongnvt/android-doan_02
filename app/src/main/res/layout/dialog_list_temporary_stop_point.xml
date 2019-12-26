@@ -31,7 +31,7 @@
         android:background="@drawable/login_btn_bg"
         android:padding="15dp"
         android:text="Thêm điểm khác"
-        android:textAllCaps="false"
+        android:textAllCaps="true"
         android:textColor="#ffffff"
         android:textSize="18sp"
         />

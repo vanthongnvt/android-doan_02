@@ -76,6 +76,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.ygaps.travelapp.ui.main.ServiceReviewActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -137,6 +138,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private int editStopPointPosition = -1;
     private Double mlat;
     private Double mlong;
+    private Integer mServiceId;
     private Integer mServiceTypeId;
     private Integer mProvinceId;
     private String mAddress;
@@ -144,14 +146,15 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     private Marker marker;
     private boolean isPOIclick = false;
     private APITour apiTour;
-    private Integer currentSizeStopPoint = 0;
+    private Integer existedBeforeSize = 0;
     private List<StopPoint> currentList = new ArrayList<>();
     private List<StopPoint> addList = new ArrayList<>();
     private List<Integer> deleteList = new ArrayList<>();
+    private List<Integer> positionMarkUpdateList = new ArrayList<>();
     private ListView listViewStopPoint;
     private ListStopPointTemporaryAdapter listStopPointTemporaryAdapter;
     List<Marker> markers = new ArrayList<>();
-    String ServiceArr[] = {"Restaurant", "Hotel", "Rest Station", "Other"};
+    String ServiceArr[] = {"Nhà Hàng", "Khách Sạn", "Trạm nghỉ", "Khác"};
     String ProvinceArr[] = {"Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng"};
     private StopPoint selectedSuggestedStopPoint;
     private MaterialSearchBar searchBar;
@@ -200,25 +203,12 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                 }
             });
 
-//            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//                @Override
-//                public void onPlaceSelected(Place place) {
-//                    // TODO: Get info about the selected place.
-//                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-//                }
-//
-//                @Override
-//                public void onError(Status status) {
-//                    // TODO: Handle the error.
-//                    Log.i(TAG, "An error occurred: " + status);
-//                }
-//            });
-
             btnShowDialogStopPointInfo.setClickable(true);
             btnShowDialogStopPointInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialogCreateStopPoint.show();
+                    mServiceId =null;
                 }
             });
 
@@ -235,19 +225,22 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                     StopPoint newStopPoint = checkValidInput();
                     if (newStopPoint != null) {
                         if (editStopPointPosition >= 0) {
-                            if (editStopPointPosition < currentSizeStopPoint) {
-                                //edit existed stop point
-                                updateStopPointInfo(currentList.get(editStopPointPosition).getId(), newStopPoint);
-                            } else {
-                                currentList.set(editStopPointPosition, newStopPoint);
-                                //maybe wrong (10%)
-                                addList.set(editStopPointPosition - currentSizeStopPoint, newStopPoint);
+                            positionMarkUpdateList.set(editStopPointPosition,1);
 
+                            Integer id = currentList.get(editStopPointPosition).getId();
+                            if(id!=null){
+                                //edit existed stop point
+                                newStopPoint.setId(id);
                             }
+                            currentList.set(editStopPointPosition, newStopPoint);
                             editStopPointPosition = -1;
                         } else {
-                            addList.add(newStopPoint);
+                            Log.d(TAG, "onClick: "+mServiceId);
+                            if(mServiceId!=null){
+                                newStopPoint.setServiceId(mServiceId);
+                            }
                             currentList.add(newStopPoint);
+                            positionMarkUpdateList.add(1);
                         }
                         listStopPointTemporaryAdapter.notifyDataSetChanged();
                         dialogListStopPoint.show();
@@ -281,7 +274,15 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             btnCompleteUpdateStopPoint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!canUpdate()) {
+                    boolean canUpdate=false;
+                    int size = positionMarkUpdateList.size();
+                    for(int i = 0; i<size; i++){
+                        if(positionMarkUpdateList.get(i)==1){
+                            addList.add(currentList.get(i));
+                            canUpdate=true;
+                        }
+                    }
+                    if (!canUpdate && deleteList.size()==0) {
 
 //                        Toast.makeText(CreateStopPointActivity.this,R.string.no_stop_point_selected , Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CreateStopPointActivity.this, TourInfoActivity.class);
@@ -290,6 +291,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
                         startActivity(intent);
                         finish();
                     } else {
+
                         addListStopPoint();
                     }
                 }
@@ -460,12 +462,22 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         TextView name = (TextView) dialog.findViewById(R.id.stop_point_info_name);
         TextView type = (TextView) dialog.findViewById(R.id.stop_point_info_type);
         TextView address = (TextView) dialog.findViewById(R.id.stop_point_info_address);
-        TextView provinceCity = (TextView) dialog.findViewById(R.id.stop_point_info_provice_city);
+        TextView provinceCity = (TextView) dialog.findViewById(R.id.stop_point_info_province_city);
         TextView minCost = (TextView) dialog.findViewById(R.id.stop_point_info_min_cost);
         TextView maxCost = (TextView) dialog.findViewById(R.id.stop_point_info_max_cost);
         TextView leave = (TextView) dialog.findViewById(R.id.stop_point_info_leave);
         TextView arrive = (TextView) dialog.findViewById(R.id.stop_point_info_arrive);
         ImageView add = dialog.findViewById(R.id.add_suggested_stop_point);
+        TextView showReview = dialog.findViewById(R.id.btn_stop_point_review);
+
+        showReview.setOnClickListener(v ->{
+            Bundle bundle = new Bundle();
+            Intent intent = new Intent(this, ServiceReviewActivity.class);
+            bundle.putInt("STOPPOINT_ID", stopPoint.getId());
+            bundle.putSerializable("STOP_POINT",stopPoint);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        });
 
         name.setText(stopPoint.getName());
         int numServiceID = stopPoint.getServiceTypeId();
@@ -498,6 +510,7 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         add.setOnClickListener( v ->{
             mlong = selectedSuggestedStopPoint.getLongitude();
             mlat = selectedSuggestedStopPoint.getLatitude();
+            mServiceId = selectedSuggestedStopPoint.getId();
             mServiceTypeId = selectedSuggestedStopPoint.getServiceTypeId();
             mProvinceId = selectedSuggestedStopPoint.getProvinceId();
             edtStopPointAddress.setText(selectedSuggestedStopPoint.getAddress());
@@ -579,11 +592,12 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
             TourInfo tourInfo = (TourInfo) intentTourID.getSerializableExtra("tourInfo");
             tourId = tourInfo.getId();
             currentList.addAll(tourInfo.getStopPoints());
-            currentSizeStopPoint = currentList.size();
+            existedBeforeSize = currentList.size();
+            for (int i = 0; i< existedBeforeSize; i++){
+                positionMarkUpdateList.add(0);
+            }
             if (intentTourID.hasExtra("canNotEdit")) {
                 canNotEdit = true;
-            } else {
-                Log.d(TAG, "init: AKAKKAKA");
             }
         }
 
@@ -599,7 +613,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         SuggestionsAdapter.OnItemViewClickListener listener = new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
             public void OnItemClickListener(int position, View v) {
-                Log.d(TAG, "OnItemClickListener: GOGOGOOGGO");
                 selectedSuggestedStopPoint = suggestionStopPointAdapter.getSuggestions().get(position);
                 LatLng latLng = new LatLng(selectedSuggestedStopPoint.getLatitude(),selectedSuggestedStopPoint.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,DEFAULT_ZOOM));
@@ -950,18 +963,20 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         hideKeyboard();
     }
 
-    public void addToDeleteList(Integer id) {
+    public void addToDeleteList(int position){
+        Integer id = currentList.get(position).getId();
+        currentList.remove(position);
+        positionMarkUpdateList.remove(position);
+        Log.d(TAG, "addToDeleteList: "+currentList.size()+":"+positionMarkUpdateList.size());
+        listStopPointTemporaryAdapter.notifyDataSetChanged();
         deleteList.add(id);
     }
 
-    public void removeTemporaryStopPoint(StopPoint stopPoint) {
-        for (int i = addList.size() - 1; i >= 0; i--) {
-            if (addList.get(i).getLongitude().equals(stopPoint.getLongitude()) &&
-                    addList.get(i).getLatitude().equals(stopPoint.getLatitude())) {
-                addList.remove(i);
-                return;
-            }
-        }
+    public void removeTemporaryStopPoint(int position) {
+        currentList.remove(position);
+        positionMarkUpdateList.remove(position);
+        Log.d(TAG, "removeTemporaryStopPoint: "+currentList.size()+":"+positionMarkUpdateList.size());
+        listStopPointTemporaryAdapter.notifyDataSetChanged();
     }
 
     public void showEditStopPointDialog(int positionInCurrent, StopPoint stopPoint, String arriveAt, String leaveAt) {
@@ -987,7 +1002,14 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onBackPressed() {
-        if (canUpdate()) {
+        boolean canUpdate=false;
+        for(Integer check : positionMarkUpdateList){
+            if(check==1){
+                canUpdate=true;
+                break;
+            }
+        }
+        if (canUpdate || deleteList.size() > 0) {
             new AlertDialog.Builder(this)
                     .setMessage("Thoát sẽ mất những thay đổi. Vẫn thoát?")
                     .setCancelable(false)
@@ -1026,14 +1048,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
     }
 
     public void removeStopPointMarker(StopPoint stopPoint) {
-//        for(int i= markers.size()-1;i>=0;i++){
-//            if(markers.get(i).getTag().equals(stopPoint)){
-//                markers.get(i).remove();
-//                markers.remove(i);
-//                return;
-//            }
-//        }
-
         for (Iterator<Marker> i = markers.iterator(); i.hasNext(); ) {
             Marker _marker = i.next();
             if (_marker.getTag().equals(stopPoint)) {
@@ -1051,39 +1065,6 @@ public class CreateStopPointActivity extends AppCompatActivity implements OnMapR
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-    private boolean canUpdate() {
-        return addList.size() > 0 || deleteList.size() > 0;
-    }
-
-    private void updateStopPointInfo(Integer id, StopPoint stopPoint) {
-        DialogProgressBar.showProgress(this);
-        apiTour.updateStopPointInfo(TokenStorage.getInstance().getAccessToken(),
-                id.toString(),
-                stopPoint.getName(),
-                stopPoint.getArrivalAt(),
-                stopPoint.getLeaveAt(),
-                stopPoint.getServiceTypeId(),
-                stopPoint.getMinCost(),
-                stopPoint.getMaxCost(), null, null
-        ).enqueue(new Callback<StopPoint>() {
-            @Override
-            public void onResponse(Call<StopPoint> call, Response<StopPoint> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(CreateStopPointActivity.this, R.string.updated_stop_point_info, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(CreateStopPointActivity.this, R.string.server_err, Toast.LENGTH_SHORT).show();
-                }
-                DialogProgressBar.closeProgress();
-            }
-
-            @Override
-            public void onFailure(Call<StopPoint> call, Throwable t) {
-                Toast.makeText(CreateStopPointActivity.this, R.string.failed_fetch_api, Toast.LENGTH_SHORT).show();
-                DialogProgressBar.closeProgress();
-            }
-        });
     }
 
     private Coordinate getDeviceCoordiate() {

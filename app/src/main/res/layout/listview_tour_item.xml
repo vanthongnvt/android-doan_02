@@ -209,6 +209,26 @@
                 android:text="End Date"
                 android:textSize="15sp" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:layout_marginBottom="10dp">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:srcCompat="@drawable/ic_status"
+                />
+
+            <TextView
+                android:id="@+id/tour_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FF7067"/>
+        </LinearLayout>
 
 
     </LinearLayout>

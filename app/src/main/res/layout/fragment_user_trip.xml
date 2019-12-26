@@ -97,7 +97,7 @@
                     android:paddingLeft="5dp"
                     android:id="@+id/tv_total_canceled_tour"
                     android:paddingTop="5dp"
-                    android:text="1000"
+                    android:text="0"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
 
@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:paddingTop="5dp"
-                    android:text="1000" />
+                    android:text="0" />
 
             </LinearLayout>
 
@@ -139,7 +139,7 @@
                     android:paddingLeft="5dp"
                     android:id="@+id/tv_total_started_tour"
                     android:paddingTop="5dp"
-                    android:text="1000"
+                    android:text="0"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
 
@@ -160,7 +160,7 @@
                     android:paddingLeft="5dp"
                     android:id="@+id/tv_total_closed_tour"
                     android:paddingTop="5dp"
-                    android:text="1000"
+                    android:text="0"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
 

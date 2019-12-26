@@ -46,7 +46,7 @@ public class FeedbackService {
     }
 
     public String getName() {
-        if(name == null){
+        if(name == null||name.isEmpty()){
             return "<ID: "+userId+" >";
         }
         return name;

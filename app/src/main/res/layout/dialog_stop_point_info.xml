@@ -94,7 +94,7 @@
             app:srcCompat="@drawable/ic_city_solid" />
 
         <TextView
-            android:id="@+id/stop_point_info_provice_city"
+            android:id="@+id/stop_point_info_province_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="5dp"
@@ -184,5 +184,16 @@
             android:paddingLeft="5dp"
             android:textColor="#1A1818" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_stop_point_review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xem đánh giá"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:textColor="@color/colorCustomPrimary"
+        android:layout_margin="10dp"
+        android:textAllCaps="true"/>
 
 </LinearLayout>

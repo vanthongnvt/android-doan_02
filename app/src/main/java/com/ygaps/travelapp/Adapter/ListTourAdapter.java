@@ -61,6 +61,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         private final TextView tvMinCost;
         private final TextView tvMaxCost;
         private  final ImageButton imgbtnClone;
+        private final TextView tvStatus;
 
 
         private ViewHolder(View row) {
@@ -73,6 +74,7 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
             tvMinCost = (TextView) row.findViewById(R.id.tv_minCost);
             tvMaxCost = (TextView) row.findViewById(R.id.tv_maxCost);
             imgbtnClone = (ImageButton) row.findViewById(R.id.listtouritem_btn_clone_tour);
+            tvStatus = row.findViewById(R.id.tour_status);
         }
     }
 
@@ -150,6 +152,18 @@ public class ListTourAdapter extends ArrayAdapter<Tour> {
         }
         else{
             holder.tvMaxCost.setText(tour.getMaxCost());
+        }
+        if(tour.getStatus()==-1){
+            holder.tvStatus.setText(R.string.tour_cancled);
+        }
+        else if(tour.getStatus()==0){
+            holder.tvStatus.setText(R.string.tour_open);
+        }
+        else if(tour.getStatus()==1){
+            holder.tvStatus.setText(R.string.tour_started);
+        }
+        else if(tour.getStatus()==2){
+            holder.tvStatus.setText(R.string.tour_closed);
         }
 
         holder.imgbtnClone.setOnClickListener(new View.OnClickListener() {
