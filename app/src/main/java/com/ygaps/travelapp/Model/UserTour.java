@@ -47,6 +47,22 @@ public class UserTour implements Serializable {
     @Expose
     private Boolean isKicked;
 
+    public UserTour(Integer id, Integer status, String name, String minCost, String maxCost, String startDate, String endDate, Number adults, Number childs, Boolean isPrivate, String avatar, Boolean isHost, Boolean isKicked) {
+        this.id = id;
+        this.status = status;
+        this.name = name;
+        this.minCost = minCost;
+        this.maxCost = maxCost;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.adults = adults;
+        this.childs = childs;
+        this.isPrivate = isPrivate;
+        this.avatar = avatar;
+        this.isHost = isHost;
+        this.isKicked = isKicked;
+    }
+
     public Integer getId() {
         return id;
     }

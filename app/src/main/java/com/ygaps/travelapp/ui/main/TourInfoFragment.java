@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,11 +19,12 @@ import com.ygaps.travelapp.Adapter.ListStopPointAdapter;
 import com.ygaps.travelapp.AppHelper.TokenStorage;
 import com.ygaps.travelapp.CreateStopPointActivity;
 import com.ygaps.travelapp.FollowTourActivity;
-import com.ygaps.travelapp.HomeActivity;
 import com.ygaps.travelapp.Model.TourInfo;
 import com.ygaps.travelapp.Model.TourMember;
+import com.ygaps.travelapp.Model.UserTour;
 import com.ygaps.travelapp.R;
 import com.squareup.picasso.Picasso;
+import com.ygaps.travelapp.UpdateTourActivity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,7 +42,7 @@ public class TourInfoFragment extends Fragment {
     private PageViewModel pageViewModel;
     private TourInfo tourInfo;
     private boolean isHostUser=false;
-    private ImageView btnCloneTour;
+    private ImageView btnEditTour;
     private ImageView imageAvatar;
     private TextView tvTourName;
     private TextView tvAdults;
@@ -111,7 +111,7 @@ public class TourInfoFragment extends Fragment {
     }
 
     private void init(View headerTour){
-        btnCloneTour=headerTour.findViewById(R.id.btn_clone_tour);
+        btnEditTour =headerTour.findViewById(R.id.btn_edit_user_tour);
         imageAvatar=headerTour.findViewById(R.id.img_avatar);
         tvTourName=headerTour.findViewById(R.id.tv_tourName);
         tvAdults=headerTour.findViewById(R.id.tv_adults);
@@ -136,7 +136,16 @@ public class TourInfoFragment extends Fragment {
         stopPointAdapter=new ListStopPointAdapter(root.getContext(),R.layout.list_view_tour_stop_point_item,tourInfo.getStopPoints());
         listView.setAdapter(stopPointAdapter);
         if(isHostUser){
-            btnCloneTour.setVisibility(View.GONE);
+            btnEditTour.setVisibility(View.VISIBLE);
+            btnEditTour.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), UpdateTourActivity.class);
+                    UserTour userTour = new UserTour(tourInfo.getId(),tourInfo.getStatus(),tourInfo.getName(),tourInfo.getMinCost(),tourInfo.getMaxCost(),tourInfo.getStartDate(),tourInfo.getEndDate(),tourInfo.getAdults(),tourInfo.getChilds(),tourInfo.getIsPrivate(),tourInfo.getAvatar(),isHostUser,false);
+                    intent.putExtra("UserTour", userTour);
+                    startActivity(intent);
+                }
+            });
         }
         if (tourInfo.getAvatar() != null){
             Picasso.get().load(tourInfo.getAvatar()).into(imageAvatar);

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         private final TextView tvMaxCost;
         private final ImageView btnEdit;
         private final TextView tvStatus;
+        private final LinearLayout parentViewItem;
 
 
         private ViewHolder(View row) {
@@ -64,6 +66,7 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
             tvMaxCost = (TextView) row.findViewById(R.id.listusertrip_item_tv_maxCost);
             btnEdit = (ImageView) row.findViewById(R.id.btn_edit_user_tour);
             tvStatus = row.findViewById(R.id.tour_status);
+            parentViewItem = row.findViewById(R.id.layout_to_hide);
         }
     }
 
@@ -72,23 +75,35 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View row;
         UserListTourAdapter.ViewHolder holder;
+        UserTour tour = list.get(position);
+//        if (tour.getStatus() != -1) {
 
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(resource, parent, false);
-            holder = new UserListTourAdapter.ViewHolder(row);
-            row.setTag(holder);
-        } else {
-            row = convertView;
-            holder = (UserListTourAdapter.ViewHolder) row.getTag();
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(resource, parent, false);
+                holder = new UserListTourAdapter.ViewHolder(row);
+                row.setTag(holder);
+            } else {
+                row = convertView;
+                holder = (UserListTourAdapter.ViewHolder) row.getTag();
+            }
+//        } else {
+//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            return inflater.inflate(R.layout.view_canceled_tour, null);
+//        }
+        if(tour.getStatus()==-1){
+            holder.parentViewItem.setVisibility(View.GONE);
+            return row;
+        }
+        else{
+            holder.parentViewItem.setVisibility(View.VISIBLE);
         }
 
-        UserTour tour = list.get(position);
 
         // set thuoc tinh cho item:
-        if (tour.getAvatar() != null){
+        if (tour.getAvatar() != null) {
             Picasso.get().load(tour.getAvatar()).into(holder.imgAvater);
-        }else{
+        } else {
             holder.imgAvater.setImageResource(R.drawable.empty_image);
         }
 
@@ -99,65 +114,55 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
         Calendar cal = Calendar.getInstance();
         long time = 0;
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        if(tour.getStartDate() == null){
+        if (tour.getStartDate() == null) {
             holder.tvStartDate.setText("00/00/0000");
-        }
-        else{
+        } else {
             time = Long.parseLong(tour.getStartDate());
             cal.setTimeInMillis(time);
             Date timeStartDate = cal.getTime();
             holder.tvStartDate.setText(dateFormat.format(timeStartDate));
         }
 
-        if(tour.getEndDate() == null){
+        if (tour.getEndDate() == null) {
             holder.tvEndDate.setText("00/00/0000");
-        }
-        else{
+        } else {
             time = Long.parseLong(tour.getEndDate());
             cal.setTimeInMillis(time);
             Date timeEndDate = cal.getTime();
             holder.tvEndDate.setText(dateFormat.format(timeEndDate));
         }
-        if(tour.getAdults() == null){
+        if (tour.getAdults() == null) {
             holder.tvAdults.setText("0 người lớn ");
-        }
-        else{
+        } else {
             holder.tvAdults.setText(tour.getAdults().toString() + " người lớn ");
         }
-        if(tour.getChilds() == null){
+        if (tour.getChilds() == null) {
             holder.tvChilds.setText("0 trẻ em");
-        }
-        else{
+        } else {
             holder.tvChilds.setText(tour.getChilds().toString() + " trẻ em");
         }
-        if(tour.getMinCost() == null){
+        if (tour.getMinCost() == null) {
             holder.tvMinCost.setText("0");
-        }
-        else{
+        } else {
             holder.tvMinCost.setText(tour.getMinCost());
         }
-        if(tour.getMaxCost() == null){
+        if (tour.getMaxCost() == null) {
             holder.tvMaxCost.setText("0");
-        }
-        else{
+        } else {
             holder.tvMaxCost.setText(tour.getMaxCost());
         }
-        if(tour.getStatus()==-1){
+        if (tour.getStatus() == -1) {
             holder.tvStatus.setText(R.string.tour_cancled);
-        }
-        else if(tour.getStatus()==0){
+        } else if (tour.getStatus() == 0) {
             holder.tvStatus.setText(R.string.tour_open);
-        }
-        else if(tour.getStatus()==1){
+        } else if (tour.getStatus() == 1) {
             holder.tvStatus.setText(R.string.tour_started);
-        }
-        else if(tour.getStatus()==2){
+        } else if (tour.getStatus() == 2) {
             holder.tvStatus.setText(R.string.tour_closed);
         }
-        if(!tour.getIsHost()){
+        if (!tour.getIsHost()) {
             holder.btnEdit.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             holder.btnEdit.setVisibility(View.VISIBLE);
             holder.btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -173,14 +178,13 @@ public class UserListTourAdapter extends ArrayAdapter<UserTour> {
 
     }
 
-    public int  filter(String s) {
+    public int filter(String s) {
         list.clear();
-        if(s == ""){
+        if (s == "") {
             list.addAll(list_backup);
-        }
-        else {
-            for(UserTour item: list_backup){
-                if(item.getName() != null && item.getName().contains(s)){
+        } else {
+            for (UserTour item : list_backup) {
+                if (item.getName() != null && item.getName().contains(s)) {
                     list.add(item);
                 }
             }

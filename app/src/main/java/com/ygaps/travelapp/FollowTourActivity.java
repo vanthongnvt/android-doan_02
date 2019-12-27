@@ -284,17 +284,17 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     public void initWhenGrantedPermission() {
         init();
 
-//        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
-//        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
-//        serviceIntent.putExtra("tourId", tourId);
-//        startService(serviceIntent);
-//
-//        broadcastLocationReceiver = new BroadcastLocationReceiver();
-//        mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
-//        mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
-//        mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
-//        mIntentFilter.addAction(getString(R.string.receiver_action_firebase_noti_on_road));
-//        registerReceiver(broadcastLocationReceiver, mIntentFilter);
+        FirebaseMessaging.getInstance().subscribeToTopic("tour-id-" + tourId);
+        Intent serviceIntent = new Intent(this, BackgroundLocationService.class);
+        serviceIntent.putExtra("tourId", tourId);
+        startService(serviceIntent);
+
+        broadcastLocationReceiver = new BroadcastLocationReceiver();
+        mIntentFilter = new IntentFilter(getString(R.string.receiver_action_send_coordinate));
+        mIntentFilter.addAction(getString(R.string.receiver_action_send_notification_on_road));
+        mIntentFilter.addAction(getString(R.string.receiver_action_noti_text));
+        mIntentFilter.addAction(getString(R.string.receiver_action_firebase_noti_on_road));
+        registerReceiver(broadcastLocationReceiver, mIntentFilter);
     }
 
     private void showDialogSelectTour() {
@@ -1172,7 +1172,8 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         for (NotificationOnRoad notification : notificationOnRoadList.getNotiList()) {
             int type = notification.getNotificationType();
             if (type == 1 || type == 2 || type == 3) {
-                addMarkerNotiOnRoad(3, notification.getLat(), notification.getLong(), notification.getNote(), notification.getSpeed());
+                int speed = (notification.getSpeed()!=null)?notification.getSpeed():0;
+                addMarkerNotiOnRoad(3, notification.getLat(), notification.getLong(), notification.getNote(), speed);
             }
         }
     }

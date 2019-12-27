@@ -94,10 +94,19 @@ public class RegisterActivity extends AppCompatActivity {
                 String strPass = edtPassword.getText().toString().trim();
                 String strConfirmPass = edtConfirmPass.getText().toString().trim();
                 String strFullName = edtFullName.getText().toString().trim();
+                if(strFullName.isEmpty()){
+                    strFullName =null;
+                }
                 String strPhone = edtPhone.getText().toString().trim();
                 String strAddress = edtAddress.getText().toString().trim();
+                if(strAddress.isEmpty()){
+                    strAddress =null;
+                }
                 String strDob = edtDob.getText().toString().trim();
-                Number numGender = -1;
+                if(strDob.isEmpty()){
+                    strDob =null;
+                }
+                Number numGender = null;
                 if (rbtnMale.isChecked()) {
                     numGender = 1;
                 } else if (rbtnFemale.isChecked()) {

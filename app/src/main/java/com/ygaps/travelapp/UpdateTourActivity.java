@@ -189,7 +189,10 @@ public class UpdateTourActivity extends AppCompatActivity {
                             if (response.isSuccessful()) {
                                 Toast.makeText(UpdateTourActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(UpdateTourActivity.this, HomeActivity.class);
+                                intent.putExtra("MENU", R.id.navigation_history);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                finish();
                             } else if (response.code() == 400) {
                                 Toast.makeText(UpdateTourActivity.this, "Thông tin nhập chưa đầy đủ", Toast.LENGTH_SHORT).show();
                             } else if (response.code() == 404) {
@@ -282,7 +285,18 @@ public class UpdateTourActivity extends AppCompatActivity {
             edtMaxCost.setText(tour.getMaxCost());
         }
         // api ko gui isPrivate ve! -> de mac dinh la private
-        rbtnPrivate.setChecked(true);
+        if(tour.getIsPrivate()==null){
+            rbtnPrivate.setChecked(true);
+        }
+        else{
+            if(tour.getIsPrivate()){
+                rbtnPrivate.setChecked(true);
+            }
+            else{
+                rbtnPublic.setChecked(true);
+            }
+        }
+
         int status = tour.getStatus().intValue();
         if (status == -1)
             rbtnCanceled.setChecked(true);

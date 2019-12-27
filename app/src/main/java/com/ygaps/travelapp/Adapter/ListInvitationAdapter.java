@@ -181,6 +181,9 @@ public class ListInvitationAdapter extends ArrayAdapter<TourInvitation> {
         if (tour.getHostAvatar() != null){
             Picasso.get().load(tour.getHostAvatar()).into(holder.hostAvatar);
         }
+        else{
+            holder.hostAvatar.setImageResource(R.drawable.unknown_user);
+        }
 
         if(tour.getCreatedOn()!=null){
             cal.setTimeInMillis(Long.parseLong(tour.getCreatedOn()));

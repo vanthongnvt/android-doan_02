@@ -197,14 +197,14 @@ public class TourMemberFragment extends Fragment {
     }
 
     public void requestJoinTour() {
-        String yourID = TokenStorage.getInstance().getUserId().toString();
+        String authId = TokenStorage.getInstance().getUserId().toString();
         String tourID = tourInfo.getId().toString();
         apiTour = new APIRetrofitCreator().getAPIService();
-        apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(), tourID, yourID, false).enqueue(new Callback<MessageResponse>() {
+        apiTour.inviteMember(TokenStorage.getInstance().getAccessToken(), tourID, authId, false).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().getMessage() == "Not valid") {
+                    if (response.body().getMessage().equals("Not valid")) {
                         Toast.makeText(getContext(), "Lỗi", Toast.LENGTH_SHORT).show();
                     } else
                         Toast.makeText(getContext(), "Yêu cầu tham gia chuyến đi thành công", Toast.LENGTH_SHORT).show();

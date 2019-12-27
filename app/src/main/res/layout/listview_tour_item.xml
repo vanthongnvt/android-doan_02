@@ -59,6 +59,8 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
+                        android:maxLines="5"
+                        android:ellipsize="end"
                         android:text="Tour Name"
                         android:textSize="20sp" />
                 </LinearLayout>

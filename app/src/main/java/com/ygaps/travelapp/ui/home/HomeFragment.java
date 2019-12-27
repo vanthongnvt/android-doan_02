@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment {
     private EditText edtHomeSearch;
     private ImageView btnAddTour;
     private int numTotalTours;
+    private Integer pageSize = 9999;
     private ProgressBar progressBar;
 
 
@@ -62,24 +63,25 @@ public class HomeFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressbar_loading);
 
         progressBar.setVisibility(View.VISIBLE);
-        // goi api lan dau de lay total tours :
-        apiTour.listTour(TokenStorage.getInstance().getAccessToken(),1,1,null,null).enqueue(new Callback<ListTour>() {
-            @Override
-            public void onResponse(Call<ListTour> call, Response<ListTour> response) {
-                listTourResponse = response.body();
-                numTotalTours = listTourResponse.getTotal();
-
-                //goi api lan tiep theo de load danh sach:
-                getList(container);
-
-            }
-
-            @Override
-            public void onFailure(Call<ListTour> call, Throwable t) {
-                Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+        getList(container);
+//        // goi api lan dau de lay total tours :
+//        apiTour.listTour(TokenStorage.getInstance().getAccessToken(),1,1,null,null).enqueue(new Callback<ListTour>() {
+//            @Override
+//            public void onResponse(Call<ListTour> call, Response<ListTour> response) {
+//                listTourResponse = response.body();
+//                numTotalTours = listTourResponse.getTotal();
+//
+//                //goi api lan tiep theo de load danh sach:
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ListTour> call, Throwable t) {
+//                Toast.makeText(getActivity(), "Lỗi get total tours", Toast.LENGTH_SHORT).show();
+//                progressBar.setVisibility(View.GONE);
+//            }
+//        });
 
 
 
@@ -97,12 +99,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void getList(ViewGroup container) {
-        apiTour.listTour(TokenStorage.getInstance().getAccessToken(), numTotalTours,1,null,null).enqueue(new Callback<ListTour>() {
+        apiTour.listTour(TokenStorage.getInstance().getAccessToken(), pageSize,1,null,true).enqueue(new Callback<ListTour>() {
             @Override
             public void onResponse(Call<ListTour> call, Response<ListTour> response) {
                 if(response.isSuccessful()){
                     listTourResponse= response.body();
-                    totalTours.setText(numTotalTours + "");
+                    totalTours.setText(String.valueOf(listTourResponse.getTotal()));
 
                     tours = listTourResponse.getTours();
                     listTourAdapter = new ListTourAdapter(container.getContext(),R.layout.listview_tour_item,tours);
