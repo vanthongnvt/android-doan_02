@@ -469,6 +469,29 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void initDialogRecordList() {
+
+        dialogRecordList.setOnDismissListener(dialog -> {
+            if (recorder != null) {
+                recorder.release();
+                recorder = null;
+            }
+
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+            if(isRecording) {
+                isRecording = false;
+                recordSignal.setVisibility(View.GONE);
+                recordButton.setImageResource(R.drawable.ic_mic_black_24dp);
+            }
+            if(isPlaying) {
+                isPlaying = false;
+                audioView.setVisibility(View.GONE);
+                pauseResumPlayer.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+            }
+        });
+
         recordButton = dialogRecordList.findViewById(R.id.start_record);
         recordSignal = dialogRecordList.findViewById(R.id.record_signal);
         seekBar = dialogRecordList.findViewById(R.id.seek_bar);
@@ -793,16 +816,18 @@ public class FollowTourActivity extends AppCompatActivity implements OnMapReadyC
         int numMaxCost = stopPoint.getMaxCost();
         minCostStopPoint.setText(Integer.toString(numMinCost));
         maxCostStopPoint.setText(Integer.toString(numMaxCost));
-        long numLeave = stopPoint.getLeaveAt();
-        long numArrive = stopPoint.getArrivalAt();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(numLeave);
-        Date date = cal.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
-        leaveStopPoint.setText(dateFormat.format(date));
-        cal.setTimeInMillis(numArrive);
-        date = cal.getTime();
-        arriveStopPoint.setText(dateFormat.format(date));
+        if(stopPoint.getArrivalAt()!=null&&stopPoint.getLeaveAt()!=null) {
+            long numLeave = stopPoint.getLeaveAt();
+            long numArrive = stopPoint.getArrivalAt();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(numLeave);
+            Date date = cal.getTime();
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+            leaveStopPoint.setText(dateFormat.format(date));
+            cal.setTimeInMillis(numArrive);
+            date = cal.getTime();
+            arriveStopPoint.setText(dateFormat.format(date));
+        }
 
         showReview.setOnClickListener(v -> {
             Bundle bundle = new Bundle();

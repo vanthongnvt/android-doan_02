@@ -41,10 +41,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -56,6 +58,11 @@ import com.ygaps.travelapp.Model.StopPoint;
 import com.ygaps.travelapp.Model.TotalTourReview;
 import com.ygaps.travelapp.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -75,6 +82,18 @@ public class ServiceReviewActivity extends AppCompatActivity implements OnMapRea
     private Boolean mLocationPermisstionsGranted = false;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private MarkerOptions markerOptions = null;
+
+    private TextView nameStopPoint;
+    private TextView typeStopPoint;
+    private TextView addressStopPoint;
+    private TextView provinceCityStopPoint;
+    private TextView minCostStopPoint;
+    private TextView maxCostStopPoint;
+    private TextView leaveStopPoint;
+    private TextView arriveStopPoint;
+    private List<String> listSerVice = Arrays.asList("Nhà hàng", "Khách sạn", "Trạm nghỉ", "Khác");
+    private List<String> listProvince = Arrays.asList("Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Bình Dương", "Đồng Nai", "Khánh Hòa", "Hải Phòng", "Long An", "Quảng Nam", "Bà Rịa Vũng Tàu", "Đắk Lắk", "Cần Thơ", "Bình Thuận  ", "Lâm Đồng", "Thừa Thiên Huế", "Kiên Giang", "Bắc Ninh", "Quảng Ninh", "Thanh Hóa", "Nghệ An", "Hải Dương", "Gia Lai", "Bình Phước", "Hưng Yên", "Bình Định", "Tiền Giang", "Thái Bình", "Bắc Giang", "Hòa Bình", "An Giang", "Vĩnh Phúc", "Tây Ninh", "Thái Nguyên", "Lào Cai", "Nam Định", "Quảng Ngãi", "Bến Tre", "Đắk Nông", "Cà Mau", "Vĩnh Long", "Ninh Bình", "Phú Thọ", "Ninh Thuận", "Phú Yên", "Hà Nam", "Hà Tĩnh", "Đồng Tháp", "Sóc Trăng", "Kon Tum", "Quảng Bình", "Quảng Trị", "Trà Vinh", "Hậu Giang", "Sơn La", "Bạc Liêu", "Yên Bái", "Tuyên Quang", "Điện Biên", "Lai Châu", "Lạng Sơn", "Hà Giang", "Bắc Kạn", "Cao Bằng");
+
 
     private TextView totalRating;
     private TextView ratingPoint;
@@ -138,7 +157,11 @@ public class ServiceReviewActivity extends AppCompatActivity implements OnMapRea
             Bundle bundle = intent.getExtras();
             stopPointID = (int) bundle.getInt(ListStopPointAdapter.STOPPOINT_ID, 0);
             stopPoint = (StopPoint) bundle.getSerializable("STOP_POINT");
+            if(stopPoint==null){
+                return;
+            }
         }
+
         lvFeedbackList = (ListView) findViewById(R.id.list_view_service_review);
         View headerReviewPoint = getLayoutInflater().inflate(R.layout.header_for_list_view_feedback_service, lvFeedbackList, false);
         lvFeedbackList.addHeaderView(headerReviewPoint);
@@ -148,6 +171,43 @@ public class ServiceReviewActivity extends AppCompatActivity implements OnMapRea
         ratingPoint = headerReviewPoint.findViewById(R.id.service_rating_point);
         totalRating = headerReviewPoint.findViewById(R.id.service_total_ratings);
         ratingReviews = (RatingReviews) headerReviewPoint.findViewById(R.id.rating_reviews);
+
+        nameStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_name);
+        typeStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_service);
+        addressStopPoint = headerReviewPoint.findViewById(R.id.stop_point_info_address);
+        provinceCityStopPoint = headerReviewPoint.findViewById(R.id.stop_point_info_province_city);
+        minCostStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_min_cost);
+        maxCostStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_max_cost);
+        leaveStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_startDate);
+        arriveStopPoint = headerReviewPoint.findViewById(R.id.tv_stop_point_endDate);
+
+        nameStopPoint.setText(stopPoint.getName());
+        int numServiceID = stopPoint.getServiceTypeId();
+        if (numServiceID >= 1 && numServiceID <= 4) {
+            typeStopPoint.setText(listSerVice.get(numServiceID - 1));
+        }
+        int numProvinceID = stopPoint.getProvinceId();
+        if (numProvinceID >= 1 && numProvinceID <= 64) {
+            provinceCityStopPoint.setText(listProvince.get(numProvinceID - 1));
+        }
+
+        addressStopPoint.setText(stopPoint.getAddress());
+        int numMinCost = stopPoint.getMinCost();
+        int numMaxCost = stopPoint.getMaxCost();
+        minCostStopPoint.setText(Integer.toString(numMinCost));
+        maxCostStopPoint.setText(Integer.toString(numMaxCost));
+        if(stopPoint.getLeaveAt()!=null&&stopPoint.getArrivalAt()!=null) {
+            long numLeave = stopPoint.getLeaveAt();
+            long numArrive = stopPoint.getArrivalAt();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(numLeave);
+            Date date = cal.getTime();
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
+            leaveStopPoint.setText(dateFormat.format(date));
+            cal.setTimeInMillis(numArrive);
+            date = cal.getTime();
+            arriveStopPoint.setText(dateFormat.format(date));
+        }
 
         apiTour = new APIRetrofitCreator().getAPIService();
 
